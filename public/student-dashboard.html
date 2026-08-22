@@ -7464,6 +7464,11 @@
                         <span style="font-size: 0.8rem; font-weight: 600;">مشاركة</span>
                     </button>
 
+                    <button id="save-btn-${post.id}" onclick="toggleSavePost(${post.id})" style="background: ${post.is_saved ? '#fef3c7' : '#f8fafc'}; border: 1px solid ${post.is_saved ? '#fde68a' : '#e2e8f0'}; color: ${post.is_saved ? '#d97706' : '#64748b'}; font-size: 0.88rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 12px; transition: all 0.2s ease;" title="${post.is_saved ? 'إزالة من المحفوظات' : 'حفظ المنشور'}">
+                        <i class="${post.is_saved ? 'fas' : 'far'} fa-bookmark" style="${post.is_saved ? 'color: #d97706;' : ''}"></i>
+                        <span style="font-size: 0.8rem; font-weight: 600;">${post.is_saved ? 'محفوظ' : 'حفظ'}</span>
+                    </button>
+
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; color: #0284c7; font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 12px; margin-right: auto;" title="عدد المشاهدات لكل IP فريد كل 24 ساعة">
                         <i class="far fa-eye" style="color: #0284c7;"></i>
                         <span id="post-views-${post.id}">${post.views_count || post.views || 0}</span>
@@ -7625,6 +7630,53 @@
             console.error('Error toggling like:', e);
         }
     }
+
+    async function toggleSavePost(postId) {
+        if (checkGuestAction()) return;
+        try {
+            const res = await fetchWithAuth(`/api/post/${postId}/bookmark`, {
+                method: 'POST'
+            });
+            const data = await res.json();
+            if (data.success) {
+                const isSaved = data.is_saved;
+                showToast(data.message || (isSaved ? '🔖 تم حفظ المنشور' : 'تم إزالة المنشور من المحفوظات'), 'success');
+                
+                const saveBtns = document.querySelectorAll(`[id="save-btn-${postId}"], .save-btn-${postId}`);
+                saveBtns.forEach(btn => {
+                    const icon = btn.querySelector('i');
+                    const textSpan = btn.querySelector('span:last-child');
+                    if (isSaved) {
+                        btn.style.background = '#fef3c7';
+                        btn.style.borderColor = '#fde68a';
+                        btn.style.color = '#d97706';
+                        btn.title = 'إزالة من المحفوظات';
+                        if (icon) {
+                            icon.className = 'fas fa-bookmark';
+                            icon.style.color = '#d97706';
+                        }
+                        if (textSpan) textSpan.innerText = 'محفوظ';
+                    } else {
+                        btn.style.background = '#f8fafc';
+                        btn.style.borderColor = '#e2e8f0';
+                        btn.style.color = '#64748b';
+                        btn.title = 'حفظ المنشور';
+                        if (icon) {
+                            icon.className = 'far fa-bookmark';
+                            icon.style.color = '';
+                        }
+                        if (textSpan) textSpan.innerText = 'حفظ';
+                    }
+                });
+            } else {
+                showToast(data.error || 'فشل حفظ المنشور', 'error');
+            }
+        } catch (e) {
+            console.error('Error toggling post save:', e);
+            showToast('حدث خطأ أثناء حفظ المنشور', 'error');
+        }
+    }
+    window.toggleSavePost = toggleSavePost;
 
     async function toggleCommentsDrawer(postId) {
         const drawers = document.querySelectorAll(`[id="comments-drawer-${postId}"]`);

@@ -6903,6 +6903,9 @@
                             '<button onclick="sharePublicPost(' + post.id + ')" style="background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="مشاركة المنشور">' +
                                 '<i class="fas fa-share-alt"></i> مشاركة' +
                             '</button>' +
+                            '<button onclick="togglePublicPostSave(' + post.id + ', this)" style="background: ' + (post.is_saved ? '#fef3c7' : '#f8fafc') + '; color: ' + (post.is_saved ? '#d97706' : '#64748b') + '; border: 1px solid ' + (post.is_saved ? '#fde68a' : '#e2e8f0') + '; padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; transition: all 0.2s ease;" title="' + (post.is_saved ? 'إزالة من المحفوظات' : 'حفظ المنشور') + '">' +
+                                '<i class="' + (post.is_saved ? 'fas' : 'far') + ' fa-bookmark" style="' + (post.is_saved ? 'color:#d97706;' : '') + '"></i> ' + (post.is_saved ? 'محفوظ' : 'حفظ') +
+                            '</button>' +
                         '</div>' +
                     '</div>' +
 
@@ -6964,6 +6967,49 @@
             } catch(e) {
                 console.error(e);
                 showNotification('حدث خطأ في الاتصال بالخادم', 'error');
+            }
+        }
+
+        async function togglePublicPostSave(postId, btnEl) {
+            var token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('💡 يرجى تسجيل الدخول أولاً لحفظ المنشورات والرجوع إليها لاحقاً!', 'info');
+                return;
+            }
+
+            try {
+                var res = await fetch('/api/post/' + postId + '/bookmark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                var data = await res.json();
+                if (data.success) {
+                    var icon = btnEl.querySelector('i');
+                    if (data.is_saved) {
+                        icon.className = 'fas fa-bookmark';
+                        icon.style.color = '#d97706';
+                        btnEl.style.background = '#fef3c7';
+                        btnEl.style.color = '#d97706';
+                        btnEl.style.borderColor = '#fde68a';
+                        btnEl.title = 'إزالة من المحفوظات';
+                        showNotification('🔖 تم حفظ المنشور في المحفوظات بنجاح', 'success');
+                    } else {
+                        icon.className = 'far fa-bookmark';
+                        icon.style.color = '';
+                        btnEl.style.background = '#f8fafc';
+                        btnEl.style.color = '#64748b';
+                        btnEl.style.borderColor = '#e2e8f0';
+                        btnEl.title = 'حفظ المنشور';
+                        showNotification('تم إزالة المنشور من المحفوظات', 'info');
+                    }
+                } else {
+                    showNotification(data.error || 'تعذر حفظ المنشور', 'error');
+                }
+            } catch(e) {
+                showNotification('خطأ في الاتصال بالخادم', 'error');
             }
         }
 

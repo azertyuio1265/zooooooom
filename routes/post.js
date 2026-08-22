@@ -248,7 +248,7 @@ router.get('/', async (req, res) => {
             // توكن غير متوفر أو غير صالحة - يستمر الجلب عاماً
         }
 
-        const { limit = 10, offset = 0, teacher_id, post_id, include_post_id } = req.query;
+        const { limit = 10, offset = 0, teacher_id, post_id, include_post_id, saved_only } = req.query;
         const parsedLimit = parseInt(limit) || 10;
         const parsedOffset = parseInt(offset) || 0;
 
@@ -310,8 +310,9 @@ router.get('/', async (req, res) => {
             }
         }
 
-        // جلب الإعجابات والمتابعات الخاصة بالزائر الحالي دفعة واحدة لتفادي استعلامات متعددة أو خاطئة
+        // جلب الإعجابات والمتابعات والمحفوظات الخاصة بالزائر الحالي دفعة واحدة لتفادي استعلامات متعددة
         const userLikedPostIds = new Set();
+        const userSavedPostIds = new Set();
         const followedTeacherIds = new Set();
 
         if (userId && userType) {
@@ -338,6 +339,19 @@ router.get('/', async (req, res) => {
                 }
             } catch (lkErr) {
                 console.warn('⚠️ فشل جلب تفضيلات الإعجاب للزائر:', lkErr.message);
+            }
+
+            try {
+                const { data: userBookmarks } = await supabase
+                    .from('post_bookmarks')
+                    .select('post_id')
+                    .eq('user_id', userId)
+                    .eq('user_type', userType);
+                if (userBookmarks && Array.isArray(userBookmarks)) {
+                    userBookmarks.forEach(b => userSavedPostIds.add(b.post_id));
+                }
+            } catch (bmErr) {
+                // تجاهل أخطاء جدول المحفوظات في حال لم يُنشأ بعد
             }
 
             try {
@@ -368,7 +382,12 @@ router.get('/', async (req, res) => {
             }
         }
 
-        // إثراء المنشورات بعدد الإعجابات، التعليقات، المتابعة، وهل أعجب به المستخدم
+        // تصفية المنشورات المحفوظة فقط في حال تم طلب خيار saved_only=true
+        if (saved_only === 'true' || saved_only === true) {
+            rawPosts = rawPosts.filter(p => userSavedPostIds.has(p.id));
+        }
+
+        // إثراء المنشورات بعدد الإعجابات، التعليقات، المتابعة، وهل أعجب أو حفظ به المستخدم
         const enrichedPosts = await Promise.all(rawPosts.map(async (post) => {
             post.teachers = teachersMap[post.teacher_id] || null;
 
@@ -395,6 +414,7 @@ router.get('/', async (req, res) => {
             }
 
             const userLiked = userLikedPostIds.has(post.id);
+            const isSaved = userSavedPostIds.has(post.id);
             const isFollowing = followedTeacherIds.has(post.teacher_id);
 
             // تجهيز صورة الأستاذ بدقة
@@ -422,6 +442,8 @@ router.get('/', async (req, res) => {
                 views_count: postViews,
                 views: postViews,
                 user_liked: userLiked,
+                is_saved: isSaved,
+                user_saved: isSaved,
                 is_following: isFollowing
             };
         }));
@@ -901,6 +923,92 @@ router.post('/toggle-like', authenticate, authorize(['student', 'teacher']), [
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
+// ============================================================
+// 4.ب. حفظ / إلغاء حفظ منشور في المحفوظات (للطلاب والأساتذة)
+// ============================================================
+const handleTogglePostBookmark = async (req, res) => {
+    try {
+        const postId = parseInt(req.params.id || req.body.post_id || req.body.id);
+        const userId = req.user.userId || req.user.id;
+        const userType = req.user.role;
+
+        if (!postId || isNaN(postId)) {
+            return res.status(400).json({ success: false, error: 'رقم المنشور غير صحيح' });
+        }
+
+        // التحقق مما إذا كان المنشور موجوداً
+        const post = await getOne('posts', 'id', postId);
+        if (!post) {
+            return res.status(404).json({ success: false, error: 'المنشور غير موجود' });
+        }
+
+        // التحقق مما إذا كان المنشور محفوظاً مسبقاً
+        let existingBookmark = null;
+        try {
+            const { data } = await supabase
+                .from('post_bookmarks')
+                .select('*')
+                .eq('user_id', userId)
+                .eq('user_type', userType)
+                .eq('post_id', postId)
+                .maybeSingle();
+            existingBookmark = data;
+        } catch (e) {}
+
+        if (existingBookmark) {
+            // إزالة من المحفوظات
+            try {
+                await supabase
+                    .from('post_bookmarks')
+                    .delete()
+                    .eq('id', existingBookmark.id);
+            } catch (e) {
+                await supabase
+                    .from('post_bookmarks')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('user_type', userType)
+                    .eq('post_id', postId);
+            }
+
+            return res.json({
+                success: true,
+                is_saved: false,
+                message: 'تم إزالة المنشور من المحفوظات'
+            });
+        } else {
+            // إضافة للمحفوظات
+            try {
+                await insert('post_bookmarks', {
+                    user_id: userId,
+                    user_type: userType,
+                    post_id: postId,
+                    created_at: new Date().toISOString()
+                });
+            } catch (e) {
+                await supabase.from('post_bookmarks').insert([{
+                    user_id: userId,
+                    user_type: userType,
+                    post_id: postId,
+                    created_at: new Date().toISOString()
+                }]);
+            }
+
+            return res.json({
+                success: true,
+                is_saved: true,
+                message: '🔖 تم حفظ المنشور في المحفوظات بنجاح!'
+            });
+        }
+    } catch (error) {
+        logger.error('❌ خطأ في حفظ المنشور:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ أثناء حفظ المنشور: ' + error.message });
+    }
+};
+
+router.post('/:id/bookmark', authenticate, handleTogglePostBookmark);
+router.post('/toggle-bookmark', authenticate, handleTogglePostBookmark);
 
 // ============================================================
 // 5. إضافة تعليق على منشور (للطلاب والأساتذة)
