@@ -230,23 +230,24 @@ async function recordStreamEnd(offerId, teacherId) {
 async function verifyStreamCompletion(offerId) {
     const { data: offer, error: offerError } = await supabase
         .from('offers')
-        .select('id, duration, duration_minutes, total_seconds, total_time, remaining_seconds, remaining_time, stream_started_at, teacher_id, subject_name, price')
+        .select('id, duration, total_seconds, remaining_seconds, stream_started_at, teacher_id, subject_name, price')
         .eq('id', offerId)
         .single();
 
     if (offerError || !offer) {
+        logger.error(`verifyStreamCompletion: error fetching offer ${offerId}:`, offerError ? offerError.message : 'Not found');
         return { complete: false, completion_percentage: 0, error: 'الدرس غير موجود' };
     }
 
     // 1. مدة البث المخطط لها بالثواني بناءً على بيانات الأستاذ
-    const durationMins = offer.duration_minutes || offer.duration || 60;
-    const expectedDuration = Number(offer.total_seconds || offer.total_time || (durationMins * 60)) || 3600;
+    const durationMins = offer.duration || 60;
+    const expectedDuration = Number(offer.total_seconds || (durationMins * 60)) || 3600;
 
     // 2. حساب الوقت المنقضي بناءً على موقت الأستاذ المقاس بالسيرفر
     let actualDurationFromTimer = 0;
     const remainingSec = (offer.remaining_seconds != null && !isNaN(Number(offer.remaining_seconds))) 
         ? Number(offer.remaining_seconds) 
-        : ((offer.remaining_time != null && !isNaN(Number(offer.remaining_time))) ? Number(offer.remaining_time) : null);
+        : null;
 
     if (remainingSec !== null) {
         // الوقت المنقضي = الوقت الكلي - الوقت المتبقي في موقت الأستاذ
@@ -278,8 +279,34 @@ async function verifyStreamCompletion(offerId) {
     }
     completionPercentage = Math.min(100, Math.round(completionPercentage * 100) / 100);
 
+    const isComplete = completionPercentage >= 80 || (completionPercentage >= 75);
+
+    // ✅ حفظ نسبة الإكتمال والمدة الفعلية للبث في قاعدة البيانات (جدول offers وجدول stream_verification)
+    const completionPctRounded = Math.round(completionPercentage);
+    try {
+        await supabase
+            .from('offers')
+            .update({
+                completion_percentage: completionPctRounded,
+                actual_duration: actualDuration,
+                actual_live_seconds: actualDuration
+            })
+            .eq('id', offerId);
+    } catch(e) {}
+
+    try {
+        await supabase
+            .from('stream_verification')
+            .update({
+                actual_live_seconds: actualDuration,
+                total_duration_seconds: expectedDuration,
+                completion_percentage: completionPctRounded
+            })
+            .eq('offer_id', offerId);
+    } catch(e) {}
+
     return {
-        complete: completionPercentage >= 80 || (completionPercentage >= 75), // تعتبر الحصة مكتملة إذا تجاوزت 75-80%
+        complete: isComplete,
         completion_percentage: completionPercentage,
         expected_seconds: expectedDuration,
         actual_seconds: actualDuration,
@@ -335,18 +362,22 @@ async function processStreamPayments(offerId, earlyEnd = false) {
     for (const session of (sessions || [])) {
         // إذا كان البث مكتمل بنسبة 80% فما فوق (أو تم تحقيقه بحسب الموقت)، يعتبر مكتملاً ولا يوجد استرداد
         const isCompleted = completion.complete || completion.completion_percentage >= 80;
+        const completionPctRounded = Math.round(completion.completion_percentage);
 
         if (isCompleted) {
             // البث مكتمل - لا استرداد للطالب، الأستاذ يحصل على سعر الحصة
             const teacherAmount = isOfferFree ? 0 : (offer.price || 0);
 
-            // تحديث حالة الجلسة
+            // تحديث حالة الجلسة ونسبة الإكتمال
             await supabase
                 .from('sessions')
                 .update({
                     payment_status: 'paid',
                     teacher_earned: teacherAmount,
-                    completed_at: new Date().toISOString()
+                    completed_at: new Date().toISOString(),
+                    completion_percentage: completionPctRounded,
+                    actual_duration: completion.actual_seconds,
+                    partial_payment_note: `بث مكتمل - نسبة الإكتمال: ${completionPctRounded}%`
                 })
                 .eq('id', session.id);
 
@@ -366,21 +397,23 @@ async function processStreamPayments(offerId, earlyEnd = false) {
                     })
                     .eq('id', offer.teacher_id);
                 
-                console.log(`✅ تم تحويل ${teacherAmount} دج للأستاذ (بث مكتمل)`);
+                console.log(`✅ تم تحويل ${teacherAmount} دج للأستاذ (بث مكتمل بنسبة ${completionPctRounded}%)`);
             }
         } else {
-            // البث غير مكتمل (أقل من 90%) - استرداد كامل للطالب في الحصص المدفوعة، لا شيء للأستاذ
+            // البث غير مكتمل (أقل من 80%) - استرداد كامل للطالب في الحصص المدفوعة، لا شيء للأستاذ
             const teacherAmount = 0;
             const refundAmount = Math.max(0, session.payment_amount - 100); // استرداد مبلغ الحصه فقط بدون رسوم 100
 
-            // تحديث حالة الجلسة
+            // تحديث حالة الجلسة ونسبة الإكتمال
             await supabase
                 .from('sessions')
                 .update({
                     payment_status: 'refunded',
                     teacher_earned: teacherAmount,
                     completed_at: new Date().toISOString(),
-                    partial_payment_note: `استرداد كامل - البث لم يكتمل نسبة 90% (النسبة: ${Math.round(completion.completion_percentage)}%)`
+                    completion_percentage: completionPctRounded,
+                    actual_duration: completion.actual_seconds,
+                    partial_payment_note: `استرداد - البث غير مكتمل (نسبة الإكتمال: ${completionPctRounded}%)`
                 })
                 .eq('id', session.id);
 
@@ -424,7 +457,7 @@ async function processStreamPayments(offerId, earlyEnd = false) {
                         amount: refundAmount,
                         type: 'refund',
                         status: 'completed',
-                        description: `استرداد كامل ${refundAmount} دج - البث لم يكتمل نسبة 90% (${Math.round(completion.completion_percentage)}% فقط)`,
+                        description: `استرداد كامل ${refundAmount} دج - البث لم يكتمل (${Math.round(completion.completion_percentage)}% فقط)`,
                         created_at: new Date().toISOString()
                     });
 

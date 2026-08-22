@@ -1908,28 +1908,31 @@ async function handleGetChatMessages(req, res) {
         let offerRemainingSeconds = null;
         let offerTotalSeconds = 3600;
         let offerStatus = null;
-        let offerExists = false;
+        let offerIsEnded = false;
         try {
-            const { data: offerData } = await supabase
+            const { data: offerData, error: offerErr } = await supabase
                 .from('offers')
-                .select('status, remaining_seconds, remaining_time, duration_minutes, duration, total_time, total_seconds')
+                .select('id, status, remaining_seconds, total_seconds, duration')
                 .eq('id', offerId)
                 .single();
             if (offerData) {
-                offerExists = true;
                 offerStatus = offerData.status;
+                if (['completed', 'ended', 'deleted'].includes(offerStatus)) {
+                    offerIsEnded = true;
+                }
                 if (offerData.remaining_seconds != null && !isNaN(Number(offerData.remaining_seconds))) {
                     offerRemainingSeconds = Number(offerData.remaining_seconds);
-                } else if (offerData.remaining_time != null && !isNaN(Number(offerData.remaining_time))) {
-                    offerRemainingSeconds = Number(offerData.remaining_time);
                 }
-                const durationMins = offerData.duration_minutes || offerData.duration || 60;
-                offerTotalSeconds = Number(offerData.total_seconds || offerData.total_time || (durationMins * 60)) || 3600;
+                const durationMins = offerData.duration || 60;
+                offerTotalSeconds = Number(offerData.total_seconds || (durationMins * 60)) || 3600;
+            } else if (offerErr && offerErr.code === 'PGRST116') {
+                // الدرس تم حذفه من قاعدة البيانات بعد إنهاء البث من الأستاذ
+                offerIsEnded = true;
             }
         } catch(e) {}
 
-        // إذا تم حذف الدرس أو انتهى البث ينبغي إغلاق شاشة البث فوراً لدى الطالب
-        if (!offerExists || ['completed', 'ended', 'deleted'].includes(offerStatus)) {
+        // إذا تم إنهاء البث فعلياً من قبل الأستاذ ينبغي إغلاق شاشة البث لدى الطالب
+        if (offerIsEnded) {
             return res.json({
                 success: true,
                 stream_ended: true,
