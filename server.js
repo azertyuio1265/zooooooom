@@ -1831,19 +1831,8 @@ const handleStartZoomStream = async (req, res) => {
             return res.status(403).json({ success: false, error: 'غير مصرح لك ببدء البث لهذا الدرس' });
         }
 
-        // ✅ التحقق من وقت البث المحدد (لا يمكن فتح البث إلا عند حلول موعده أو قبله بـ 15 دقيقة كحد أقصى)
-        if (offer.offer_date) {
-            const offerTime = new Date(offer.offer_date).getTime();
-            const now = Date.now();
-            const bufferTime = 15 * 60 * 1000; // 15 minutes buffer
-            if (now < (offerTime - bufferTime)) {
-                const formattedDate = new Date(offer.offer_date).toLocaleString('ar-DZ', { dateStyle: 'medium', timeStyle: 'short' });
-                return res.status(400).json({ 
-                    success: false, 
-                    error: `⚠️ لا يمكن فتح أو بدء البث قبل موعده المحدد (${formattedDate}). يرجى الانتظار حتى حلول وقت الحصة.` 
-                });
-            }
-        }
+        // ✅ تم إلغاء قيود الوقت للأستاذ لفتح البث متى شاء دون أي شروط زمنية
+
         
         let roomName = offer.room_name;
         let password = offer.room_password;
