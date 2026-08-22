@@ -151,6 +151,13 @@ router.post('/end/:offer_id', authenticate, authorize(['teacher']), validateOffe
         const offer_id = parseInt(req.params.offer_id);
         const early_end = req.body.early_end === true || req.query.early_end === 'true' || req.body.cancel_before_start === true;
 
+        // ✅ حفظ الوقت المتبقي في موقت الأستاذ إن تم تمريره في الطلب لضمان أعلى دقة في حساب نسبة الإكتمال
+        if (req.body.remaining_seconds !== undefined && !isNaN(Number(req.body.remaining_seconds))) {
+            try {
+                await saveOfferRemainingTime(offer_id, Number(req.body.remaining_seconds), false);
+            } catch (e) {}
+        }
+
         // ✅ التحقق من وجود الدرس وحالته الحالية
         const currentOffer = await getOne('offers', 'id', offer_id);
         if (!currentOffer) {
@@ -1901,6 +1908,7 @@ async function handleGetChatMessages(req, res) {
         let offerRemainingSeconds = null;
         let offerTotalSeconds = 3600;
         let offerStatus = null;
+        let offerExists = false;
         try {
             const { data: offerData } = await supabase
                 .from('offers')
@@ -1908,6 +1916,7 @@ async function handleGetChatMessages(req, res) {
                 .eq('id', offerId)
                 .single();
             if (offerData) {
+                offerExists = true;
                 offerStatus = offerData.status;
                 if (offerData.remaining_seconds != null && !isNaN(Number(offerData.remaining_seconds))) {
                     offerRemainingSeconds = Number(offerData.remaining_seconds);
@@ -1918,6 +1927,16 @@ async function handleGetChatMessages(req, res) {
                 offerTotalSeconds = Number(offerData.total_seconds || offerData.total_time || (durationMins * 60)) || 3600;
             }
         } catch(e) {}
+
+        // إذا تم حذف الدرس أو انتهى البث ينبغي إغلاق شاشة البث فوراً لدى الطالب
+        if (!offerExists || ['completed', 'ended', 'deleted'].includes(offerStatus)) {
+            return res.json({
+                success: true,
+                stream_ended: true,
+                messages: [],
+                message: 'تم إنهاء البث المباشر من قبل الأستاذ'
+            });
+        }
 
         const lastTeacherPing = teacherPingStore.get(offerId);
         // مرونة عالية في التحقق من تواجد الأستاذ (تجنب اعتبار البث متوقفاً بسبب بطء الاتصال، المهلة 90 ثانية)

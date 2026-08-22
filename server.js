@@ -2889,7 +2889,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
                 const res = await fetch('/api/stream/end/${offer.id}', { 
                     method: 'POST', 
                     headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ early_end: false })
+                    body: JSON.stringify({ early_end: false, remaining_seconds: typeof streamRemainingSeconds !== 'undefined' ? streamRemainingSeconds : null })
                 });
                 const data = await res.json();
                 if (data && data.success) {
@@ -3630,6 +3630,15 @@ function generateStudentZoomPage(offer, student) {
                 });
                 const data = await res.json();
                 if (data.success) {
+                    if (data.stream_ended) {
+                        if (isLeaving) return;
+                        isLeaving = true;
+                        try { if (client) client.leave(); } catch(e){}
+                        alert('🔴 قام الأستاذ بإنهاء البث المباشر.');
+                        try { window.close(); } catch(e){}
+                        window.location.href = '/student-dashboard.html';
+                        return;
+                    }
                     if (data.total_seconds && !isNaN(Number(data.total_seconds))) {
                         studentTotalSeconds = Math.max(Number(data.total_seconds), studentRemainingSeconds);
                     }

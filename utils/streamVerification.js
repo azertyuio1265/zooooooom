@@ -230,26 +230,56 @@ async function recordStreamEnd(offerId, teacherId) {
 async function verifyStreamCompletion(offerId) {
     const { data: offer, error: offerError } = await supabase
         .from('offers')
-        .select('id, duration, teacher_id, subject_name, price')
+        .select('id, duration, duration_minutes, total_seconds, total_time, remaining_seconds, remaining_time, stream_started_at, teacher_id, subject_name, price')
         .eq('id', offerId)
         .single();
 
     if (offerError || !offer) {
-        return { complete: false, error: 'الدرس غير موجود' };
+        return { complete: false, completion_percentage: 0, error: 'الدرس غير موجود' };
     }
 
+    // 1. مدة البث المخطط لها بالثواني بناءً على بيانات الأستاذ
+    const durationMins = offer.duration_minutes || offer.duration || 60;
+    const expectedDuration = Number(offer.total_seconds || offer.total_time || (durationMins * 60)) || 3600;
+
+    // 2. حساب الوقت المنقضي بناءً على موقت الأستاذ المقاس بالسيرفر
+    let actualDurationFromTimer = 0;
+    const remainingSec = (offer.remaining_seconds != null && !isNaN(Number(offer.remaining_seconds))) 
+        ? Number(offer.remaining_seconds) 
+        : ((offer.remaining_time != null && !isNaN(Number(offer.remaining_time))) ? Number(offer.remaining_time) : null);
+
+    if (remainingSec !== null) {
+        // الوقت المنقضي = الوقت الكلي - الوقت المتبقي في موقت الأستاذ
+        actualDurationFromTimer = Math.max(0, expectedDuration - remainingSec);
+    }
+
+    // 3. حساب الوقت المنقضي بناءً على زمن بدء البث إن وجد
+    let actualDurationFromStartTime = 0;
+    if (offer.stream_started_at) {
+        const startTime = new Date(offer.stream_started_at).getTime();
+        if (!isNaN(startTime)) {
+            actualDurationFromStartTime = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+        }
+    }
+
+    // 4. جلب سجل التحقق إن وجد
     const verification = await calculateActualStreamDuration(offerId);
-    
-    if (!verification) {
-        return { complete: false, error: 'لا توجد بيانات تحقق' };
-    }
+    const actualDurationFromVerif = verification ? (verification.actual_live_seconds || 0) : 0;
 
-    const expectedDuration = offer.duration * 60; // بالدقائق إلى ثواني
-    const actualDuration = verification.actual_live_seconds;
-    const completionPercentage = (actualDuration / expectedDuration) * 100;
+    // قياس الوقت المنقضي الفعلي من موقت الأستاذ أو السيرفر
+    let actualDuration = Math.max(actualDurationFromTimer, actualDurationFromStartTime, actualDurationFromVerif);
+    
+    // تأكيد ألا يتجاوز الوقت الفعلي مدة البث الكلية
+    actualDuration = Math.min(expectedDuration, actualDuration);
+
+    let completionPercentage = (actualDuration / expectedDuration) * 100;
+    if (isNaN(completionPercentage) || completionPercentage < 0) {
+        completionPercentage = 0;
+    }
+    completionPercentage = Math.min(100, Math.round(completionPercentage * 100) / 100);
 
     return {
-        complete: completionPercentage >= 80, // 80% من الوقت المطلوب
+        complete: completionPercentage >= 80 || (completionPercentage >= 75), // تعتبر الحصة مكتملة إذا تجاوزت 75-80%
         completion_percentage: completionPercentage,
         expected_seconds: expectedDuration,
         actual_seconds: actualDuration,
@@ -303,8 +333,8 @@ async function processStreamPayments(offerId, earlyEnd = false) {
     console.log(`📊 جاري معالجة ${sessions?.length || 0} جلسة للبث ${offerId}`);
 
     for (const session of (sessions || [])) {
-        // إذا كان البث مكتمل بنسبة 90% فما فوق، يعتبر مكتملاً ولا يوجد استرداد
-        const isCompleted = completion.completion_percentage >= 90;
+        // إذا كان البث مكتمل بنسبة 80% فما فوق (أو تم تحقيقه بحسب الموقت)، يعتبر مكتملاً ولا يوجد استرداد
+        const isCompleted = completion.complete || completion.completion_percentage >= 80;
 
         if (isCompleted) {
             // البث مكتمل - لا استرداد للطالب، الأستاذ يحصل على سعر الحصة
