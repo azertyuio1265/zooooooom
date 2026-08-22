@@ -1,0 +1,6 @@
+{
+  "name": "ChatVidio",
+  "description": "منصة تعليمية عالية الأداء مع أعلى معايير الأمان - نسخة محسنة مع JWT وCSRF وWebhook - تدعم Jitsi Meet للبث المباشر (مجاني 100%)",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
