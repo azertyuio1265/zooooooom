@@ -2066,25 +2066,28 @@ function generateTeacherZoomPage(offer, teacher, token) {
         @keyframes spin { to { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
-            .header-bar { height: auto; min-height: 48px; flex-wrap: wrap; padding: 6px 10px; gap: 6px; }
-            .header-title { font-size: 13px; width: 100%; }
-            #streamTimerContainer { order: 3; width: 100%; justify-content: center; }
+            .header-bar { height: auto; min-height: 40px; flex-wrap: wrap; padding: 4px 8px; gap: 4px; }
+            .header-title { font-size: 12px; width: auto; max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            #streamTimerContainer { order: -1; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: auto; }
+            #timerRemainingLabel { font-size: 10px; }
+            #timerRemaining { font-size: 12px; }
             
             .main-stage { flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
-            .video-area { height: 180px; max-height: 28vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
-            #mediaContainer { height: 100%; width: 100%; border-radius: 8px; }
+            .video-area { height: 50vh; max-height: 55vh; flex: none; padding: 2px; position: sticky; top: 0; z-index: 10; width: 100%; }
+            #mediaContainer { height: 100%; width: 100%; border-radius: 6px; }
             
             .chat-sidebar { width: 100%; flex: 1; min-height: 0; border-right: none; border-top: 1px solid #1f2937; display: flex; flex-direction: column; overflow: hidden; }
-            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; gap: 8px; font-size: 14px; -webkit-overflow-scrolling: touch; }
-            .chat-msg { font-size: 14px; padding: 10px 14px; }
+            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; gap: 6px; font-size: 13px; -webkit-overflow-scrolling: touch; }
+            .chat-msg { font-size: 13px; padding: 6px 10px; }
             
-            .chat-input-box { padding: 12px 14px; }
-            .chat-input-box input { padding: 12px 16px; font-size: 14px; border-radius: 10px; }
-            .chat-input-box button { padding: 0 16px; border-radius: 10px; }
+            .chat-input-box { padding: 8px 10px; }
+            .chat-input-box input { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
+            .chat-input-box button { padding: 0 12px; border-radius: 8px; }
             
-            .controls-bar { height: auto; min-height: 54px; gap: 6px; padding: 8px 10px; flex-wrap: wrap; }
-            .ctrl-btn { width: 40px; height: 40px; font-size: 15px; }
-            .ctrl-btn.end { width: 100%; height: 42px; border-radius: 8px; font-size: 13px; order: 10; margin-top: 4px; }
+            .controls-bar { height: auto; min-height: 44px; gap: 6px; padding: 4px 8px; flex-wrap: wrap; }
+            .ctrl-btn { width: 36px; height: 36px; font-size: 14px; }
+            .ctrl-btn.end { width: auto; height: 32px; border-radius: 6px; font-size: 11px; padding: 0 10px; margin-top: 0; }
+            #addStudentsBtn { padding: 4px 8px !important; font-size: 11px !important; height: 28px !important; }
         }
 
         /* Theater Mode Styles */
@@ -2099,36 +2102,30 @@ function generateTeacherZoomPage(offer, teacher, token) {
 <body>
     <div class="agora-container">
         <div class="header-bar">
-            <div class="header-title" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div class="header-title" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;">
                 <i class="fas fa-video"></i>
-                <span>بث الأستاذ: ${escapeHtml(subjectName)}</span>
-                <span class="badge">مباشر HD</span>
-                <span style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);"><i class="fas fa-graduation-cap"></i> نظام إلقاء المحاضرات للمدارس والجامعات</span>
+                <span style="font-size: 14px;">بث الأستاذ: ${escapeHtml(subjectName)}</span>
+                <span class="badge" style="font-size: 10px; padding: 1px 6px;">مباشر HD</span>
             </div>
-            <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 8px; background: #1f2937; padding: 4px 14px; border-radius: 20px; border: 1px solid #374151;">
-                <div id="timerRemainingLabel" style="font-size: 12px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> الوقت المتبقي:</div>
-                <div id="timerRemaining" style="font-family: monospace; font-size: 14px; font-weight: bold; color: #10b981;">00:00:00</div>
-            </div>
-            <div id="liveViewersBadge" style="display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;">
+            <div id="liveViewersBadge" style="display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 2px 8px; border-radius: 16px; font-size: 11px; font-weight: 700;">
                 <i class="fas fa-users"></i>
-                <span>المتواجدون بالبث:</span>
-                <span id="viewersCount" style="color: #6ee7b7; font-size: 14px; font-weight: 800;">0</span>
-                <span>طالب</span>
+                <span id="viewersCount" style="color: #6ee7b7; font-size: 12px; font-weight: 800;">0</span>
             </div>
-            <div style="display: flex; align-items: center; background: #111827; padding: 2px 6px; border-radius: 6px;">
-                <a target="_blank" href="https://www.bestchange.com/?p=1344346" rel="noopener noreferrer"><img src="https://www.bestchange.com/images/banners/100x100-15.jpg" loading="lazy" alt="Online-money exchangers list" title="E-currency exchanger monitor BestChange" width="80" height="80" border="0" style="border-radius:4px;" /></a>
+            <div style="font-size: 12px; color: #9ca3af; display: flex; align-items: center; gap: 4px;">
+                <i class="fas fa-user-tie"></i> ${escapeHtml(teacherName)}
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button id="addStudentsBtn" onclick="addStudentsToStream(${offer.id})" style="background: #6366f1; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold; position: relative;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <button id="addStudentsBtn" onclick="addStudentsToStream(${offer.id})" style="background: #6366f1; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; position: relative; display: inline-flex; align-items: center; gap: 4px; height: 28px;">
                     <i class="fas fa-user-plus"></i> إضافة الطلاب
-                    <span id="waitingCountBadge" style="position: absolute; top: -8px; left: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: none; align-items: center; justify-content: center; font-size: 10px; border: 2px solid #111827;">0</span>
+                    <span id="waitingCountBadge" style="position: absolute; top: -6px; left: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-size: 9px; border: 2px solid #111827;">0</span>
                 </button>
-                <button onclick="leaveSession()" style="background: #dc2626; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px; transition: background 0.2s;">
-                    <i class="fas fa-stop-circle"></i> إنهاء البث المباشر
+                <button onclick="leaveSession()" style="background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s; height: 28px;">
+                    <i class="fas fa-stop-circle"></i> إنهاء البث
                 </button>
-                <div style="font-size: 14px; color: #9ca3af;">
-                    <i class="fas fa-user-tie"></i> ${escapeHtml(teacherName)}
-                </div>
+            </div>
+            <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 6px; background: #1f2937; padding: 3px 10px; border-radius: 16px; border: 1px solid #374151; margin-right: auto;">
+                <div id="timerRemainingLabel" style="font-size: 11px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> المتبقي:</div>
+                <div id="timerRemaining" style="font-family: monospace; font-size: 13px; font-weight: bold; color: #10b981;">00:00:00</div>
             </div>
         </div>
         <div class="main-stage">
@@ -3116,48 +3113,48 @@ function generateStudentZoomPage(offer, student) {
         @keyframes spin { to { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
-            .header-bar { height: auto; min-height: 48px; flex-wrap: wrap; padding: 6px 10px; gap: 6px; }
-            .header-title { font-size: 13px; width: 100%; }
-            #streamTimerContainer { order: 3; width: 100%; justify-content: center; }
+            .header-bar { height: auto; min-height: 40px; flex-wrap: wrap; padding: 4px 8px; gap: 4px; }
+            .header-title { font-size: 12px; width: auto; max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            #streamTimerContainer { order: -1; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: auto; }
+            #studentTimerLabel { font-size: 10px; }
+            #studentTimerDisplay { font-size: 12px; }
             
             .main-stage { flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
-            .video-area { height: 180px; max-height: 28vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
-            #mediaContainer { height: 100%; width: 100%; border-radius: 8px; }
+            .video-area { height: 50vh; max-height: 55vh; flex: none; padding: 2px; position: sticky; top: 0; z-index: 10; width: 100%; }
+            #mediaContainer { height: 100%; width: 100%; border-radius: 6px; }
             
             .chat-sidebar { width: 100%; flex: 1; min-height: 0; border-right: none; border-top: 1px solid #1f2937; display: flex; flex-direction: column; overflow: hidden; }
-            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; gap: 8px; font-size: 14px; -webkit-overflow-scrolling: touch; }
-            .chat-msg { font-size: 14px; padding: 10px 14px; }
+            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; gap: 6px; font-size: 13px; -webkit-overflow-scrolling: touch; }
+            .chat-msg { font-size: 13px; padding: 6px 10px; }
             
-            .chat-input-box { padding: 12px 14px; }
-            .chat-input-box input { padding: 12px 16px; font-size: 14px; border-radius: 10px; }
-            .chat-input-box button { padding: 0 16px; border-radius: 10px; }
+            .chat-input-box { padding: 8px 10px; }
+            .chat-input-box input { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
+            .chat-input-box button { padding: 0 16px; border-radius: 8px; }
             
-            .controls-bar { height: auto; min-height: 54px; gap: 6px; padding: 8px 10px; flex-wrap: wrap; }
-            .ctrl-btn { width: 40px; height: 40px; font-size: 15px; }
-            .ctrl-btn.end { width: 100%; height: 42px; border-radius: 8px; font-size: 13px; order: 10; margin-top: 4px; }
+            .controls-bar { height: auto; min-height: 44px; gap: 6px; padding: 4px 8px; flex-wrap: wrap; }
+            .ctrl-btn { width: 36px; height: 36px; font-size: 14px; }
+            .ctrl-btn.end { width: auto; height: 32px; border-radius: 6px; font-size: 11px; padding: 0 10px; margin-top: 0; }
         }
     </style>
 </head>
 <body>
     <div class="agora-container">
         <div class="header-bar">
-            <div class="header-title">
+            <div class="header-title" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;">
                 <i class="fas fa-play-circle"></i>
-                <span>البث المباشر: ${escapeHtml(subjectName)}</span>
-                <span class="badge">مباشر</span>
+                <span style="font-size: 14px;">البث المباشر: ${escapeHtml(subjectName)}</span>
+                <span class="badge" style="font-size: 10px; padding: 1px 6px;">مباشر</span>
             </div>
-            <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 8px; background: #1f2937; padding: 4px 12px; border-radius: 20px; border: 1px solid #374151;">
-                <div id="studentTimerLabel" style="font-size: 12px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> الوقت المتبقي:</div>
-                <div id="studentTimerDisplay" style="font-family: monospace; font-size: 14px; font-weight: bold; color: #10b981;">00:00:00</div>
-            </div>
-            <div id="liveViewersBadge" style="display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;">
+            <div id="liveViewersBadge" style="display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 2px 8px; border-radius: 16px; font-size: 11px; font-weight: 700;">
                 <i class="fas fa-users"></i>
-                <span>المتواجدون بالبث:</span>
-                <span id="viewersCount" style="color: #6ee7b7; font-size: 14px; font-weight: 800;">0</span>
-                <span>متواجدين</span>
+                <span id="viewersCount" style="color: #6ee7b7; font-size: 12px; font-weight: 800;">0</span>
             </div>
-            <div style="font-size: 14px; color: #9ca3af;">
+            <div style="font-size: 12px; color: #9ca3af; display: flex; align-items: center; gap: 4px;">
                 <i class="fas fa-user"></i> ${escapeHtml(studentName)}
+            </div>
+            <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 6px; background: #1f2937; padding: 3px 10px; border-radius: 16px; border: 1px solid #374151; margin-right: auto;">
+                <div id="studentTimerLabel" style="font-size: 11px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> المتبقي:</div>
+                <div id="studentTimerDisplay" style="font-family: monospace; font-size: 13px; font-weight: bold; color: #10b981;">00:00:00</div>
             </div>
         </div>
         <div class="main-stage">
