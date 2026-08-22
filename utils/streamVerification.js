@@ -114,18 +114,44 @@ async function calculateActualStreamDuration(offerId) {
         return null;
     }
 
+    if (!verification.server_start_time) {
+        return {
+            total_seconds: 0,
+            paused_seconds: 0,
+            actual_live_seconds: 0,
+            started_at: null,
+            ended_at: verification.server_end_time
+        };
+    }
+
     const startTime = new Date(verification.server_start_time);
+    if (isNaN(startTime.getTime())) {
+        return {
+            total_seconds: 0,
+            paused_seconds: 0,
+            actual_live_seconds: 0,
+            started_at: verification.server_start_time,
+            ended_at: verification.server_end_time
+        };
+    }
+
     const endTime = verification.server_end_time 
         ? new Date(verification.server_end_time) 
         : new Date();
     
-    const totalSeconds = Math.floor((endTime - startTime) / 1000);
+    let totalSeconds = Math.floor((endTime - startTime) / 1000);
+    if (isNaN(totalSeconds) || totalSeconds < 0) {
+        totalSeconds = 0;
+    }
     
     // حساب وقت الإيقاف الكلي (يمكن تحسينه لاحقاً)
     const pausedSeconds = verification.total_paused_seconds || 0;
     
     // الوقت الفعلي للبث = الوقت الكلي - وقت الإيقاف
-    const actualLiveSeconds = Math.max(0, totalSeconds - pausedSeconds);
+    let actualLiveSeconds = Math.max(0, totalSeconds - pausedSeconds);
+    if (isNaN(actualLiveSeconds)) {
+        actualLiveSeconds = 0;
+    }
 
     return {
         total_seconds: totalSeconds,

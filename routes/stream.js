@@ -1476,9 +1476,28 @@ router.get('/admin/all-verifications', authenticate, authorize(['admin']), async
         const formatted = (verifications || []).map(v => {
             const offer = v.offers;
             const expectedSeconds = offer ? offer.duration * 60 : 0;
-            const percentage = expectedSeconds > 0 
-                ? Math.round((v.actual_live_seconds / expectedSeconds) * 100) 
+            
+            let actualSeconds = v.actual_live_seconds;
+            if ((actualSeconds === null || actualSeconds === undefined || actualSeconds === 0) && v.server_start_time) {
+                const startTime = new Date(v.server_start_time);
+                if (!isNaN(startTime.getTime())) {
+                    const endTime = v.server_end_time ? new Date(v.server_end_time) : new Date();
+                    const totalSeconds = Math.floor((endTime - startTime) / 1000);
+                    const pausedSeconds = v.total_paused_seconds || 0;
+                    actualSeconds = Math.max(0, totalSeconds - pausedSeconds);
+                }
+            }
+            if (actualSeconds === null || actualSeconds === undefined || isNaN(actualSeconds)) {
+                actualSeconds = 0;
+            }
+
+            let percentage = expectedSeconds > 0 
+                ? Math.round((actualSeconds / expectedSeconds) * 100) 
                 : 0;
+            if (isNaN(percentage)) {
+                percentage = 0;
+            }
+            percentage = Math.min(100, percentage);
 
             return {
                 id: v.id,
@@ -1488,7 +1507,7 @@ router.get('/admin/all-verifications', authenticate, authorize(['admin']), async
                 subject_name: offer?.subject_name,
                 duration_minutes: offer?.duration,
                 expected_seconds: expectedSeconds,
-                actual_seconds: v.actual_live_seconds,
+                actual_seconds: actualSeconds,
                 completion_percentage: percentage,
                 is_complete: percentage >= 80,
                 server_start_time: v.server_start_time,

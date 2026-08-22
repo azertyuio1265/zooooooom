@@ -2071,12 +2071,16 @@ function generateTeacherZoomPage(offer, teacher, token) {
             #streamTimerContainer { order: 3; width: 100%; justify-content: center; }
             
             .main-stage { flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
-            .video-area { height: 210px; max-height: 32vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
+            .video-area { height: 180px; max-height: 28vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
             #mediaContainer { height: 100%; width: 100%; border-radius: 8px; }
             
             .chat-sidebar { width: 100%; flex: 1; min-height: 0; border-right: none; border-top: 1px solid #1f2937; display: flex; flex-direction: column; overflow: hidden; }
-            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; gap: 8px; font-size: 13px; -webkit-overflow-scrolling: touch; }
-            .chat-msg { font-size: 13px; padding: 8px 12px; }
+            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; gap: 8px; font-size: 14px; -webkit-overflow-scrolling: touch; }
+            .chat-msg { font-size: 14px; padding: 10px 14px; }
+            
+            .chat-input-box { padding: 12px 14px; }
+            .chat-input-box input { padding: 12px 16px; font-size: 14px; border-radius: 10px; }
+            .chat-input-box button { padding: 0 16px; border-radius: 10px; }
             
             .controls-bar { height: auto; min-height: 54px; gap: 6px; padding: 8px 10px; flex-wrap: wrap; }
             .ctrl-btn { width: 40px; height: 40px; font-size: 15px; }
@@ -2137,49 +2141,6 @@ function generateTeacherZoomPage(offer, teacher, token) {
                     <div id="localVideo"></div>
                 </div>
 
-                <!-- السبورة الذكية الشارحة تفاعلياً -->
-                <div id="whiteboardContainer" style="display: none; position: absolute; inset: 10px; background: #ffffff; border-radius: 12px; z-index: 50; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <!-- شريط أدوات السبورة -->
-                    <div style="background: #e2e8f0; padding: 10px 16px; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; color: #0f172a;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.9rem; color: #1e3a8a;"><i class="fas fa-chalkboard"></i> السبورة الذكية الشارحة (تفاعلي)</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                            <button onclick="setWhiteboardTool('pen')" id="wbToolPen" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
-                                <i class="fas fa-pencil-alt"></i> القلم
-                            </button>
-                            <button onclick="setWhiteboardTool('eraser')" id="wbToolEraser" style="background: #ffffff; color: #334155; border: 1px solid #94a3b8; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
-                                <i class="fas fa-eraser"></i> الممحاة
-                            </button>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 11px; font-weight: 800;">اللون:</span>
-                                <input type="color" id="wbColor" value="#000000" onchange="setWhiteboardColor(this.value)" style="width: 28px; height: 28px; border: 1px solid #94a3b8; border-radius: 4px; cursor: pointer; padding: 0; background: transparent;">
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <span style="font-size: 11px; font-weight: 800;">السمك:</span>
-                                <select id="wbBrushSize" onchange="setWhiteboardBrushSize(this.value)" style="padding: 4px 6px; border-radius: 6px; border: 1px solid #94a3b8; font-family: Cairo; font-size: 12px; font-weight: bold;">
-                                    <option value="2">رفيع (2px)</option>
-                                    <option value="5" selected>متوسط (5px)</option>
-                                    <option value="10">سميك (10px)</option>
-                                    <option value="20">عريض (20px)</option>
-                                </select>
-                            </div>
-                            <button onclick="clearWhiteboard()" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
-                                <i class="fas fa-trash-alt"></i> مسح السبورة
-                            </button>
-                        </div>
-                        <div>
-                            <button onclick="toggleWhiteboard()" style="background: #475569; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; font-family: Cairo;">
-                                إغلاق <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- مساحة الرسم -->
-                    <div style="flex: 1; background: #ffffff; position: relative;">
-                        <canvas id="whiteboardCanvas" style="width: 100%; height: 100%; display: block; cursor: crosshair; background: #ffffff;"></canvas>
-                    </div>
-                </div>
-
             </div>
             <div class="chat-sidebar">
                 <div class="chat-header">
@@ -2212,11 +2173,6 @@ function generateTeacherZoomPage(offer, teacher, token) {
             </button>
             <button class="ctrl-btn" id="shareBtn" onclick="toggleShare()" title="مشاركة الشاشة لعرض الدروس والمستندات">
                 <i class="fas fa-desktop"></i>
-            </button>
-            
-            <!-- زر السبورة الذكية -->
-            <button class="ctrl-btn" id="wbBtn" onclick="toggleWhiteboard()" title="السبورة الذكية التفاعلية للشرح التفاعلي" style="background: #10b981; border-color: #059669; color: white;">
-                <i class="fas fa-chalkboard"></i>
             </button>
             
             <!-- زر التحكم بجودة البث -->
@@ -2725,158 +2681,6 @@ function generateTeacherZoomPage(offer, teacher, token) {
             } catch(e) { console.error('Share screen error:', e); }
         }
 
-        // ==========================================
-        // 🎨 ميزات السبورة الذكية التفاعلية للأستاذ
-        // ==========================================
-        let isWhiteboardActive = false;
-        let whiteboardCanvas = null;
-        let whiteboardCtx = null;
-        let isDrawing = false;
-        let currentWbTool = 'pen'; // 'pen' or 'eraser'
-        let currentWbColor = '#000000';
-        let currentWbBrushSize = 5;
-        let originalVideoTrack = null;
-        let canvasVideoTrack = null;
-
-        function initWhiteboard() {
-            whiteboardCanvas = document.getElementById('whiteboardCanvas');
-            if (!whiteboardCanvas) return;
-            whiteboardCtx = whiteboardCanvas.getContext('2d');
-            
-            function resizeCanvas() {
-                const rect = whiteboardCanvas.getBoundingClientRect();
-                whiteboardCanvas.width = rect.width || 800;
-                whiteboardCanvas.height = rect.height || 600;
-                
-                // ملء الخلفية باللون الأبيض لتبدو كسبورة حقيقية
-                whiteboardCtx.fillStyle = '#ffffff';
-                whiteboardCtx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
-                whiteboardCtx.lineCap = 'round';
-                whiteboardCtx.lineJoin = 'round';
-            }
-            
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            function getCoords(e) {
-                const rect = whiteboardCanvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: (clientX - rect.left) * (whiteboardCanvas.width / rect.width),
-                    y: (clientY - rect.top) * (whiteboardCanvas.height / rect.height)
-                };
-            }
-
-            function startDraw(e) {
-                isDrawing = true;
-                const coords = getCoords(e);
-                whiteboardCtx.beginPath();
-                whiteboardCtx.moveTo(coords.x, coords.y);
-                e.preventDefault();
-            }
-
-            function draw(e) {
-                if (!isDrawing) return;
-                const coords = getCoords(e);
-                whiteboardCtx.lineWidth = currentWbBrushSize;
-                whiteboardCtx.strokeStyle = (currentWbTool === 'eraser') ? '#ffffff' : currentWbColor;
-                whiteboardCtx.lineTo(coords.x, coords.y);
-                whiteboardCtx.stroke();
-                e.preventDefault();
-            }
-
-            function stopDraw() {
-                isDrawing = false;
-            }
-
-            // دعم الرسم بالفأرة (الكمبيوتر)
-            whiteboardCanvas.addEventListener('mousedown', startDraw);
-            whiteboardCanvas.addEventListener('mousemove', draw);
-            whiteboardCanvas.addEventListener('mouseup', stopDraw);
-            whiteboardCanvas.addEventListener('mouseleave', stopDraw);
-
-            // دعم الرسم باللمس (التابلت والهواتف الذكية)
-            whiteboardCanvas.addEventListener('touchstart', startDraw, { passive: false });
-            whiteboardCanvas.addEventListener('touchmove', draw, { passive: false });
-            whiteboardCanvas.addEventListener('touchend', stopDraw);
-        }
-
-        async function toggleWhiteboard() {
-            const container = document.getElementById('whiteboardContainer');
-            const wbBtn = document.getElementById('wbBtn');
-            if (!whiteboardCanvas) {
-                initWhiteboard();
-            }
-
-            if (!isWhiteboardActive) {
-                container.style.display = 'flex';
-                isWhiteboardActive = true;
-                if (wbBtn) wbBtn.classList.remove('active'); // active means red in css of controls-bar, we want active to look different or we can set direct color
-                wbBtn.style.background = '#e11d48'; // تغيير لون زر السبورة للوردي/الأحمر للتنبيه
-                
-                // إرسال شاشة السبورة الذكية كبث للطلاب
-                try {
-                    const canvasStream = whiteboardCanvas.captureStream(15); // 15 إطار في الثانية
-                    const track = canvasStream.getVideoTracks()[0];
-                    if (track && client) {
-                        originalVideoTrack = localVideoTrack;
-                        canvasVideoTrack = AgoraRTC.createCustomVideoTrack({ mediaStreamTrack: track });
-                        
-                        await client.unpublish(localVideoTrack);
-                        await client.publish(canvasVideoTrack);
-                        console.log('✅ تم نشر بث السبورة الذكية للطلاب بنجاح!');
-                    }
-                } catch(err) {
-                    console.error('Error sharing whiteboard:', err);
-                }
-            } else {
-                container.style.display = 'none';
-                isWhiteboardActive = false;
-                wbBtn.style.background = '#10b981'; // إعادة اللون الأخضر للزر
-                
-                // العودة لبث الكاميرا العادية للطلاب
-                try {
-                    if (canvasVideoTrack && client) {
-                        await client.unpublish(canvasVideoTrack);
-                        canvasVideoTrack.close();
-                        canvasVideoTrack = null;
-                        
-                        if (originalVideoTrack && isCamOn) {
-                            await client.publish(originalVideoTrack);
-                            originalVideoTrack.play('localVideo');
-                        }
-                    }
-                } catch(err) {
-                    console.error('Error returning to camera stream:', err);
-                }
-            }
-        }
-
-        function setWhiteboardTool(tool) {
-            currentWbTool = tool;
-            document.getElementById('wbToolPen').style.background = (tool === 'pen') ? '#2563eb' : '#ffffff';
-            document.getElementById('wbToolPen').style.color = (tool === 'pen') ? '#ffffff' : '#334155';
-            document.getElementById('wbToolEraser').style.background = (tool === 'eraser') ? '#2563eb' : '#ffffff';
-            document.getElementById('wbToolEraser').style.color = (tool === 'eraser') ? '#ffffff' : '#334155';
-        }
-
-        function setWhiteboardColor(color) {
-            currentWbColor = color;
-            setWhiteboardTool('pen');
-        }
-
-        function setWhiteboardBrushSize(size) {
-            currentWbBrushSize = parseInt(size, 10);
-        }
-
-        function clearWhiteboard() {
-            if (confirm('هل أنت متأكد من مسح جميع الرسومات والشروحات الحالية على السبورة الذكية؟')) {
-                whiteboardCtx.fillStyle = '#ffffff';
-                whiteboardCtx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
-            }
-        }
-
         function updateBtnState(id, active) {
             const btn = document.getElementById(id);
             if (active) btn.classList.remove('active');
@@ -3317,12 +3121,16 @@ function generateStudentZoomPage(offer, student) {
             #streamTimerContainer { order: 3; width: 100%; justify-content: center; }
             
             .main-stage { flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
-            .video-area { height: 210px; max-height: 32vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
+            .video-area { height: 180px; max-height: 28vh; flex: none; padding: 4px; position: sticky; top: 0; z-index: 10; width: 100%; }
             #mediaContainer { height: 100%; width: 100%; border-radius: 8px; }
             
             .chat-sidebar { width: 100%; flex: 1; min-height: 0; border-right: none; border-top: 1px solid #1f2937; display: flex; flex-direction: column; overflow: hidden; }
-            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; gap: 8px; font-size: 13px; -webkit-overflow-scrolling: touch; }
-            .chat-msg { font-size: 13px; padding: 8px 12px; }
+            .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; gap: 8px; font-size: 14px; -webkit-overflow-scrolling: touch; }
+            .chat-msg { font-size: 14px; padding: 10px 14px; }
+            
+            .chat-input-box { padding: 12px 14px; }
+            .chat-input-box input { padding: 12px 16px; font-size: 14px; border-radius: 10px; }
+            .chat-input-box button { padding: 0 16px; border-radius: 10px; }
             
             .controls-bar { height: auto; min-height: 54px; gap: 6px; padding: 8px 10px; flex-wrap: wrap; }
             .ctrl-btn { width: 40px; height: 40px; font-size: 15px; }
