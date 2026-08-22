@@ -2126,7 +2126,16 @@ function generateTeacherZoomPage(offer, teacher, token) {
             <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 6px; background: #1f2937; padding: 3px 10px; border-radius: 16px; border: 1px solid #374151; margin-right: auto;">
                 <div id="timerRemainingLabel" style="font-size: 11px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> المتبقي:</div>
                 <div id="timerRemaining" style="font-family: monospace; font-size: 13px; font-weight: bold; color: #10b981;">00:00:00</div>
+                <div style="display: flex; align-items: center; gap: 5px; margin-right: 4px; padding-right: 6px; border-right: 1px solid #374151;" title="نسبة إكتمال البث المباشر">
+                    <div style="width: 45px; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; position: relative;">
+                        <div id="streamProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.3s ease;"></div>
+                    </div>
+                    <span id="streamProgressPct" style="font-size: 10px; font-weight: 700; color: #60a5fa; font-family: monospace;">0%</span>
+                </div>
             </div>
+        </div>
+        <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.06); position: relative; z-index: 15;">
+            <div id="mainStreamProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.4s ease;"></div>
         </div>
         <div class="main-stage">
             <div class="video-area">
@@ -2217,25 +2226,43 @@ function generateTeacherZoomPage(offer, teacher, token) {
         let isSharing = false;
 
         let streamRemainingSeconds = ${offer.remaining_time || 0};
+        let streamTotalSeconds = ${offer.total_time || (offer.duration_minutes ? offer.duration_minutes * 60 : (offer.duration ? offer.duration * 60 : 3600))};
+        if (!streamTotalSeconds || streamTotalSeconds <= 0) streamTotalSeconds = 3600;
+        if (streamRemainingSeconds > streamTotalSeconds) streamTotalSeconds = streamRemainingSeconds;
+
         let isTimerPaused = true; // لا يبدأ الموقت تلقائياً حتى يضيف الأستاذ الطلبة
         let streamIntervalId = null;
         let lastSyncTime = Date.now();
 
         function updateTimerDisplay() {
             const display = document.getElementById('timerRemaining');
-            if (!display) return;
-            const hours = Math.floor(streamRemainingSeconds / 3600);
-            const minutes = Math.floor((streamRemainingSeconds % 3600) / 60);
-            const seconds = streamRemainingSeconds % 60;
-            const pad = (num) => String(num).padStart(2, '0');
-            display.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-            if (isTimerPaused) {
-                display.style.color = '#f59e0b';
-            } else if (streamRemainingSeconds <= 300) {
-                display.style.color = '#ef4444';
-            } else {
-                display.style.color = '#10b981';
+            if (display) {
+                const hours = Math.floor(streamRemainingSeconds / 3600);
+                const minutes = Math.floor((streamRemainingSeconds % 3600) / 60);
+                const seconds = streamRemainingSeconds % 60;
+                const pad = (num) => String(num).padStart(2, '0');
+                display.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+                if (isTimerPaused) {
+                    display.style.color = '#f59e0b';
+                } else if (streamRemainingSeconds <= 300) {
+                    display.style.color = '#ef4444';
+                } else {
+                    display.style.color = '#10b981';
+                }
             }
+
+            // حساب شريط إكتمال البث
+            const total = Math.max(1, streamTotalSeconds);
+            const elapsed = Math.max(0, total - streamRemainingSeconds);
+            const pct = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+
+            const pBar1 = document.getElementById('streamProgressBar');
+            const pBar2 = document.getElementById('mainStreamProgressBar');
+            const pText = document.getElementById('streamProgressPct');
+
+            if (pBar1) pBar1.style.width = pct + '%';
+            if (pBar2) pBar2.style.width = pct + '%';
+            if (pText) pText.textContent = pct + '%';
         }
 
         function startTimer() {
@@ -3155,7 +3182,16 @@ function generateStudentZoomPage(offer, student) {
             <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 6px; background: #1f2937; padding: 3px 10px; border-radius: 16px; border: 1px solid #374151; margin-right: auto;">
                 <div id="studentTimerLabel" style="font-size: 11px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> المتبقي:</div>
                 <div id="studentTimerDisplay" style="font-family: monospace; font-size: 13px; font-weight: bold; color: #10b981;">00:00:00</div>
+                <div style="display: flex; align-items: center; gap: 5px; margin-right: 4px; padding-right: 6px; border-right: 1px solid #374151;" title="نسبة إكتمال البث المباشر">
+                    <div style="width: 45px; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; position: relative;">
+                        <div id="streamProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.3s ease;"></div>
+                    </div>
+                    <span id="streamProgressPct" style="font-size: 10px; font-weight: 700; color: #60a5fa; font-family: monospace;">0%</span>
+                </div>
             </div>
+        </div>
+        <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.06); position: relative; z-index: 15;">
+            <div id="mainStreamProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.4s ease;"></div>
         </div>
         <div class="main-stage">
             <div class="video-area">
@@ -3523,24 +3559,42 @@ function generateStudentZoomPage(offer, student) {
 
         let isStudentMuted = false;
         let studentRemainingSeconds = ${offer.remaining_time || 0};
+        let studentTotalSeconds = ${offer.total_time || (offer.duration_minutes ? offer.duration_minutes * 60 : (offer.duration ? offer.duration * 60 : 3600))};
+        if (!studentTotalSeconds || studentTotalSeconds <= 0) studentTotalSeconds = 3600;
+        if (studentRemainingSeconds > studentTotalSeconds) studentTotalSeconds = studentRemainingSeconds;
+
         let isStreamPaused = ${offer.status === 'paused' ? 'true' : 'false'};
         let studentTimerInterval = null;
 
         function updateStudentTimerDisplay() {
             const display = document.getElementById('studentTimerDisplay');
-            if (!display) return;
-            const hours = Math.floor(studentRemainingSeconds / 3600);
-            const minutes = Math.floor((studentRemainingSeconds % 3600) / 60);
-            const seconds = studentRemainingSeconds % 60;
-            const pad = (num) => String(num).padStart(2, '0');
-            display.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-            if (isStreamPaused) {
-                display.style.color = '#f59e0b';
-                display.title = 'البث متوقف مؤقتاً';
-            } else {
-                display.style.color = '#10b981';
-                display.title = 'البث جاري';
+            if (display) {
+                const hours = Math.floor(studentRemainingSeconds / 3600);
+                const minutes = Math.floor((studentRemainingSeconds % 3600) / 60);
+                const seconds = studentRemainingSeconds % 60;
+                const pad = (num) => String(num).padStart(2, '0');
+                display.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+                if (isStreamPaused) {
+                    display.style.color = '#f59e0b';
+                    display.title = 'البث متوقف مؤقتاً';
+                } else {
+                    display.style.color = '#10b981';
+                    display.title = 'البث جاري';
+                }
             }
+
+            // حساب شريط إكتمال البث للطالب
+            const total = Math.max(1, studentTotalSeconds);
+            const elapsed = Math.max(0, total - studentRemainingSeconds);
+            const pct = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+
+            const pBar1 = document.getElementById('streamProgressBar');
+            const pBar2 = document.getElementById('mainStreamProgressBar');
+            const pText = document.getElementById('streamProgressPct');
+
+            if (pBar1) pBar1.style.width = pct + '%';
+            if (pBar2) pBar2.style.width = pct + '%';
+            if (pText) pText.textContent = pct + '%';
         }
 
         function togglePauseOverlay(show) {
@@ -3576,8 +3630,13 @@ function generateStudentZoomPage(offer, student) {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    if (data.is_paused !== undefined || data.is_teacher_online !== undefined) {
-                        isStreamPaused = !!data.is_paused || (data.is_teacher_online === false);
+                    if (data.total_seconds && !isNaN(Number(data.total_seconds))) {
+                        studentTotalSeconds = Math.max(Number(data.total_seconds), studentRemainingSeconds);
+                    }
+                    if (data.stream_status !== undefined || data.is_paused !== undefined) {
+                        // إظهار التوقف فقط إذا تم إيقافه صراحة أو انقطع الاتصال لأكثر من 90 ثانية
+                        const pauseCondition = (data.stream_status === 'paused') || (data.is_paused === true && data.is_teacher_online === false);
+                        isStreamPaused = !!pauseCondition;
                         togglePauseOverlay(isStreamPaused);
                     }
                     if (data.remaining_seconds !== undefined && data.remaining_seconds !== null) {

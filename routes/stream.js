@@ -1897,13 +1897,14 @@ async function handleGetChatMessages(req, res) {
             activeCount = count || 0;
         } catch (e) {}
 
-        // ✅ جلب بيانات الوقت المتبقي وحالة البث
+        // ✅ جلب بيانات الوقت المتبقي وحالة البث وإجمالي المدة
         let offerRemainingSeconds = null;
+        let offerTotalSeconds = 3600;
         let offerStatus = null;
         try {
             const { data: offerData } = await supabase
                 .from('offers')
-                .select('status, remaining_seconds, remaining_time, duration_minutes, duration')
+                .select('status, remaining_seconds, remaining_time, duration_minutes, duration, total_time, total_seconds')
                 .eq('id', offerId)
                 .single();
             if (offerData) {
@@ -1913,12 +1914,15 @@ async function handleGetChatMessages(req, res) {
                 } else if (offerData.remaining_time != null && !isNaN(Number(offerData.remaining_time))) {
                     offerRemainingSeconds = Number(offerData.remaining_time);
                 }
+                const durationMins = offerData.duration_minutes || offerData.duration || 60;
+                offerTotalSeconds = Number(offerData.total_seconds || offerData.total_time || (durationMins * 60)) || 3600;
             }
         } catch(e) {}
 
         const lastTeacherPing = teacherPingStore.get(offerId);
-        const isTeacherOnline = lastTeacherPing ? ((Date.now() - lastTeacherPing) <= 4500) : false;
-        const isPaused = (offerStatus === 'paused') || (!isTeacherOnline);
+        // مرونة عالية في التحقق من تواجد الأستاذ (تجنب اعتبار البث متوقفاً بسبب بطء الاتصال، المهلة 90 ثانية)
+        const isTeacherOnline = lastTeacherPing ? ((Date.now() - lastTeacherPing) <= 90000) : true;
+        const isPaused = (offerStatus === 'paused');
 
         // Dynamically fix any generic 'طالب' names in chat messages
         const unassignedStudentIds = msgs
@@ -1953,6 +1957,7 @@ async function handleGetChatMessages(req, res) {
             muted_students: mutedStudentsList,
             active_count: activeCount,
             remaining_seconds: offerRemainingSeconds,
+            total_seconds: offerTotalSeconds,
             stream_status: offerStatus,
             is_paused: isPaused,
             is_teacher_online: isTeacherOnline
