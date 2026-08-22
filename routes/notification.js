@@ -90,4 +90,38 @@ router.post('/read/:notification_id', authenticate, [
     }
 });
 
+// ============================================================
+// مسح جميع الإشعارات للمستخدم
+// ============================================================
+router.delete('/clear-all/:user_id/:user_type', authenticate, [
+    param('user_id').isInt().withMessage('معرف المستخدم غير صالح'),
+    param('user_type').isIn(['student', 'teacher']).withMessage('نوع المستخدم غير صالح')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        const { user_id, user_type } = req.params;
+
+        if (req.user.userId !== parseInt(user_id) || req.user.role !== user_type) {
+            return res.status(403).json({ success: false, error: 'غير مصرح لك' });
+        }
+
+        const { error } = await supabase
+            .from('notifications')
+            .delete()
+            .eq('user_id', parseInt(user_id))
+            .eq('user_type', user_type);
+
+        if (error) throw error;
+
+        res.json({ success: true, message: 'تم مسح جميع الإشعارات بنجاح' });
+    } catch (error) {
+        logger.error('خطأ في مسح الإشعارات:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
+    }
+});
+
 module.exports = router;

@@ -1176,6 +1176,31 @@ router.put('/notifications/read-all', authenticate, authorize(['student']), [
 });
 
 // ============================================================
+// مسح جميع الإشعارات للطالب
+// ============================================================
+router.delete('/notifications/clear-all', authenticate, authorize(['student']), async (req, res) => {
+    try {
+        const student_id = req.user.userId;
+
+        const { error } = await supabase
+            .from('notifications')
+            .delete()
+            .eq('user_id', student_id)
+            .eq('user_type', 'student');
+
+        if (error) throw error;
+
+        res.json({
+            success: true,
+            message: 'تم مسح جميع الإشعارات بنجاح'
+        });
+    } catch (error) {
+        logger.error('خطأ في مسح الإشعارات:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
+    }
+});
+
+// ============================================================
 // جلب الإحصائيات للطالب
 // ============================================================
 router.get('/stats/:student_id', authenticate, authorize(['student']), [

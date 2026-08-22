@@ -2679,7 +2679,7 @@
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
     <div class="navbar-inner">
-        <a class="nav-logo" onclick="showSection('groups')">
+        <a class="nav-logo" onclick="showSection('offers')">
             <i class="fas fa-graduation-cap"></i>
             <span>Zoom<span class="highlight">Dz</span></span>
         </a>
@@ -2754,9 +2754,12 @@
         <div class="nav-notifications" style="position: absolute; top: 70px; right: 0; width: 100%;">
 
             <div class="notif-dropdown" id="notifDropdown">
-                <div class="notif-dropdown-header">
-                    <h4><i class="fas fa-bell" style="color:var(--primary);"></i> الإشعارات</h4>
-                    <button class="mark-read" onclick="markAllNotifications()">تحديد الكل كمقروء</button>
+                <div class="notif-dropdown-header" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                    <h4 style="margin:0;"><i class="fas fa-bell" style="color:var(--primary);"></i> الإشعارات</h4>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <button class="mark-read" onclick="markAllNotifications()" style="font-size:0.75rem; padding: 3px 8px;">تحديد الكل كمقروء</button>
+                        <button class="mark-read" onclick="clearAllNotifications()" style="color: #ef4444; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 6px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="مسح سجل الإشعارات بالكامل"><i class="fas fa-trash-alt"></i> مسح الكل</button>
+                    </div>
                 </div>
                 <div class="notif-list" id="notifList">
                     <div class="notif-empty">
@@ -4335,7 +4338,39 @@
             return;
         }
 
-        showSection('groups');
+        showSection('offers');
+    }
+
+    async function clearAllNotifications() {
+        if (!notifications || notifications.length === 0) {
+            showToast('سجل الإشعارات فارغ بالفعل', 'info');
+            return;
+        }
+        if (!confirm('هل أنت تأكد من مسح جميع الإشعارات بالكامل؟')) return;
+
+        try {
+            let res = await fetchWithAuth(`/api/student/notifications/clear-all`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) {
+                res = await fetchWithAuth(`/api/notifications/clear-all/${studentId}/student`, {
+                    method: 'DELETE'
+                });
+            }
+            const data = await res.json();
+            if (data.success || res.ok) {
+                notifications = [];
+                updateNotifBadge();
+                renderNotifications();
+                showToast('تم مسح جميع الإشعارات بنجاح', 'success');
+            } else {
+                showToast(data.error || 'حدث خطأ في مسح الإشعارات', 'error');
+            }
+        } catch (e) {
+            if (e.message !== 'انتهت صلاحية الجلسة') {
+                showToast('حدث خطأ أثناء مسح الإشعارات', 'error');
+            }
+        }
     }
 
     async function markAllNotifications() {
@@ -4848,11 +4883,31 @@
             container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
         }
         try {
+            let myBookingsMap = {};
+            if (studentId && !userData?.is_guest) {
+                try {
+                    const bookingsRes = await fetchWithAuth(`/api/student/sessions/${studentId}`);
+                    if (bookingsRes.ok) {
+                        const bookingsData = await bookingsRes.json();
+                        if (Array.isArray(bookingsData)) {
+                            bookingsData.forEach(b => {
+                                if (b.offer_id) {
+                                    myBookingsMap[b.offer_id] = b;
+                                }
+                            });
+                        }
+                    }
+                } catch(e) {
+                    console.warn('تعذر جلب حجوزات الطالب:', e);
+                }
+            }
+
             const res = await fetch(`${API_BASE_URL}/api/offers`);
             const rawOffers = await res.json();
             
             // ✅ تصفية وتصنيف الدروس بوضوح حسب الحالة (بث مباشر -> جاهز -> قادم -> منتهي)
             let offers = (rawOffers || []).filter(offer => offer.status !== 'cancelled');
+            window.latestOffersData = offers;
             offers.sort((a, b) => {
                 const statusA = getOfferStatus(a).code;
                 const statusB = getOfferStatus(b).code;
@@ -4890,7 +4945,7 @@
                 });
             }
             
-            renderOffers(filteredOffers);
+            renderOffers(filteredOffers, myBookingsMap);
             loadFreeOffersSidebar(filteredOffers);
         } catch(e) { 
             console.error('خطأ في تحميل الدروس:', e);
@@ -4898,7 +4953,7 @@
         }
     }
 
-    function renderOffers(offers) {
+    function renderOffers(offers, myBookingsMap = {}) {
         const container = document.getElementById('offersList');
         if (!offers || offers.length === 0) {
             let message = 'لا توجد دروس متاحة حالياً';
@@ -4922,9 +4977,36 @@
                 levelDisplay = `<div class="offer-info"><i class="fas fa-graduation-cap"></i> المستوى: ${levelName}</div>`;
             }
 
+            const userBooking = myBookingsMap[offer.id];
+            const isBooked = !!userBooking && (userBooking.payment_status === 'paid' || userBooking.payment_status === 'pending_stream' || userBooking.is_free === true);
+
             const offerFee = isFree ? 0 : Math.round(((offer.duration || 60) / 60) * 50);
             const offerTotalCost = isFree ? 0 : ((offer.price || 0) + offerFee);
             const canBook = (isFree || currentBalance >= offerTotalCost) && statusInfo.code !== 'ended';
+
+            let actionBtnHtml = '';
+
+            if (isBooked || userBooking) {
+                if (statusInfo.code === 'ended') {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1; background: #64748b; color: white;" disabled><i class="fas fa-flag-checkered"></i> الدرس منتهي</button>`;
+                } else if (statusInfo.code === 'live' || statusInfo.code === 'ready') {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1; background: #059669; color: white; font-weight: 800; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="enterOrCheckStream(${offer.id})"><i class="fas fa-video" style="animation: pulse 1.5s infinite;"></i> دخول البث المباشر الآن</button>`;
+                } else {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1; background: #2563eb; color: white; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="enterOrCheckStream(${offer.id})"><i class="fas fa-check-circle"></i> تم الحجز - دخول البث</button>`;
+                }
+            } else {
+                if (statusInfo.code === 'ended') {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1; background: #64748b; color: white;" disabled>الدرس منتهي</button>`;
+                } else if (statusInfo.code === 'live') {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1; background: #dc2626; color: white; font-weight: 800;" onclick="bookOffer(${offer.id}, ${isFree}, ${offer.price || 0}, ${offer.duration || 60})" ${!canBook ? 'disabled' : ''}><i class="fas fa-video"></i> انضم للبث المباشر الان</button>`;
+                } else if (isFree) {
+                    actionBtnHtml = `<button class="book-btn free" style="flex: 1;" onclick="bookOffer(${offer.id}, true, 0, ${offer.duration || 60})"><i class="fas fa-gift"></i> تسجيل مجاني</button>`;
+                } else if (canBook) {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1;" onclick="bookOffer(${offer.id}, false, ${offer.price || 0}, ${offer.duration || 60})"><i class="fas fa-ticket-alt"></i> حجز (باستخدام الرصيد)</button>`;
+                } else {
+                    actionBtnHtml = `<button class="book-btn" style="flex: 1;" disabled>رصيد غير كافٍ</button>`;
+                }
+            }
 
             html += `
                 <div class="offer-card" id="offer-card-${offer.id}">
@@ -4932,7 +5014,7 @@
                         ${(offer.thumbnail_url || offer.image_url || offer.thumbnail) ? `<div style="width:100%; max-height:280px; min-height:140px; background:#f8fafc; border-radius:12px; overflow:hidden; margin-bottom:12px; display:flex; align-items:center; justify-content:center; border: 1px solid #e2e8f0;"><img src="${escapeHtml(offer.thumbnail_url || offer.image_url || offer.thumbnail)}" alt="${escapeHtml(offer.subject_name)}" style="width:100%; max-height:280px; object-fit:contain; border-radius:12px;" onerror="this.onerror=null; this.parentElement.style.display='none';"></div>` : ''}
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div>${statusInfo.badgeHtml}</div>
+                            <div>${statusInfo.badgeHtml} ${userBooking ? '<span style="padding: 3px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; margin-right: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-check"></i> محجوز</span>' : ''}</div>
                             <div>${isFree ? '<span class="free-badge"><i class="fas fa-gift"></i> مجانية</span>' : `<span class="paid-badge"><i class="fas fa-money-bill"></i> ${offer.price} دج</span>`}</div>
                         </div>
 
@@ -4943,19 +5025,17 @@
                                     ${escapeHtml(offer.teacher_name || 'غير معروف')}
                                     <i class="fas fa-id-card" style="font-size: 0.72rem; opacity: 0.8;"></i>
                                 </div>
-                                <div style="font-size: 0.72rem; color: var(--gray-500);">${offer.teacher_specialization || 'تخصص عام'}</div>
+                                <div style="font-size: 0.72rem; color: var(--gray-500);">${escapeHtml(offer.teacher_specialization || 'تخصص عام')}</div>
                             </div>
                         </div>
                         <div class="offer-title">${escapeHtml(offer.subject_name)}</div>
                         <div class="offer-info"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleDateString('ar-DZ', {timeZone: 'Africa/Algiers'})}</div>
                         <div class="offer-info"><i class="fas fa-clock"></i> ${offerDate.toLocaleTimeString('ar-DZ', {hour: '2-digit', minute:'2-digit', hour12: false, timeZone: 'Africa/Algiers'})} | ${offer.duration} دقيقة</div>
                         ${levelDisplay}
-                        ${!isFree && currentBalance < offerTotalCost && statusInfo.code !== 'ended' ? `<div class="insufficient-balance"><i class="fas fa-exclamation-triangle"></i> رصيدك: ${currentBalance} دج (المطلوب: ${offerTotalCost} دج)</div>` : ''}
+                        ${!isFree && !isBooked && currentBalance < offerTotalCost && statusInfo.code !== 'ended' ? `<div class="insufficient-balance"><i class="fas fa-exclamation-triangle"></i> رصيدك: ${currentBalance} دج (المطلوب: ${offerTotalCost} دج)</div>` : ''}
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: auto; width: 100%;">
-                        <button class="book-btn ${isFree ? 'free' : ''}" style="flex: 1;" onclick="bookOffer(${offer.id}, ${isFree}, ${offer.price || 0}, ${offer.duration || 60})" ${!canBook ? 'disabled' : ''}>
-                            ${statusInfo.code === 'ended' ? 'الدرس منتهي' : (statusInfo.code === 'live' ? 'انضم للبث المباشر' : (isFree ? 'تسجيل مجاني' : (canBook ? 'حجز (باستخدام الرصيد)' : 'رصيد غير كافٍ')))}
-                        </button>
+                        ${actionBtnHtml}
                         <button onclick="shareOffer(${offer.id})" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 44px; transition: all 0.2s;" title="مشاركة">
                             <i class="fas fa-share-alt"></i>
                         </button>
@@ -4979,6 +5059,37 @@
             }, 200);
         }
     }
+
+    async function enterOrCheckStream(offerId) {
+        if (checkGuestAction()) return;
+        if (!studentId) {
+            showToast('الرجاء تسجيل الدخول أولاً', 'error');
+            return;
+        }
+        try {
+            const res = await fetchWithAuth(`/api/student/stream-status/${offerId}/${studentId}`);
+            const data = await res.json();
+            if (data.can_join && data.stream_url) {
+                joinLiveStream(offerId);
+            } else if (data.is_waiting) {
+                showToast('⏳ البث لم يبدأ بعد أو لم يفتح الأستاذ الغرفة، انتظر قليلاً...', 'warning');
+            } else if (data.error && data.error.includes('لم تقم بحجز')) {
+                const offerObj = (window.latestOffersData || []).find(o => o.id == offerId);
+                if (offerObj) {
+                    bookOffer(offerId, offerObj.is_free, offerObj.price, offerObj.duration);
+                } else {
+                    showToast(data.error, 'info');
+                }
+            } else {
+                showToast(data.error || 'البث غير متاح حالياً', 'warning');
+            }
+        } catch(e) {
+            if (e.message !== 'انتهت صلاحية الجلسة') {
+                joinLiveStream(offerId);
+            }
+        }
+    }
+    window.enterOrCheckStream = enterOrCheckStream;
 
     function shareOffer(offerId) {
         const shareUrl = `${window.location.origin}/offer/${offerId}`;
@@ -7563,15 +7674,25 @@
     // ================================================================
 
     let autoRefreshInterval = null;
+    let fastNotifInterval = null;
 
     function startAutoRefresh() {
         if (userData && (userData.is_guest || userData.id === -1)) return;
         checkUnreadMessagesCount();
+        loadNotifications();
+
+        if (fastNotifInterval) clearInterval(fastNotifInterval);
+        fastNotifInterval = setInterval(async () => {
+            if (!studentId) return;
+            try {
+                await loadNotifications();
+            } catch(e) {}
+        }, 4000);
+
         if (autoRefreshInterval) clearInterval(autoRefreshInterval);
         autoRefreshInterval = setInterval(async () => {
             if (!studentId) return;
             try {
-                await loadNotifications();
                 await loadWallet();
                 await checkUnreadMessagesCount();
                 if (currentSection === 'offers') {
@@ -7592,7 +7713,7 @@
             } catch (e) {
                 // silent background polling
             }
-        }, 60000);
+        }, 15000);
     }
 
     // ============================================================
