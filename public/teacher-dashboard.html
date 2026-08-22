@@ -2966,11 +2966,47 @@
                 </div>
             </div>
 
-            <!-- Feed Container -->
-            <div id="postsFeedContainer">
-                <div style="text-align: center; padding: 40px; color: #6b7280;">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p style="margin-top: 10px;">جاري تحميل المنشورات...</p>
+            <style>
+                @media (max-width: 991px) {
+                    .posts-layout-container {
+                        flex-direction: column !important;
+                    }
+                    .posts-saved-sidebar {
+                        width: 100% !important;
+                        position: static !important;
+                        margin-bottom: 24px;
+                    }
+                }
+            </style>
+
+            <!-- Feed Container with Two Columns -->
+            <div class="posts-layout-container" style="display: flex; gap: 24px; align-items: flex-start; flex-direction: row-reverse; width: 100%;">
+                <!-- Right Side: Posts Feed -->
+                <div style="flex: 1; min-width: 320px;">
+                    <div id="postsFeedContainer">
+                        <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <i class="fas fa-spinner fa-spin fa-2x"></i>
+                            <p style="margin-top: 10px;">جاري تحميل المنشورات...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Left Side: Saved Posts Sidebar -->
+                <div class="posts-saved-sidebar" style="width: 280px; flex-shrink: 0; background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; position: sticky; top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; direction: rtl;">
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-bookmark" style="color: #f59e0b;"></i>
+                            <span>منشوراتك المحفوظة</span>
+                        </h4>
+                        <span id="savedPostsCount" style="background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 800; padding: 2px 10px; border-radius: 12px;">0</span>
+                    </div>
+                    <div id="savedPostsSidebarContainer" style="max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; direction: rtl;">
+                        <!-- Saved posts list will be dynamically loaded here -->
+                        <div style="text-align: center; color: #94a3b8; padding: 10px; font-size: 0.85rem;">
+                            <i class="fas fa-bookmark" style="margin-bottom: 6px; display: block; font-size: 1.2rem; color: #cbd5e1;"></i>
+                            <span>لا توجد منشورات محفوظة</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5229,6 +5265,7 @@
             if (b1) b1.style.display = 'none';
             if (b2) b2.style.display = 'none';
             loadTeacherPosts();
+            loadSavedPostsSidebar();
         }
         if (section === 'courses') loadCourses();
         if (section === 'exercises') loadExercises();
@@ -9551,6 +9588,9 @@ function updateUI() {
                         if (textSpan) textSpan.innerText = 'حفظ';
                     }
                 });
+                
+                // Refresh saved posts list sidebar
+                loadSavedPostsSidebar();
             } else {
                 showToast(data.error || 'فشل حفظ المنشور', 'error');
             }
@@ -9560,6 +9600,110 @@ function updateUI() {
         }
     }
     window.toggleSavePost = toggleSavePost;
+
+    async function loadSavedPostsSidebar() {
+        const container = document.getElementById('savedPostsSidebarContainer');
+        const countBadge = document.getElementById('savedPostsCount');
+        if (!container) return;
+
+        try {
+            const res = await fetchWithAuth('/api/post?saved_only=true');
+            if (!res.ok) throw new Error('فشل جلب المحفوظات');
+            const data = await res.json();
+            const posts = Array.isArray(data) ? data : (data.posts || data.data || []);
+
+            if (countBadge) countBadge.textContent = posts.length;
+
+            if (posts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #94a3b8; padding: 15px; font-size: 0.85rem;">
+                        <i class="fas fa-bookmark" style="margin-bottom: 6px; display: block; font-size: 1.2rem; color: #cbd5e1;"></i>
+                        <span>لا توجد منشورات محفوظة</span>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => {
+                const authorName = post.teachers?.full_name || post.teacher_name || 'أستاذ المنصة';
+                const authorImg = post.teacher_profile_image || (post.teachers && post.teachers.profile_image) || '/images/default-avatar.svg';
+                const plainTextContent = post.content ? post.content.replace(/<[^>]*>/g, '').trim() : '';
+                const displayExcerpt = plainTextContent.length > 45 ? plainTextContent.substring(0, 45) + '...' : plainTextContent || 'منشور وسائط';
+                
+                return `
+                    <div onclick="scrollToSavedPost(${post.id})" style="display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0';">
+                        <img src="${authorImg}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0;" onerror="this.src='/images/default-avatar.svg'">
+                        <div style="flex: 1; min-width: 0; text-align: right;">
+                            <div style="font-weight: 800; font-size: 0.8rem; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px;">
+                                ${escapeHtml(authorName)}
+                            </div>
+                            <div style="font-size: 0.72rem; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${escapeHtml(displayExcerpt)}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: #94a3b8; margin-right: 4px;"></i>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('Error loading saved posts sidebar:', e);
+            container.innerHTML = `
+                <div style="text-align: center; color: #ef4444; padding: 10px; font-size: 0.82rem;">
+                    <span>فشل تحميل المحفوظات</span>
+                </div>`;
+        }
+    }
+    window.loadSavedPostsSidebar = loadSavedPostsSidebar;
+
+    async function scrollToSavedPost(postId) {
+        let el = document.getElementById(`post-card-${postId}`);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.style.border = '2px solid #f59e0b';
+            el.style.boxShadow = '0 0 20px rgba(245, 158, 11, 0.3)';
+            setTimeout(() => {
+                el.style.transition = 'all 1s ease';
+                el.style.border = '1px solid #cbd5e1';
+                el.style.boxShadow = '';
+            }, 3000);
+        } else {
+            // If not currently in DOM (due to pagination), fetch and prepend it to the feed!
+            try {
+                const res = await fetchWithAuth(`/api/post?post_id=${postId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const posts = Array.isArray(data) ? data : (data.posts || data.data || []);
+                if (posts.length > 0) {
+                    const post = posts[0];
+                    const feed = document.getElementById('postsFeedContainer');
+                    if (feed) {
+                        // remove placeholder/empty-state if present
+                        if (feed.innerHTML.includes('لا توجد منشورات') || feed.innerHTML.includes('جاري تحميل منشورات')) {
+                            feed.innerHTML = '';
+                        }
+                        const cardHtml = renderPostCardHtml(post, userData?.id);
+                        feed.insertAdjacentHTML('afterbegin', cardHtml);
+                        
+                        setTimeout(() => {
+                            const newEl = document.getElementById(`post-card-${postId}`);
+                            if (newEl) {
+                                newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                newEl.style.border = '2px solid #f59e0b';
+                                newEl.style.boxShadow = '0 0 20px rgba(245, 158, 11, 0.3)';
+                                setTimeout(() => {
+                                    newEl.style.transition = 'all 1s ease';
+                                    newEl.style.border = '1px solid #cbd5e1';
+                                    newEl.style.boxShadow = '';
+                                }, 3000);
+                            }
+                        }, 100);
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching specific post to scroll:', err);
+            }
+        }
+    }
+    window.scrollToSavedPost = scrollToSavedPost;
 
     function sharePost(postId) {
         const shareUrl = `${window.location.origin}/post/${postId}`;
