@@ -2851,48 +2851,29 @@
                 </button>
             </div>
 
-            <style>
-                @media (max-width: 991px) {
-                    .posts-layout-container {
-                        flex-direction: column !important;
-                    }
-                    .posts-saved-sidebar {
-                        width: 100% !important;
-                        position: static !important;
-                        margin-bottom: 24px;
-                    }
-                }
-            </style>
-
-            <div class="section-title"><i class="fas fa-newspaper" style="color: var(--primary);"></i> منشورات الأساتذة والمعلمين</div>
-            
-            <div class="posts-layout-container" style="display: flex; gap: 24px; align-items: flex-start; flex-direction: row-reverse; width: 100%;">
-                <!-- Right Side: Posts Feed -->
-                <div style="flex: 1; min-width: 320px;">
-                    <div id="studentPostsFeedContainer">
-                        <div style="text-align: center; padding: 40px; color: #6b7280;">
-                            <i class="fas fa-spinner fa-spin fa-2x"></i>
-                            <p style="margin-top: 10px;">جاري تحميل منشورات الأساتذة...</p>
-                        </div>
-                    </div>
+            <!-- Posts Header & Filter Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; background: white; padding: 18px 24px; border-radius: 18px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                <div style="font-size: 1.15rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-newspaper" style="color: var(--primary); font-size: 1.25rem;"></i> <span>منشورات الأساتذة والمعلمين</span>
                 </div>
+                
+                <!-- Filter Switcher -->
+                <div style="display: flex; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 14px; border: 1px solid #e2e8f0;">
+                    <button id="student-post-filter-all" onclick="setStudentPostsFilter('all')" style="padding: 8px 18px; border-radius: 10px; font-size: 0.88rem; font-weight: 800; border: none; cursor: pointer; background: white; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s;">
+                        <i class="fas fa-stream"></i> جميع المنشورات
+                    </button>
+                    <button id="student-post-filter-saved" onclick="setStudentPostsFilter('saved')" style="padding: 8px 18px; border-radius: 10px; font-size: 0.88rem; font-weight: 800; border: none; cursor: pointer; background: transparent; color: #64748b; transition: all 0.2s; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-bookmark" style="color: #f59e0b;"></i> المحفوظات
+                        <span id="studentSavedPostsBadge" style="background: #fef3c7; color: #d97706; font-size: 0.75rem; padding: 1px 8px; border-radius: 10px; font-weight: 900;">0</span>
+                    </button>
+                </div>
+            </div>
 
-                <!-- Left Side: Saved Posts Sidebar -->
-                <div class="posts-saved-sidebar" style="width: 280px; flex-shrink: 0; background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; position: sticky; top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; direction: rtl;">
-                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-bookmark" style="color: #f59e0b;"></i>
-                            <span>منشوراتك المحفوظة</span>
-                        </h4>
-                        <span id="savedPostsCount" style="background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 800; padding: 2px 10px; border-radius: 12px;">0</span>
-                    </div>
-                    <div id="savedPostsSidebarContainer" style="max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; direction: rtl;">
-                        <!-- Saved posts list will be dynamically loaded here -->
-                        <div style="text-align: center; color: #94a3b8; padding: 10px; font-size: 0.85rem;">
-                            <i class="fas fa-bookmark" style="margin-bottom: 6px; display: block; font-size: 1.2rem; color: #cbd5e1;"></i>
-                            <span>لا توجد منشورات محفوظة</span>
-                        </div>
-                    </div>
+            <!-- Feed Container -->
+            <div id="studentPostsFeedContainer">
+                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 10px;">جاري تحميل منشورات الأساتذة...</p>
                 </div>
             </div>
         </div>
@@ -7300,11 +7281,55 @@
     // ================================================================
     // POSTS LOGIC FOR STUDENTS (منشورات الأساتذة)
     // ================================================================
+    let studentPostsFilter = 'all'; // 'all' or 'saved'
     let studentPostsOffset = 0;
     let studentPostsLimit = 10;
     let studentPostsHasMore = true;
     let studentPostsLoading = false;
     let studentPostsObserver = null;
+
+    function setStudentPostsFilter(filter) {
+        if (studentPostsFilter === filter) return;
+        studentPostsFilter = filter;
+
+        const allBtn = document.getElementById('student-post-filter-all');
+        const savedBtn = document.getElementById('student-post-filter-saved');
+
+        if (allBtn && savedBtn) {
+            if (filter === 'all') {
+                allBtn.style.background = 'white';
+                allBtn.style.color = 'var(--primary)';
+                allBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+                savedBtn.style.background = 'transparent';
+                savedBtn.style.color = '#64748b';
+                savedBtn.style.boxShadow = 'none';
+            } else {
+                savedBtn.style.background = 'white';
+                savedBtn.style.color = 'var(--primary)';
+                savedBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+                allBtn.style.background = 'transparent';
+                allBtn.style.color = '#64748b';
+                allBtn.style.boxShadow = 'none';
+            }
+        }
+
+        loadStudentPosts(true);
+    }
+    window.setStudentPostsFilter = setStudentPostsFilter;
+
+    async function updateStudentSavedCountBadge() {
+        const badge = document.getElementById('studentSavedPostsBadge');
+        if (!badge) return;
+        try {
+            const res = await fetchWithAuth('/api/post?saved_only=true&limit=100');
+            if (res.ok) {
+                const data = await res.json();
+                const count = Array.isArray(data) ? data.length : (data.posts || []).length;
+                badge.textContent = count;
+            }
+        } catch (e) {}
+    }
+    window.updateStudentSavedCountBadge = updateStudentSavedCountBadge;
 
     async function loadStudentPosts(reset = true) {
         const feed = document.getElementById('studentPostsFeedContainer');
@@ -7317,7 +7342,7 @@
             feed.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #6b7280;">
                     <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p style="margin-top: 10px;">جاري تحميل أحدث 10 منشورات...</p>
+                    <p style="margin-top: 10px;">جاري تحميل المنشورات...</p>
                 </div>`;
         }
 
@@ -7328,6 +7353,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             const sharedPost = urlParams.get('post');
             let postEndpoint = `/api/post?limit=${studentPostsLimit}&offset=${studentPostsOffset}`;
+            if (studentPostsFilter === 'saved') {
+                postEndpoint += '&saved_only=true';
+            }
             if (sharedPost && reset) {
                 postEndpoint += `&include_post_id=${encodeURIComponent(sharedPost)}`;
             }
@@ -7342,16 +7370,30 @@
             }
             const posts = Array.isArray(data) ? data : (data.posts || data.data || []);
             
+            updateStudentSavedCountBadge();
+
             if (reset && posts.length === 0) {
-                feed.innerHTML = `
-                    <div style="text-align: center; padding: 50px 20px; background: white; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 18px rgba(0,0,0,0.03);">
-                        <i class="fas fa-newspaper" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 12px;"></i>
-                        <h4 style="font-weight: 800; color: #475569; margin-bottom: 6px;">لا توجد منشورات حتى الآن</h4>
-                        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">سيظهر هنا كل منشور جديد يشاركه الأساتذة معنا!</p>
-                        <button onclick="loadStudentPosts(true)" style="background: var(--primary); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-sync-alt"></i> تحديث المنشورات
-                        </button>
-                    </div>`;
+                if (studentPostsFilter === 'saved') {
+                    feed.innerHTML = `
+                        <div style="text-align: center; padding: 50px 20px; background: white; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 18px rgba(0,0,0,0.03);">
+                            <i class="fas fa-bookmark" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 12px;"></i>
+                            <h4 style="font-weight: 800; color: #475569; margin-bottom: 6px;">لا توجد منشورات محفوظة</h4>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">يمكنك حفظ أي منشور للرجوع إليه لاحقاً بالنقر على زر حفظ 🔖 أسفل أي منشور.</p>
+                            <button onclick="setStudentPostsFilter('all')" style="background: var(--primary); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-stream"></i> استعراض جميع المنشورات
+                            </button>
+                        </div>`;
+                } else {
+                    feed.innerHTML = `
+                        <div style="text-align: center; padding: 50px 20px; background: white; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 18px rgba(0,0,0,0.03);">
+                            <i class="fas fa-newspaper" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 12px;"></i>
+                            <h4 style="font-weight: 800; color: #475569; margin-bottom: 6px;">لا توجد منشورات حتى الآن</h4>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">سيظهر هنا كل منشور جديد يشاركه الأساتذة معنا!</p>
+                            <button onclick="loadStudentPosts(true)" style="background: var(--primary); color: white; border: none; padding: 8px 22px; border-radius: 20px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-sync-alt"></i> تحديث المنشورات
+                            </button>
+                        </div>`;
+                }
                 studentPostsLoading = false;
                 return;
             }
@@ -7381,7 +7423,7 @@
                 const endCardHtml = `
                     <div style="text-align: center; padding: 25px 20px; background: white; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 18px rgba(0,0,0,0.03); margin-top: 15px; margin-bottom: 25px;">
                         <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
-                        <h4 style="font-weight: 800; color: #374151; margin-bottom: 4px; font-size: 0.95rem;">شاهدت جميع المنشورات</h4>
+                        <h4 style="font-weight: 800; color: #374151; margin-bottom: 4px; font-size: 0.95rem;">${studentPostsFilter === 'saved' ? 'وصلت إلى نهاية منشوراتك المحفوظة' : 'شاهدت جميع المنشورات'}</h4>
                         <button onclick="loadStudentPosts(true)" style="background: #f1f5f9; color: var(--primary); border: 1px solid #cbd5e1; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;">
                             <i class="fas fa-sync-alt"></i> تحديث من البداية
                         </button>
@@ -7706,8 +7748,25 @@
                     }
                 });
                 
-                // Refresh saved posts list sidebar
-                loadSavedPostsSidebar();
+                // Refresh saved count badge
+                updateStudentSavedCountBadge();
+
+                // If currently viewing saved filter and item was removed, smoothly remove card
+                if (studentPostsFilter === 'saved' && !isSaved) {
+                    const card = document.getElementById(`post-card-${postId}`);
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            card.remove();
+                            const feed = document.getElementById('studentPostsFeedContainer');
+                            if (feed && !feed.querySelector('.post-card')) {
+                                loadStudentPosts(true);
+                            }
+                        }, 300);
+                    }
+                }
             } else {
                 showToast(data.error || 'فشل حفظ المنشور', 'error');
             }

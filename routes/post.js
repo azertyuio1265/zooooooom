@@ -263,6 +263,23 @@ router.get('/', async (req, res) => {
             query = query.eq('teacher_id', teacher_id);
         }
 
+        if ((saved_only === 'true' || saved_only === true) && userId && userType) {
+            try {
+                const { data: userBookmarks } = await supabase
+                    .from('post_bookmarks')
+                    .select('post_id')
+                    .eq('user_id', userId)
+                    .eq('user_type', userType);
+                const savedIds = (userBookmarks || []).map(b => b.post_id);
+                if (savedIds.length === 0) {
+                    return res.json({ posts: [], has_more: false, total: 0 });
+                }
+                query = query.in('id', savedIds);
+            } catch (bmErr) {
+                return res.json({ posts: [], has_more: false, total: 0 });
+            }
+        }
+
         query = query.range(parsedOffset, parsedOffset + parsedLimit - 1);
 
         const { data: posts, error } = await query;
