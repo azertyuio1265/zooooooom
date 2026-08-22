@@ -2643,7 +2643,12 @@
                 <i class="fas fa-chevron-right"></i>
             </button>
             <div class="nav-tabs" id="navTabs">
-                <button class="nav-tab active" data-section="posts" onclick="showSection('posts')">
+                <button class="nav-tab active" data-section="offers" onclick="showSection('offers')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="tab-label">دروسي</span>
+                    <span class="nav-badge" id="offersBadge" style="display:none;">0</span>
+                </button>
+                <button class="nav-tab" data-section="posts" onclick="showSection('posts')">
                     <i class="fas fa-bullhorn"></i>
                     <span class="tab-label">المنشورات</span>
                     <span class="nav-badge" id="postsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
@@ -2660,11 +2665,6 @@
                     <i class="fas fa-users-rectangle"></i>
                     <span class="tab-label">المجموعات</span>
                     <span class="nav-badge" id="groupsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
-                </button>
-                <button class="nav-tab" data-section="offers" onclick="showSection('offers')">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="tab-label">دروسي</span>
-                    <span class="nav-badge" id="offersBadge" style="display:none;">0</span>
                 </button>
                 <button class="nav-tab" data-section="courses" onclick="showSection('courses')">
                     <i class="fas fa-play-circle"></i>
@@ -2797,7 +2797,7 @@
                     </div>
                 </div>
                 <button class="btn-primary" onclick="showCreateOfferModal()" style="background: #ffffff; color: #1e40af; border: none; font-weight: 800; white-space: nowrap; padding: 10px 18px; border-radius: 20px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-shrink: 0;">
-                    <i class="fas fa-plus-circle"></i> إنشاء درس جديد zoom
+                    <i class="fas fa-video"></i> إنشاء درس ZoomDZ
                 </button>
             </div>
             <div id="teachingLevelBanner" class="teaching-level-banner" style="display: none;">
@@ -2811,7 +2811,7 @@
                 </button>
             </div>
             <div class="section-actions">
-                <button class="btn-primary" onclick="showCreateOfferModal()"><i class="fas fa-plus"></i> درس جديد zoom</button>
+                <button class="btn-primary" onclick="showCreateOfferModal()"><i class="fas fa-video"></i> إنشاء درس ZoomDZ</button>
                 <button class="btn-danger" onclick="deleteExpiredOffers()"><i class="fas fa-trash"></i> حذف المنتهية</button>
             </div>
             <div id="offersList" class="offers-grid"></div>
@@ -3082,7 +3082,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <button onclick="goToCreateZoomLesson()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
-                        <i class="fas fa-video"></i> إضافة درس لايف zoom
+                        <i class="fas fa-video"></i> إنشاء درس ZoomDZ
                     </button>
                     <button onclick="loadColleagueLessons(true)" style="background: #f1f5f9; color: var(--primary); border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                         <i class="fas fa-sync-alt"></i> تحديث
@@ -3836,7 +3836,7 @@
 <!-- CREATE OFFER MODAL -->
 <div id="createOfferModal" class="modal" style="display: none;">
     <div class="modal-header">
-        <h3><i class="fas fa-plus"></i> درس جديد</h3>
+        <h3><i class="fas fa-video"></i> إنشاء درس ZoomDZ</h3>
         <button class="close-modal" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -3861,9 +3861,6 @@
                 <input type="number" id="duration" placeholder="الدقائق" value="60" min="60" max="240" oninput="syncDurationPreset(); validateOfferLimits();" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.95rem;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--gray-600); white-space: nowrap;">دقيقة</span>
             </div>
-        </div>
-        <div id="durationFeeBox" style="margin-top: 6px; padding: 8px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 0.82rem; color: #166534; font-weight: 700;">
-            <i class="fas fa-calculator" style="color: #16a34a;"></i> رسوم البث للطالب لهذه الحصة: <span id="calculatedFeeDisplay" style="color: #15803d; font-size: 0.95rem; font-weight: 800;">50</span> دج <span id="calculatedFeeDetail" style="font-size: 0.75rem; color: #166534; font-weight: 600;">(ساعة واحدة × 50 دج)</span>
         </div>
 
         <label style="display:block; margin-top:10px; margin-bottom:6px; font-weight:700; color:var(--gray-800);">
@@ -7083,7 +7080,7 @@ function updateUI() {
                     <h3 style="font-weight: 800; font-size: 1.15rem; color: #1e293b; margin-bottom: 8px;">ابدأ في إنشاء الدروس الخاصة بك وشاركها مع طلابك للانضمام إلى الدرس</h3>
                     <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 18px;">لم تقم بإنشاء أي درس بعد. اضغط على الزر أدناه لإضافة أول درس لطلابك.</p>
                     <button class="btn-primary" onclick="showCreateOfferModal()" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 25px; font-weight: 800; font-size: 0.95rem; margin: 0 auto;">
-                        <i class="fas fa-plus"></i> إضافة درس جديد الآن
+                        <i class="fas fa-video"></i> إنشاء درس ZoomDZ
                     </button>
                 </div>`;
             return;
@@ -8462,7 +8459,7 @@ function updateUI() {
         }
 
         const isApproved = userData && userData.status === 'approved';
-        const defaultSection = isApproved ? 'posts' : 'profile';
+        const defaultSection = isApproved ? 'offers' : 'profile';
         showSection(defaultSection);
     }
 
@@ -10937,7 +10934,11 @@ function updateUI() {
 
 <!-- ===== MOBILE BOTTOM NAV ===== -->
 <div class="mobile-bottom-nav">
-    <button class="mobile-bottom-item active" data-section="posts" onclick="showSection('posts')">
+    <button class="mobile-bottom-item active" data-section="offers" onclick="showSection('offers')">
+        <i class="fas fa-calendar-alt"></i>
+        <span>دروسي</span>
+    </button>
+    <button class="mobile-bottom-item" data-section="posts" onclick="showSection('posts')">
         <i class="fas fa-bullhorn"></i>
         <span>المنشورات</span>
         <span id="mobilePostsBadge" style="display: none; position: absolute; top: 4px; right: 18px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">0</span>
@@ -10949,10 +10950,6 @@ function updateUI() {
     <button class="mobile-bottom-item" data-section="all-lessons" onclick="showSection('all-lessons')">
         <i class="fas fa-graduation-cap"></i>
         <span>دروس لايف</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="offers" onclick="showSection('offers')">
-        <i class="fas fa-calendar-alt"></i>
-        <span>دروسي</span>
     </button>
     <button class="mobile-bottom-item" data-section="courses" onclick="showSection('courses')">
         <i class="fas fa-play-circle"></i>
