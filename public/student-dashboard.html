@@ -2047,15 +2047,15 @@
             .profile-avatar { width: 55px; height: 55px; }
         }
 
-        /* ===== MOBILE BOTTOM NAVIGATION & DRAWER ===== */
+        /* ===== MOBILE BOTTOM NAVIGATION & DRAWER (COOL BLUE THEME) ===== */
         .mobile-bottom-nav { display: none; }
         .mobile-drawer-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(6, 15, 30, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             z-index: 9998;
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2064,9 +2064,10 @@
         .mobile-drawer {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: #ffffff;
+            background: linear-gradient(180deg, #0e1e38 0%, #081224 100%);
             border-radius: 28px 28px 0 0;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
             z-index: 9999;
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2074,6 +2075,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            color: #f1f5f9;
         }
         .mobile-drawer.active { transform: translateY(0); }
         .mobile-drawer-header {
@@ -2081,18 +2083,18 @@
             align-items: center;
             justify-content: space-between;
             padding: 18px 20px 14px;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .mobile-drawer-title {
             font-size: 1.05rem;
             font-weight: 800;
-            color: var(--gray-900);
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .mobile-drawer-close {
-            background: var(--gray-100);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             width: 36px;
             height: 36px;
@@ -2101,20 +2103,21 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            color: var(--gray-600);
+            color: #94a3b8;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .mobile-drawer-close:hover { background: var(--gray-200); color: var(--gray-900); }
+        .mobile-drawer-close:hover { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
         .mobile-drawer-body {
             padding: 16px 20px 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .mobile-drawer-user {
-            background: var(--gradient-main);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 18px;
             padding: 16px;
             color: white;
@@ -2127,7 +2130,7 @@
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            border: 2px solid white;
+            border: 2px solid rgba(56, 189, 248, 0.6);
             object-fit: cover;
         }
         .mobile-drawer-menu-item {
@@ -2136,19 +2139,19 @@
             justify-content: space-between;
             padding: 12px 16px;
             border-radius: 14px;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.92rem;
-            border: 1px solid var(--gray-100);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             cursor: pointer;
             transition: all 0.2s;
         }
         .mobile-drawer-menu-item:hover, .mobile-drawer-menu-item.active {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-soft);
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.3);
         }
         .mobile-drawer-menu-item .item-content {
             display: flex;
@@ -2168,9 +2171,9 @@
                 position: fixed;
                 bottom: 0; left: 0; right: 0;
                 height: 62px;
-                background: #ffffff;
-                border-top: 1px solid rgba(226, 232, 240, 0.8);
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+                background: #0b172a;
+                border-top: 1px solid rgba(56, 189, 248, 0.15);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
                 z-index: 9997;
                 justify-content: space-around;
                 align-items: center;
@@ -2182,7 +2185,7 @@
                 align-items: center;
                 justify-content: center;
                 gap: 3px;
-                color: var(--gray-500);
+                color: #64748b;
                 text-decoration: none;
                 font-size: 0.72rem;
                 font-weight: 700;
@@ -2198,7 +2201,7 @@
                 transition: transform 0.2s ease;
             }
             .mobile-bottom-item.active, .mobile-bottom-item:hover {
-                color: var(--primary);
+                color: #38bdf8;
             }
             .mobile-bottom-item.active i {
                 transform: translateY(-2px) scale(1.1);
@@ -3563,6 +3566,130 @@
                 <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #f59e0b;"></i>
                 <p style="margin-top: 10px; color: #64748b;">جاري التحقق من حالة الصندوق...</p>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<div class="mobile-bottom-nav">
+    <button class="mobile-bottom-item active" data-section="groups" onclick="showSection('groups')">
+        <i class="fas fa-users-rectangle"></i>
+        <span>غرف الدردشة</span>
+        <span class="nav-badge" id="mobileGroupsBadgeBottom" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.65rem; font-weight:800; position:absolute; top:4px; right:12px;">0</span>
+    </button>
+    <button class="mobile-bottom-item" data-section="posts" onclick="showSection('posts')">
+        <i class="fas fa-newspaper"></i>
+        <span>المنشورات</span>
+        <span id="mobilePostsBadge" style="display:none; position:absolute; top:4px; right:18px; background:#ef4444; color:white; border-radius:50%; width:16px; height:16px; font-size:0.65rem; font-weight:800; display:flex; align-items:center; justify-content:center;">0</span>
+    </button>
+    <button class="mobile-bottom-item" data-section="exercises" onclick="showSection('exercises')">
+        <i class="fas fa-file-pen"></i>
+        <span>التمارين</span>
+    </button>
+    <button class="mobile-bottom-item" data-section="offers" onclick="showSection('offers')">
+        <i class="fas fa-calendar-alt"></i>
+        <span>دروس لايف</span>
+    </button>
+    <button class="mobile-bottom-item" onclick="toggleMobileDrawer()">
+        <i class="fas fa-bars"></i>
+        <span>المزيد</span>
+    </button>
+</div>
+
+<!-- ===== MOBILE DRAWER OVERLAY & SHEET ===== -->
+<div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawer()"></div>
+<div class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-header">
+        <div class="mobile-drawer-title">
+            <i class="fas fa-graduation-cap" style="color:#38bdf8;"></i>
+            <span>لوحة تحكم الطالب</span>
+        </div>
+        <button class="mobile-drawer-close" onclick="closeMobileDrawer()">&times;</button>
+    </div>
+    <div class="mobile-drawer-body">
+        <div class="mobile-drawer-user">
+            <img id="drawerAvatar" class="mobile-drawer-avatar" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+            <div style="flex:1;">
+                <div id="drawerName" style="font-weight:800; font-size:1rem;">طالب</div>
+                <div id="drawerEmail" style="font-size:0.75rem; opacity:0.85;">...</div>
+            </div>
+            <button onclick="showDepositModal(); closeMobileDrawer();" style="background:#38bdf8; color:#0f172a; border:none; padding:6px 12px; border-radius:20px; font-weight:800; font-size:0.75rem; cursor:pointer;">
+                <i class="fas fa-plus-circle"></i> شحن
+            </button>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showSection('teachers'); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-chalkboard-user" style="color:#38bdf8;"></i>
+                <span>قائمة الأساتذة</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showSection('courses'); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-play-circle" style="color:#38bdf8;"></i>
+                <span>الدورات التعليمية</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showSection('transactions'); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-history" style="color:#38bdf8;"></i>
+                <span>سجل المعاملات والعمليات</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showSection('referral'); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-link" style="color:#fbbf24;"></i>
+                <span>نظام الإحالة والمكافآت</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="openMysteryBoxModal(); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-gift" style="color:#f59e0b;"></i>
+                <span>صندوق الهدايا والمفاجآت</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showSection('messages'); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-envelope" style="color:#38bdf8;"></i>
+                <span>الرسائل والاتصالات</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="showEditProfileModal(); closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fas fa-user-edit" style="color:#38bdf8;"></i>
+                <span>تعديل الملف الشخصي</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="window.location.href='https://t.me/zoomdz1'; closeMobileDrawer();">
+            <div class="item-content">
+                <i class="fab fa-telegram" style="color:#38bdf8;"></i>
+                <span>قناتنا الرسمية على التلجرام</span>
+            </div>
+            <i class="fas fa-external-link-alt" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin:6px 0;"></div>
+
+        <div class="mobile-drawer-menu-item" onclick="logout()" style="color:#f87171; background:rgba(239, 68, 68, 0.1); border-color:rgba(239, 68, 68, 0.2);">
+            <div class="item-content">
+                <i class="fas fa-sign-out-alt" style="color:#ef4444;"></i>
+                <span style="color:#f87171;">تسجيل الخروج</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5; color:#f87171;"></i>
         </div>
     </div>
 </div>

@@ -2332,15 +2332,15 @@
             .stream-timer-container .timer-display .time { font-size: 2rem; }
         }
 
-        /* ===== MOBILE BOTTOM NAVIGATION & DRAWER ===== */
+        /* ===== MOBILE BOTTOM NAVIGATION & DRAWER (COOL BLUE THEME) ===== */
         .mobile-bottom-nav { display: none; }
         .mobile-drawer-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(8, 18, 36, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             z-index: 9998;
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2349,9 +2349,10 @@
         .mobile-drawer {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: #ffffff;
+            background: linear-gradient(180deg, #0e1e38 0%, #081224 100%);
             border-radius: 28px 28px 0 0;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 -12px 40px rgba(0,0,0,0.5);
             z-index: 9999;
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2366,19 +2367,19 @@
             align-items: center;
             justify-content: space-between;
             padding: 18px 20px 14px;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .mobile-drawer-title {
             font-size: 1.05rem;
             font-weight: 800;
-            color: var(--gray-900);
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .mobile-drawer-close {
-            background: var(--gray-100);
-            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -2386,20 +2387,21 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
-            color: var(--gray-600);
+            color: #cbd5e1;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .mobile-drawer-close:hover { background: var(--gray-200); color: var(--gray-900); }
+        .mobile-drawer-close:hover { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
         .mobile-drawer-body {
             padding: 16px 20px 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .mobile-drawer-user {
-            background: var(--gradient-main);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.25);
             border-radius: 18px;
             padding: 16px;
             color: white;
@@ -2412,7 +2414,7 @@
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            border: 2px solid white;
+            border: 2px solid #3b82f6;
             object-fit: cover;
         }
         .mobile-drawer-menu-item {
@@ -2421,19 +2423,20 @@
             justify-content: space-between;
             padding: 12px 16px;
             border-radius: 14px;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.92rem;
-            border: 1px solid var(--gray-100);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             cursor: pointer;
             transition: all 0.2s;
         }
         .mobile-drawer-menu-item:hover, .mobile-drawer-menu-item.active {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-soft);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
         }
         .mobile-drawer-menu-item .item-content {
             display: flex;
@@ -2444,6 +2447,10 @@
             font-size: 1.1rem;
             width: 24px;
             text-align: center;
+            color: #60a5fa;
+        }
+        .mobile-drawer-menu-item:hover i, .mobile-drawer-menu-item.active i {
+            color: #ffffff;
         }
 
         @media (max-width: 768px) {
@@ -2453,9 +2460,9 @@
                 position: fixed;
                 bottom: 0; left: 0; right: 0;
                 height: 62px;
-                background: #ffffff;
-                border-top: 1px solid rgba(226, 232, 240, 0.8);
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+                background: linear-gradient(180deg, #0e1e38 0%, #081224 100%);
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 -8px 25px rgba(8, 18, 36, 0.45);
                 z-index: 9997;
                 justify-content: space-around;
                 align-items: center;
@@ -2467,9 +2474,9 @@
                 align-items: center;
                 justify-content: center;
                 gap: 3px;
-                color: var(--gray-500);
+                color: #94a3b8;
                 text-decoration: none;
-                font-size: 0.72rem;
+                font-size: 0.7rem;
                 font-weight: 700;
                 background: none;
                 border: none;
@@ -2479,14 +2486,24 @@
                 transition: all 0.2s ease;
             }
             .mobile-bottom-item i {
-                font-size: 1.25rem;
-                transition: transform 0.2s ease;
+                font-size: 1.2rem;
+                color: #94a3b8;
+                transition: transform 0.2s ease, color 0.2s ease;
             }
-            .mobile-bottom-item.active, .mobile-bottom-item:hover {
-                color: var(--primary);
+            .mobile-bottom-item:hover {
+                color: #60a5fa;
+            }
+            .mobile-bottom-item:hover i {
+                color: #60a5fa;
+            }
+            .mobile-bottom-item.active {
+                color: #38bdf8;
+                font-weight: 800;
             }
             .mobile-bottom-item.active i {
-                transform: translateY(-2px) scale(1.1);
+                color: #38bdf8;
+                filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+                transform: translateY(-2px) scale(1.12);
             }
             .nav-tabs { display: none !important; }
         }
@@ -2838,23 +2855,23 @@
                     <span class="tab-label">غرف الفيديو</span>
                     <span class="nav-badge" id="offersBadge" style="display:none;">0</span>
                 </button>
-                <button class="nav-tab" data-section="posts" onclick="showSection('posts')">
-                    <i class="fas fa-bullhorn"></i>
-                    <span class="tab-label">المنشورات</span>
-                    <span class="nav-badge" id="postsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
+                <button class="nav-tab" data-section="all-lessons" onclick="showSection('all-lessons')">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="tab-label">دروس لايف</span>
                 </button>
                 <button class="nav-tab" data-section="exercises" onclick="showSection('exercises')">
                     <i class="fas fa-file-pen"></i>
                     <span class="tab-label">التمارين والحلول</span>
                 </button>
-                <button class="nav-tab" data-section="all-lessons" onclick="showSection('all-lessons')">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span class="tab-label">دروس لايف</span>
-                </button>
                 <button class="nav-tab" data-section="groups" onclick="showSection('groups')">
                     <i class="fas fa-users-rectangle"></i>
                     <span class="tab-label">المجموعات</span>
                     <span class="nav-badge" id="groupsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
+                </button>
+                <button class="nav-tab" data-section="posts" onclick="showSection('posts')">
+                    <i class="fas fa-bullhorn"></i>
+                    <span class="tab-label">المنشورات</span>
+                    <span class="nav-badge" id="postsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
                 </button>
                 <button class="nav-tab" data-section="courses" onclick="showSection('courses')">
                     <i class="fas fa-play-circle"></i>
@@ -2951,10 +2968,10 @@
 <div class="main-wrapper">
     <!-- DESKTOP COOL BLUE SIDEBAR -->
     <aside class="desktop-cool-sidebar" id="teacherSidebar">
-        <!-- Quick Action: Create ZoomDZ Lesson -->
+        <!-- Quick Action: Create ZoomDZ Room -->
         <button class="sidebar-create-btn" onclick="showCreateOfferModal()">
             <i class="fas fa-video"></i>
-            <span>إنشاء درس ZoomDZ</span>
+            <span>إنشاء غرفة ZoomDZ</span>
         </button>
 
         <div class="sidebar-group-title">القائمة والتعليم</div>
@@ -2964,23 +2981,23 @@
                 <span class="tab-label">غرف الفيديو</span>
                 <span class="nav-badge" id="offersBadgeSidebar" style="display:none;">0</span>
             </button>
-            <button class="sidebar-nav-item nav-tab" data-section="posts" onclick="showSection('posts')">
-                <i class="fas fa-bullhorn"></i>
-                <span class="tab-label">المنشورات</span>
-                <span class="nav-badge" id="postsBadgeSidebar" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
+            <button class="sidebar-nav-item nav-tab" data-section="all-lessons" onclick="showSection('all-lessons')">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="tab-label">دروس لايف</span>
             </button>
             <button class="sidebar-nav-item nav-tab" data-section="exercises" onclick="showSection('exercises')">
                 <i class="fas fa-file-pen"></i>
                 <span class="tab-label">التمارين والحلول</span>
             </button>
-            <button class="sidebar-nav-item nav-tab" data-section="all-lessons" onclick="showSection('all-lessons')">
-                <i class="fas fa-graduation-cap"></i>
-                <span class="tab-label">دروس لايف</span>
-            </button>
             <button class="sidebar-nav-item nav-tab" data-section="groups" onclick="showSection('groups')">
                 <i class="fas fa-users-rectangle"></i>
                 <span class="tab-label">المجموعات</span>
                 <span class="nav-badge" id="groupsBadgeSidebar" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
+            </button>
+            <button class="sidebar-nav-item nav-tab" data-section="posts" onclick="showSection('posts')">
+                <i class="fas fa-bullhorn"></i>
+                <span class="tab-label">المنشورات</span>
+                <span class="nav-badge" id="postsBadgeSidebar" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
             </button>
             <button class="sidebar-nav-item nav-tab" data-section="courses" onclick="showSection('courses')">
                 <i class="fas fa-play-circle"></i>
@@ -3059,26 +3076,26 @@
                 <div style="display: flex; align-items: center; gap: 14px;">
                     <i class="fas fa-graduation-cap" style="font-size: 1.8rem; color: #fde047; flex-shrink: 0;"></i>
                     <div>
-                        <h4 style="margin: 0; font-weight: 800; font-size: 1.05rem; color: #ffffff;">ابدأ في إنشاء الدروس الخاصة بك وشاركها مع طلابك للانضمام إلى الدرس</h4>
-                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.92;">قم بإنشاء حصصك ودروسك المباشرة، وشارك الرابط مع طلابك ليتمكنوا من الانضمام والاستفادة فوراً.</p>
+                        <h4 style="margin: 0; font-weight: 800; font-size: 1.05rem; color: #ffffff;">ابدأ في إنشاء الغرف والدروس الخاصة بك وشاركها مع طلابك للانضمام</h4>
+                        <p style="margin: 4px 0 0 0; font-size: 0.85rem; opacity: 0.92;">قم بإنشاء غرفك وحصصك المباشرة، وشارك الرابط مع طلابك ليتمكنوا من الانضمام والاستفادة فوراً.</p>
                     </div>
                 </div>
                 <button class="btn-primary" onclick="showCreateOfferModal()" style="background: #ffffff; color: #1e40af; border: none; font-weight: 800; white-space: nowrap; padding: 10px 18px; border-radius: 20px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-shrink: 0;">
-                    <i class="fas fa-video"></i> إنشاء درس ZoomDZ
+                    <i class="fas fa-video"></i> إنشاء غرفة ZoomDZ
                 </button>
             </div>
             <div id="teachingLevelBanner" class="teaching-level-banner" style="display: none;">
                 <div class="banner-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="banner-content">
                     <h4>⚠️ قم بإدخال المستوى الدراسي للطلبة</h4>
-                    <p>لا يمكنك إضافة دروس جديدة حتى تقوم بتحديد المستوى الدراسي الذي تدرسه في ملفك الشخصي.</p>
+                    <p>لا يمكنك إضافة غرف أو دروس جديدة حتى تقوم بتحديد المستوى الدراسي الذي تدرسه في ملفك الشخصي.</p>
                 </div>
                 <button class="banner-btn" onclick="showEditProfileModal()">
                     <i class="fas fa-edit"></i> تعديل الملف الشخصي
                 </button>
             </div>
             <div class="section-actions">
-                <button class="btn-primary" onclick="showCreateOfferModal()"><i class="fas fa-video"></i> إنشاء درس ZoomDZ</button>
+                <button class="btn-primary" onclick="showCreateOfferModal()"><i class="fas fa-video"></i> إنشاء غرفة ZoomDZ</button>
                 <button class="btn-danger" onclick="deleteExpiredOffers()"><i class="fas fa-trash"></i> حذف المنتهية</button>
             </div>
             <div id="offersList" class="offers-grid"></div>
@@ -3349,7 +3366,7 @@
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <button onclick="goToCreateZoomLesson()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
-                        <i class="fas fa-video"></i> إنشاء درس ZoomDZ
+                        <i class="fas fa-video"></i> إنشاء غرفة ZoomDZ
                     </button>
                     <button onclick="loadColleagueLessons(true)" style="background: #f1f5f9; color: var(--primary); border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                         <i class="fas fa-sync-alt"></i> تحديث
@@ -4103,7 +4120,7 @@
 <!-- CREATE OFFER MODAL -->
 <div id="createOfferModal" class="modal" style="display: none;">
     <div class="modal-header">
-        <h3><i class="fas fa-video"></i> إنشاء درس ZoomDZ</h3>
+        <h3><i class="fas fa-video"></i> إنشاء غرفة ZoomDZ</h3>
         <button class="close-modal" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -7344,10 +7361,10 @@ function updateUI() {
             container.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: white; border-radius: 16px; border: 2px dashed #cbd5e1; margin: 10px 0;">
                     <i class="fas fa-chalkboard-teacher" style="font-size: 3.2rem; color: var(--primary); margin-bottom: 14px;"></i>
-                    <h3 style="font-weight: 800; font-size: 1.15rem; color: #1e293b; margin-bottom: 8px;">ابدأ في إنشاء الدروس الخاصة بك وشاركها مع طلابك للانضمام إلى الدرس</h3>
-                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 18px;">لم تقم بإنشاء أي درس بعد. اضغط على الزر أدناه لإضافة أول درس لطلابك.</p>
+                    <h3 style="font-weight: 800; font-size: 1.15rem; color: #1e293b; margin-bottom: 8px;">ابدأ في إنشاء الغرف الخاصة بك وشاركها مع طلابك للانضمام</h3>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 18px;">لم تقم بإنشاء أي غرفة فيديو بعد. اضغط على الزر أدناه لإضافة أول غرفة لطلابك.</p>
                     <button class="btn-primary" onclick="showCreateOfferModal()" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 25px; font-weight: 800; font-size: 0.95rem; margin: 0 auto;">
-                        <i class="fas fa-video"></i> إنشاء درس ZoomDZ
+                        <i class="fas fa-video"></i> إنشاء غرفة ZoomDZ
                     </button>
                 </div>`;
             return;
@@ -11210,27 +11227,23 @@ function updateUI() {
         <i class="fas fa-video"></i>
         <span>غرف الفيديو</span>
     </button>
-    <button class="mobile-bottom-item" data-section="posts" onclick="showSection('posts')">
-        <i class="fas fa-bullhorn"></i>
-        <span>المنشورات</span>
-        <span id="mobilePostsBadge" style="display: none; position: absolute; top: 4px; right: 18px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">0</span>
+    <button class="mobile-bottom-item" data-section="all-lessons" onclick="showSection('all-lessons')">
+        <i class="fas fa-graduation-cap"></i>
+        <span>دروس لايف</span>
     </button>
     <button class="mobile-bottom-item" data-section="exercises" onclick="showSection('exercises')">
         <i class="fas fa-clipboard-list"></i>
         <span>التمارين</span>
     </button>
-    <button class="mobile-bottom-item" data-section="all-lessons" onclick="showSection('all-lessons')">
-        <i class="fas fa-graduation-cap"></i>
-        <span>دروس لايف</span>
+    <button class="mobile-bottom-item" data-section="groups" onclick="showSection('groups')">
+        <i class="fas fa-users-rectangle"></i>
+        <span>المجموعات</span>
+        <span class="nav-badge" id="mobileGroupsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.65rem; font-weight:800; position:absolute; top:4px; right:12px;">0</span>
     </button>
-    <button class="mobile-bottom-item" data-section="courses" onclick="showSection('courses')">
-        <i class="fas fa-play-circle"></i>
-        <span>دوراتي</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="messages" onclick="showSection('messages')" style="position:relative;">
-        <i class="fas fa-envelope"></i>
-        <span>الرسائل</span>
-        <span class="nav-badge" id="mobileMessagesBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; position:absolute; top:4px; right:12px;">0</span>
+    <button class="mobile-bottom-item" data-section="posts" onclick="showSection('posts')">
+        <i class="fas fa-bullhorn"></i>
+        <span>المنشورات</span>
+        <span id="mobilePostsBadge" style="display: none; position: absolute; top: 4px; right: 18px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">0</span>
     </button>
     <button class="mobile-bottom-item" onclick="toggleMobileDrawer()">
         <i class="fas fa-bars"></i>
@@ -11268,10 +11281,10 @@ function updateUI() {
             <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
         </div>
 
-        <div class="mobile-drawer-menu-item" onclick="showSection('all-lessons'); closeMobileDrawer();">
+        <div class="mobile-drawer-menu-item" onclick="showSection('courses'); closeMobileDrawer();">
             <div class="item-content">
-                <i class="fas fa-graduation-cap" style="color:var(--primary);"></i>
-                <span>دروس الزملاء الأساتذة</span>
+                <i class="fas fa-play-circle" style="color:var(--primary);"></i>
+                <span>دوراتي التعليمية</span>
             </div>
             <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
         </div>
@@ -11280,15 +11293,6 @@ function updateUI() {
             <div class="item-content">
                 <i class="fas fa-history" style="color:var(--primary);"></i>
                 <span>المعاملات والعمليات المالية</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showSection('groups'); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-users-rectangle" style="color:var(--primary);"></i>
-                <span>المجموعات والطلاب</span>
-                <span class="nav-badge" id="mobileGroupsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
             </div>
             <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
         </div>
@@ -11328,7 +11332,7 @@ function updateUI() {
         <div class="mobile-drawer-menu-item" onclick="showSection('profile'); closeMobileDrawer();">
             <div class="item-content">
                 <i class="fas fa-user" style="color:var(--primary);"></i>
-                <span>درس الملف الشخصي</span>
+                <span>الملف الشخصي والحساب</span>
             </div>
             <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
         </div>
@@ -11357,14 +11361,14 @@ function updateUI() {
             <i class="fas fa-external-link-alt" style="font-size:0.8rem; opacity:0.5;"></i>
         </div>
 
-        <div style="height:1px; background:var(--gray-200); margin:6px 0;"></div>
+        <div style="height:1px; background:rgba(255,255,255,0.08); margin:6px 0;"></div>
 
-        <div class="mobile-drawer-menu-item" onclick="logout()" style="color:var(--danger); background:#fef2f2; border-color:#fee2e2;">
+        <div class="mobile-drawer-menu-item" onclick="logout()" style="color:#f87171; background:rgba(239, 68, 68, 0.1); border-color:rgba(239, 68, 68, 0.2);">
             <div class="item-content">
-                <i class="fas fa-sign-out-alt" style="color:var(--danger);"></i>
-                <span>تسجيل الخروج</span>
+                <i class="fas fa-sign-out-alt" style="color:#ef4444;"></i>
+                <span style="color:#f87171;">تسجيل الخروج</span>
             </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5; color:#f87171;"></i>
         </div>
     </div>
 </div>
