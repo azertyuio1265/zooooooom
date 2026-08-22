@@ -2708,7 +2708,7 @@
                 </button>
                 <button class="nav-tab" data-section="offers" onclick="showSection('offers')">
                     <i class="fas fa-calendar-alt"></i>
-                    <span class="tab-label">دروس لايف</span>
+                    <span class="tab-label">غرف لايف</span>
                 </button>
                 <button class="nav-tab" data-section="teachers" onclick="showSection('teachers')">
                     <i class="fas fa-chalkboard-user"></i>
@@ -2851,7 +2851,7 @@
             </button>
             <button class="sidebar-nav-item nav-tab" data-section="offers" onclick="showSection('offers')">
                 <i class="fas fa-calendar-alt"></i>
-                <span class="tab-label">دروس لايف</span>
+                <span class="tab-label">غرف لايف</span>
             </button>
             <button class="sidebar-nav-item nav-tab" data-section="teachers" onclick="showSection('teachers')">
                 <i class="fas fa-chalkboard-user"></i>
@@ -2897,7 +2897,7 @@
     <div class="content-area">
         <!-- OFFERS SECTION -->
         <div id="offersSection" style="display: none;">
-            <div class="section-title"><i class="fas fa-calendar-alt"></i> دروس لايف المباشرة والمقبلة</div>
+            <div class="section-title"><i class="fas fa-calendar-alt"></i> غرف لايف المباشرة والمقبلة</div>
             <div id="offersList" class="offers-grid"></div>
         </div>
 
@@ -3588,7 +3588,7 @@
     </button>
     <button class="mobile-bottom-item" data-section="offers" onclick="showSection('offers')">
         <i class="fas fa-calendar-alt"></i>
-        <span>دروس لايف</span>
+        <span>غرف لايف</span>
     </button>
     <button class="mobile-bottom-item" onclick="toggleMobileDrawer()">
         <i class="fas fa-bars"></i>
@@ -9138,138 +9138,6 @@
         صورة 1 من 1
     </div>
 </div>
-
-<!-- ===== MOBILE BOTTOM NAV ===== -->
-<div class="mobile-bottom-nav">
-    <button class="mobile-bottom-item active" data-section="groups" onclick="showSection('groups')">
-        <i class="fas fa-users-rectangle"></i>
-        <span>غرف الدردشة</span>
-        <span id="mobileGroupsBadge" style="display: none; position: absolute; top: 4px; right: 18px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">0</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="posts" onclick="showSection('posts')">
-        <i class="fas fa-newspaper"></i>
-        <span>المنشورات</span>
-        <span id="mobilePostsBadge" style="display: none; position: absolute; top: 4px; right: 18px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">0</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="exercises" onclick="showSection('exercises')">
-        <i class="fas fa-clipboard-list"></i>
-        <span>التمارين</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="offers" onclick="showSection('offers')">
-        <i class="fas fa-calendar-alt"></i>
-        <span>دروس لايف</span>
-    </button>
-    <button class="mobile-bottom-item" data-section="teachers" onclick="showSection('teachers')">
-        <i class="fas fa-chalkboard-user"></i>
-        <span>الأساتذة</span>
-    </button>
-    <button class="mobile-bottom-item" onclick="toggleMobileDrawer()">
-        <i class="fas fa-bars"></i>
-        <span>المزيد</span>
-    </button>
-</div>
-
-<!-- ===== MOBILE DRAWER OVERLAY & SHEET ===== -->
-<div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawer()"></div>
-<div class="mobile-drawer" id="mobileDrawer">
-    <div class="mobile-drawer-header">
-        <div class="mobile-drawer-title">
-            <i class="fas fa-graduation-cap" style="color:var(--primary);"></i>
-            <span>القائمة والتبويبات</span>
-        </div>
-        <button class="mobile-drawer-close" onclick="closeMobileDrawer()">&times;</button>
-    </div>
-    <div class="mobile-drawer-body">
-        <div class="mobile-drawer-user">
-            <img id="drawerAvatar" class="mobile-drawer-avatar" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
-            <div style="flex:1;">
-                <div id="drawerName" style="font-weight:800; font-size:1rem;">طالب</div>
-                <div id="drawerEmail" style="font-size:0.75rem; opacity:0.85;">...</div>
-                <div style="margin-top:4px; font-size:0.8rem; font-weight:700; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:12px; display:inline-block;" id="drawerBalance">0 دج</div>
-            </div>
-            <button onclick="showDepositModal(); closeMobileDrawer();" style="background:white; color:var(--primary); border:none; padding:6px 14px; border-radius:20px; font-weight:800; font-size:0.75rem; cursor:pointer;">
-                <i class="fas fa-plus"></i> شحن
-            </button>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showSection('transactions'); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-history" style="color:var(--primary);"></i>
-                <span>سجل المعاملات والشحن</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showSection('groups'); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-users" style="color:var(--primary);"></i>
-                <span>المجموعات التعليمية</span>
-                <span class="nav-badge" id="mobileGroupsBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showSection('referral'); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-gift" style="color:var(--gold-dark);"></i>
-                <span>نظام الإحالة والمكافآت</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showSection('messages'); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-envelope" style="color:var(--primary);"></i>
-                <span>الرسائل والدردشة</span>
-                <span class="nav-badge" id="mobileMessagesBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:auto;">0</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="toggleNotifications(); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-bell" style="color:var(--accent);"></i>
-                <span>الإشعارات</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="showEditProfileModal(); closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-user-edit" style="color:var(--secondary);"></i>
-                <span>تعديل الملف الشخصي والمستوى</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="window.location.href='/download-app'; closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fas fa-mobile-alt" style="color:#0284c7;"></i>
-                <span>تثبيت تطبيق ZoomDz (PWA)</span>
-            </div>
-            <i class="fas fa-external-link-alt" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div class="mobile-drawer-menu-item" onclick="window.location.href='https://t.me/zoomdz1'; closeMobileDrawer();">
-            <div class="item-content">
-                <i class="fab fa-telegram" style="color:#0088cc;"></i>
-                <span>قناة التلجرام للدعم</span>
-            </div>
-            <i class="fas fa-external-link-alt" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-
-        <div style="height:1px; background:var(--gray-200); margin:6px 0;"></div>
-
-        <div class="mobile-drawer-menu-item" onclick="logout()" style="color:var(--danger); background:#fef2f2; border-color:#fee2e2;">
-            <div class="item-content">
-                <i class="fas fa-sign-out-alt" style="color:var(--danger);"></i>
-                <span>تسجيل الخروج</span>
-            </div>
-            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
-        </div>
-    </div>
-</div>
-
 
 <!-- Camera Modal -->
 <div id="modalCameraContainer" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.9); padding:20px; text-align:center;">
