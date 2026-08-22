@@ -7283,7 +7283,7 @@ function updateUI() {
             const isOwnOffer = userData && offer.teacher_id === userData.id;
             const levelLabel = levelMap[offer.education_level] || offer.education_level || 'عام';
             const priceText = (offer.is_free || parseFloat(offer.price || 0) === 0) ? 'مجاني' : `${offer.price} دج`;
-            const formattedDate = offer.offer_date ? new Date(offer.offer_date).toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'تاريخ غير محدد';
+            const formattedDate = offer.offer_date ? new Date(offer.offer_date).toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Africa/Algiers' }) : 'تاريخ غير محدد';
             
             const isLive = offer.status === 'live' || offer.stream_url;
 

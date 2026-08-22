@@ -4947,8 +4947,8 @@
                             </div>
                         </div>
                         <div class="offer-title">${escapeHtml(offer.subject_name)}</div>
-                        <div class="offer-info"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleDateString('ar')}</div>
-                        <div class="offer-info"><i class="fas fa-clock"></i> ${offerDate.toLocaleTimeString('ar', {hour: '2-digit', minute:'2-digit'})} | ${offer.duration} دقيقة</div>
+                        <div class="offer-info"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleDateString('ar-DZ', {timeZone: 'Africa/Algiers'})}</div>
+                        <div class="offer-info"><i class="fas fa-clock"></i> ${offerDate.toLocaleTimeString('ar-DZ', {hour: '2-digit', minute:'2-digit', hour12: false, timeZone: 'Africa/Algiers'})} | ${offer.duration} دقيقة</div>
                         ${levelDisplay}
                         ${!isFree && currentBalance < offerTotalCost && statusInfo.code !== 'ended' ? `<div class="insufficient-balance"><i class="fas fa-exclamation-triangle"></i> رصيدك: ${currentBalance} دج (المطلوب: ${offerTotalCost} دج)</div>` : ''}
                     </div>
@@ -5848,7 +5848,7 @@
                             <div style="font-size: 0.82rem; font-weight: 800; color: var(--gray-900); margin-top:2px;">${escapeHtml(booking.subject_name || '')}</div>
                         </div>
                     </div>
-                    <div style="font-size: 0.85rem; margin: 6px 0; color: var(--gray-700);"><i class="fas fa-calendar-alt" style="color:var(--gray-400); margin-left: 8px;"></i> ${offerDate ? offerDate.toLocaleString('ar') : 'غير محدد'}</div>
+                    <div style="font-size: 0.85rem; margin: 6px 0; color: var(--gray-700);"><i class="fas fa-calendar-alt" style="color:var(--gray-400); margin-left: 8px;"></i> ${offerDate ? offerDate.toLocaleString('ar-DZ', {timeZone: 'Africa/Algiers', hour12: false}) : 'غير محدد'}</div>
                     <div style="font-size: 0.85rem; margin: 6px 0; color: var(--gray-700);"><i class="fas fa-clock" style="color:var(--gray-400); margin-left: 8px;"></i> ${booking.duration || '0'} دقيقة</div>
                     ${canJoin ? `<button class="join-stream-btn" style="margin-top: 12px; width: 100%;" onclick="joinLiveStream('${booking.offer_id}')"><i class="fas fa-video"></i> انضم للبث المباشر الان</button>` : ''}
                     ${!canJoin && isLive ? '<div style="color:var(--danger); font-size:0.75rem; margin-top:8px; font-weight:700;">🔴 البث مباشر الآن! انتظر فتح الغرفة من الأستاذ...</div>' : ''}

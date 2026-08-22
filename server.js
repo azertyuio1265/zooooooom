@@ -2095,10 +2095,11 @@ function generateTeacherZoomPage(offer, teacher, token) {
 <body>
     <div class="agora-container">
         <div class="header-bar">
-            <div class="header-title">
+            <div class="header-title" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <i class="fas fa-video"></i>
                 <span>بث الأستاذ: ${escapeHtml(subjectName)}</span>
                 <span class="badge">مباشر HD</span>
+                <span style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);"><i class="fas fa-graduation-cap"></i> نظام إلقاء المحاضرات للمدارس والجامعات</span>
             </div>
             <div id="streamTimerContainer" style="display: flex; align-items: center; gap: 8px; background: #1f2937; padding: 4px 14px; border-radius: 20px; border: 1px solid #374151;">
                 <div id="timerRemainingLabel" style="font-size: 12px; color: #9ca3af;"><i class="fas fa-stopwatch"></i> الوقت المتبقي:</div>
@@ -2135,6 +2136,50 @@ function generateTeacherZoomPage(offer, teacher, token) {
                 <div id="mediaContainer">
                     <div id="localVideo"></div>
                 </div>
+
+                <!-- السبورة الذكية الشارحة تفاعلياً -->
+                <div id="whiteboardContainer" style="display: none; position: absolute; inset: 10px; background: #ffffff; border-radius: 12px; z-index: 50; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <!-- شريط أدوات السبورة -->
+                    <div style="background: #e2e8f0; padding: 10px 16px; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; color: #0f172a;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 800; font-size: 0.9rem; color: #1e3a8a;"><i class="fas fa-chalkboard"></i> السبورة الذكية الشارحة (تفاعلي)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <button onclick="setWhiteboardTool('pen')" id="wbToolPen" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
+                                <i class="fas fa-pencil-alt"></i> القلم
+                            </button>
+                            <button onclick="setWhiteboardTool('eraser')" id="wbToolEraser" style="background: #ffffff; color: #334155; border: 1px solid #94a3b8; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
+                                <i class="fas fa-eraser"></i> الممحاة
+                            </button>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="font-size: 11px; font-weight: 800;">اللون:</span>
+                                <input type="color" id="wbColor" value="#000000" onchange="setWhiteboardColor(this.value)" style="width: 28px; height: 28px; border: 1px solid #94a3b8; border-radius: 4px; cursor: pointer; padding: 0; background: transparent;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="font-size: 11px; font-weight: 800;">السمك:</span>
+                                <select id="wbBrushSize" onchange="setWhiteboardBrushSize(this.value)" style="padding: 4px 6px; border-radius: 6px; border: 1px solid #94a3b8; font-family: Cairo; font-size: 12px; font-weight: bold;">
+                                    <option value="2">رفيع (2px)</option>
+                                    <option value="5" selected>متوسط (5px)</option>
+                                    <option value="10">سميك (10px)</option>
+                                    <option value="20">عريض (20px)</option>
+                                </select>
+                            </div>
+                            <button onclick="clearWhiteboard()" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; font-family: Cairo;">
+                                <i class="fas fa-trash-alt"></i> مسح السبورة
+                            </button>
+                        </div>
+                        <div>
+                            <button onclick="toggleWhiteboard()" style="background: #475569; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; font-family: Cairo;">
+                                إغلاق <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- مساحة الرسم -->
+                    <div style="flex: 1; background: #ffffff; position: relative;">
+                        <canvas id="whiteboardCanvas" style="width: 100%; height: 100%; display: block; cursor: crosshair; background: #ffffff;"></canvas>
+                    </div>
+                </div>
+
             </div>
             <div class="chat-sidebar">
                 <div class="chat-header">
@@ -2165,8 +2210,13 @@ function generateTeacherZoomPage(offer, teacher, token) {
             <button class="ctrl-btn" id="theaterBtn" onclick="toggleTheaterMode()" title="وضع المسرح (توسيع الشاشة بالكامل)">
                 <i class="fas fa-expand"></i>
             </button>
-            <button class="ctrl-btn" id="shareBtn" onclick="toggleShare()" title="مشاركة الشاشة">
+            <button class="ctrl-btn" id="shareBtn" onclick="toggleShare()" title="مشاركة الشاشة لعرض الدروس والمستندات">
                 <i class="fas fa-desktop"></i>
+            </button>
+            
+            <!-- زر السبورة الذكية -->
+            <button class="ctrl-btn" id="wbBtn" onclick="toggleWhiteboard()" title="السبورة الذكية التفاعلية للشرح التفاعلي" style="background: #10b981; border-color: #059669; color: white;">
+                <i class="fas fa-chalkboard"></i>
             </button>
             
             <!-- زر التحكم بجودة البث -->
@@ -2673,6 +2723,158 @@ function generateTeacherZoomPage(offer, teacher, token) {
                     updateBtnState('shareBtn', false);
                 }
             } catch(e) { console.error('Share screen error:', e); }
+        }
+
+        // ==========================================
+        // 🎨 ميزات السبورة الذكية التفاعلية للأستاذ
+        // ==========================================
+        let isWhiteboardActive = false;
+        let whiteboardCanvas = null;
+        let whiteboardCtx = null;
+        let isDrawing = false;
+        let currentWbTool = 'pen'; // 'pen' or 'eraser'
+        let currentWbColor = '#000000';
+        let currentWbBrushSize = 5;
+        let originalVideoTrack = null;
+        let canvasVideoTrack = null;
+
+        function initWhiteboard() {
+            whiteboardCanvas = document.getElementById('whiteboardCanvas');
+            if (!whiteboardCanvas) return;
+            whiteboardCtx = whiteboardCanvas.getContext('2d');
+            
+            function resizeCanvas() {
+                const rect = whiteboardCanvas.getBoundingClientRect();
+                whiteboardCanvas.width = rect.width || 800;
+                whiteboardCanvas.height = rect.height || 600;
+                
+                // ملء الخلفية باللون الأبيض لتبدو كسبورة حقيقية
+                whiteboardCtx.fillStyle = '#ffffff';
+                whiteboardCtx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                whiteboardCtx.lineCap = 'round';
+                whiteboardCtx.lineJoin = 'round';
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            function getCoords(e) {
+                const rect = whiteboardCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: (clientX - rect.left) * (whiteboardCanvas.width / rect.width),
+                    y: (clientY - rect.top) * (whiteboardCanvas.height / rect.height)
+                };
+            }
+
+            function startDraw(e) {
+                isDrawing = true;
+                const coords = getCoords(e);
+                whiteboardCtx.beginPath();
+                whiteboardCtx.moveTo(coords.x, coords.y);
+                e.preventDefault();
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                const coords = getCoords(e);
+                whiteboardCtx.lineWidth = currentWbBrushSize;
+                whiteboardCtx.strokeStyle = (currentWbTool === 'eraser') ? '#ffffff' : currentWbColor;
+                whiteboardCtx.lineTo(coords.x, coords.y);
+                whiteboardCtx.stroke();
+                e.preventDefault();
+            }
+
+            function stopDraw() {
+                isDrawing = false;
+            }
+
+            // دعم الرسم بالفأرة (الكمبيوتر)
+            whiteboardCanvas.addEventListener('mousedown', startDraw);
+            whiteboardCanvas.addEventListener('mousemove', draw);
+            whiteboardCanvas.addEventListener('mouseup', stopDraw);
+            whiteboardCanvas.addEventListener('mouseleave', stopDraw);
+
+            // دعم الرسم باللمس (التابلت والهواتف الذكية)
+            whiteboardCanvas.addEventListener('touchstart', startDraw, { passive: false });
+            whiteboardCanvas.addEventListener('touchmove', draw, { passive: false });
+            whiteboardCanvas.addEventListener('touchend', stopDraw);
+        }
+
+        async function toggleWhiteboard() {
+            const container = document.getElementById('whiteboardContainer');
+            const wbBtn = document.getElementById('wbBtn');
+            if (!whiteboardCanvas) {
+                initWhiteboard();
+            }
+
+            if (!isWhiteboardActive) {
+                container.style.display = 'flex';
+                isWhiteboardActive = true;
+                if (wbBtn) wbBtn.classList.remove('active'); // active means red in css of controls-bar, we want active to look different or we can set direct color
+                wbBtn.style.background = '#e11d48'; // تغيير لون زر السبورة للوردي/الأحمر للتنبيه
+                
+                // إرسال شاشة السبورة الذكية كبث للطلاب
+                try {
+                    const canvasStream = whiteboardCanvas.captureStream(15); // 15 إطار في الثانية
+                    const track = canvasStream.getVideoTracks()[0];
+                    if (track && client) {
+                        originalVideoTrack = localVideoTrack;
+                        canvasVideoTrack = AgoraRTC.createCustomVideoTrack({ mediaStreamTrack: track });
+                        
+                        await client.unpublish(localVideoTrack);
+                        await client.publish(canvasVideoTrack);
+                        console.log('✅ تم نشر بث السبورة الذكية للطلاب بنجاح!');
+                    }
+                } catch(err) {
+                    console.error('Error sharing whiteboard:', err);
+                }
+            } else {
+                container.style.display = 'none';
+                isWhiteboardActive = false;
+                wbBtn.style.background = '#10b981'; // إعادة اللون الأخضر للزر
+                
+                // العودة لبث الكاميرا العادية للطلاب
+                try {
+                    if (canvasVideoTrack && client) {
+                        await client.unpublish(canvasVideoTrack);
+                        canvasVideoTrack.close();
+                        canvasVideoTrack = null;
+                        
+                        if (originalVideoTrack && isCamOn) {
+                            await client.publish(originalVideoTrack);
+                            originalVideoTrack.play('localVideo');
+                        }
+                    }
+                } catch(err) {
+                    console.error('Error returning to camera stream:', err);
+                }
+            }
+        }
+
+        function setWhiteboardTool(tool) {
+            currentWbTool = tool;
+            document.getElementById('wbToolPen').style.background = (tool === 'pen') ? '#2563eb' : '#ffffff';
+            document.getElementById('wbToolPen').style.color = (tool === 'pen') ? '#ffffff' : '#334155';
+            document.getElementById('wbToolEraser').style.background = (tool === 'eraser') ? '#2563eb' : '#ffffff';
+            document.getElementById('wbToolEraser').style.color = (tool === 'eraser') ? '#ffffff' : '#334155';
+        }
+
+        function setWhiteboardColor(color) {
+            currentWbColor = color;
+            setWhiteboardTool('pen');
+        }
+
+        function setWhiteboardBrushSize(size) {
+            currentWbBrushSize = parseInt(size, 10);
+        }
+
+        function clearWhiteboard() {
+            if (confirm('هل أنت متأكد من مسح جميع الرسومات والشروحات الحالية على السبورة الذكية؟')) {
+                whiteboardCtx.fillStyle = '#ffffff';
+                whiteboardCtx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+            }
         }
 
         function updateBtnState(id, active) {

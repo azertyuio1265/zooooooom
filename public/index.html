@@ -7218,7 +7218,7 @@
                                     return `
                                         <div class="profile-offer-item">
                                             <div class="subject">${escapeHtml(o.subject_name)}</div>
-                                            <div class="details"><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${offerDate.toLocaleString('ar')}</div>
+                                            <div class="details"><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${offerDate.toLocaleString('ar-DZ', {timeZone: 'Africa/Algiers', hour12: false})}</div>
                                             <div class="details"><i class="fas fa-clock" aria-hidden="true"></i> ${o.duration} دقيقة</div>
                                             ${o.is_free ? '<span class="free-tag-small"><i class="fas fa-gift" aria-hidden="true"></i> مجانية</span>' : '<span class="price-tag-small"><i class="fas fa-money-bill" aria-hidden="true"></i> ' + o.price + ' دج</span>'}
                                         </div>

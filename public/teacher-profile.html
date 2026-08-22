@@ -3677,7 +3677,7 @@
                             '</div>' +
                         '</div>' +
                         '<div class="offer-subject">' + escapeHtml(o.subject_name) + '</div>' +
-                        '<div class="offer-details"><i class="fas fa-calendar-alt"></i> ' + offerDate.toLocaleString('ar') + '</div>' +
+                        '<div class="offer-details"><i class="fas fa-calendar-alt"></i> ' + offerDate.toLocaleString('ar-DZ', {timeZone: 'Africa/Algiers', hour12: false}) + '</div>' +
                         '<div class="offer-details"><i class="fas fa-clock"></i> ' + o.duration + ' دقيقة</div>' +
                         '<div>' +
                             (o.is_free ? '<span class="free-tag"><i class="fas fa-gift"></i> مجانية</span>' : '<span class="price-tag"><i class="fas fa-money-bill"></i> ' + o.price + ' دج</span>') +
@@ -3835,7 +3835,7 @@
                                     return `
                                         <div class="profile-offer-item">
                                             <div class="subject">${escapeHtml(o.subject_name)}</div>
-                                            <div class="details"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleString('ar')}</div>
+                                            <div class="details"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleString('ar-DZ', {timeZone: 'Africa/Algiers', hour12: false})}</div>
                                             <div class="details"><i class="fas fa-clock"></i> ${o.duration} دقيقة</div>
                                             ${o.is_free ? '<span class="free-tag-small"><i class="fas fa-gift"></i> مجانية</span>' : '<span class="price-tag-small"><i class="fas fa-money-bill"></i> ' + o.price + ' دج</span>'}
                                         </div>
