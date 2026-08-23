@@ -1753,7 +1753,7 @@
             position: relative;
             display: flex;
             align-items: center;
-            margin: 0 4px;
+            margin: 0 6px;
         }
         .nav-search-box {
             position: relative;
@@ -1762,7 +1762,7 @@
             background: #f1f5f9;
             border: 1.5px solid #cbd5e1;
             border-radius: 24px;
-            padding: 2px 10px 2px 30px;
+            padding: 2px 10px 2px 32px;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             width: 210px;
         }
@@ -1770,7 +1770,7 @@
             background: #ffffff;
             border-color: var(--primary, #0f5cbf);
             box-shadow: 0 0 0 3.5px rgba(15, 92, 191, 0.15);
-            width: 250px;
+            width: 260px;
         }
         .nav-search-box input {
             border: none;
@@ -1819,13 +1819,14 @@
         .nav-search-dropdown {
             position: absolute;
             top: calc(100% + 8px);
-            left: 0;
+            right: 0;
+            left: auto;
             width: 380px;
             max-width: 92vw;
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.04);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
             z-index: 3000;
             overflow: hidden;
             animation: fadeInSearchDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1872,10 +1873,10 @@
             overscroll-behavior: contain;
         }
         .nav-search-placeholder {
-            padding: 24px 16px;
+            padding: 28px 16px;
             text-align: center;
             color: #64748b;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -2009,31 +2010,196 @@
             opacity: 0.9;
             transform: translateY(-1px);
         }
+
+        /* زر البحث المخصص للجوال في الشريط العلوي */
+        .nav-mobile-search-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: 1.5px solid #e2e8f0;
+            color: #334155;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin: 0 2px;
+        }
+        .nav-mobile-search-btn:active {
+            transform: scale(0.92);
+            background: #e2e8f0;
+            color: var(--primary, #0f5cbf);
+        }
+
+        /* نافذة البحث المخصصة للجوال (Mobile Search Modal / Sheet) */
+        .mobile-search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.68);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            animation: fadeInSearchOverlay 0.2s ease-out;
+        }
+        @keyframes fadeInSearchOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .mobile-search-sheet {
+            background: #ffffff;
+            width: 100%;
+            max-height: 88vh;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideDownSearchSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideDownSearchSheet {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .mobile-search-sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .mobile-search-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #0f172a;
+        }
+        .mobile-search-title i {
+            color: var(--primary, #0f5cbf);
+            font-size: 1.05rem;
+        }
+        .mobile-search-close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: none;
+            color: #64748b;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mobile-search-close-btn:active {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        .mobile-search-input-wrapper {
+            position: relative;
+            padding: 10px 16px 6px;
+            display: flex;
+            align-items: center;
+        }
+        .mobile-search-input-wrapper input {
+            width: 100%;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 10px 14px 10px 38px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.92rem;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .mobile-search-input-wrapper input:focus {
+            background: #ffffff;
+            border-color: var(--primary, #0f5cbf);
+            box-shadow: 0 0 0 3px rgba(15, 92, 191, 0.15);
+        }
+        .mobile-search-input-wrapper .mobile-input-icon {
+            position: absolute;
+            left: 28px;
+            color: #94a3b8;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .mobile-search-clear-btn {
+            position: absolute;
+            left: 26px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mobile-search-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .mobile-filter-btn {
+            border: none;
+            background: #f1f5f9;
+            color: #475569;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .mobile-filter-btn.active {
+            background: var(--primary, #0f5cbf);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(15, 92, 191, 0.25);
+        }
+        .mobile-search-results-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: calc(88vh - 170px);
+            padding: 4px 8px 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
         @media (max-width: 768px) {
-            .nav-search-box {
-                width: 140px;
-                padding: 2px 6px 2px 24px;
+            .desktop-only-search {
+                display: none !important;
             }
-            .nav-search-box:focus-within {
-                width: 180px;
-            }
-            .nav-search-box input {
-                font-size: 0.75rem;
-            }
-            .nav-search-box input::placeholder {
-                font-size: 0.7rem;
-            }
-            .nav-search-dropdown {
-                width: 320px;
-                max-width: 90vw;
+            .nav-mobile-search-btn {
+                display: inline-flex !important;
             }
         }
-        @media (max-width: 480px) {
-            .nav-search-box {
-                width: 110px;
+        @media (min-width: 769px) {
+            .desktop-only-search {
+                display: flex !important;
             }
-            .nav-search-box:focus-within {
-                width: 145px;
+            .nav-mobile-search-btn {
+                display: none !important;
             }
         }
 
@@ -2978,6 +3144,11 @@
             <span class="notif-badge hidden" id="notifBadge">0</span>
         </button>
 
+        <!-- زر البحث المخصص لشاشات الهواتف في الشريط العلوي -->
+        <button type="button" class="nav-mobile-search-btn" onclick="openMobileSearchModal()" title="بحث عن أستاذ أو طالب" id="mobileSearchTriggerBtn">
+            <i class="fas fa-search"></i>
+        </button>
+
         <div class="nav-tabs-container">
             <button class="nav-scroll-btn" onclick="scrollTabs('right')" style="margin-left: 6px;" title="التمرير لليمين"><i class="fas fa-chevron-right"></i></button>
             <div class="nav-tabs" id="navTabs">
@@ -3033,22 +3204,22 @@
             <button class="nav-scroll-btn" onclick="scrollTabs('left')" style="margin-right: 6px;" title="التمرير لليسار"><i class="fas fa-chevron-left"></i></button>
         </div>
 
-        <!-- محرك البحث في الشريط العلوي (عن أستاذ أو طالب) -->
-        <div class="nav-search-container" id="navSearchContainer">
+        <!-- محرك البحث في الشريط العلوي (عن أستاذ أو طالب) للشاشات الكبيرة -->
+        <div class="nav-search-container desktop-only-search" id="navSearchContainer">
             <div class="nav-search-box" id="navSearchBox">
                 <i class="fas fa-search nav-search-icon"></i>
-                <input type="text" id="navSearchInput" placeholder="بحث عن أستاذ أو طالب..." autocomplete="off" oninput="handleNavUserSearch(this.value)" onfocus="openNavSearchResults()" />
-                <button type="button" id="navSearchClearBtn" class="nav-search-clear" onclick="clearNavUserSearch()" style="display:none;" title="مسح">
+                <input type="text" id="navSearchInput" placeholder="بحث عن أستاذ أو طالب..." autocomplete="off" oninput="handleNavUserSearch(this.value, false)" onfocus="openNavSearchResults()" />
+                <button type="button" id="navSearchClearBtn" class="nav-search-clear" onclick="clearNavUserSearch(false)" style="display:none;" title="مسح">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <!-- قائمة نتائج البحث المنبثقة -->
+            <!-- قائمة نتائج البحث المنبثقة للديسكتوب -->
             <div class="nav-search-dropdown" id="navSearchDropdown" style="display:none;">
                 <div class="nav-search-filter-bar">
-                    <button type="button" class="nav-filter-btn active" data-filter="all" onclick="setNavSearchFilter('all')">الكل</button>
-                    <button type="button" class="nav-filter-btn" data-filter="teacher" onclick="setNavSearchFilter('teacher')"><i class="fas fa-chalkboard-user"></i> أساتذة</button>
-                    <button type="button" class="nav-filter-btn" data-filter="student" onclick="setNavSearchFilter('student')"><i class="fas fa-user-graduate"></i> طلاب</button>
+                    <button type="button" class="nav-filter-btn active" data-filter="all" onclick="setNavSearchFilter('all', false)">الكل</button>
+                    <button type="button" class="nav-filter-btn" data-filter="teacher" onclick="setNavSearchFilter('teacher', false)"><i class="fas fa-chalkboard-user"></i> أساتذة</button>
+                    <button type="button" class="nav-filter-btn" data-filter="student" onclick="setNavSearchFilter('student', false)"><i class="fas fa-user-graduate"></i> طلاب</button>
                 </div>
                 <div class="nav-search-results-list" id="navSearchResultsList">
                     <div class="nav-search-placeholder">
@@ -3117,6 +3288,42 @@
         </div>
     </div>
 </nav>
+
+<!-- ===== نافذة البحث المخصصة للجوال (MOBILE SEARCH MODAL) ===== -->
+<div class="mobile-search-overlay" id="mobileSearchModal" style="display:none;" onclick="if(event.target === this) closeMobileSearchModal();">
+    <div class="mobile-search-sheet">
+        <div class="mobile-search-sheet-header">
+            <div class="mobile-search-title">
+                <i class="fas fa-search"></i>
+                <span>البحث عن أستاذ أو طالب</span>
+            </div>
+            <button type="button" class="mobile-search-close-btn" onclick="closeMobileSearchModal()" aria-label="إغلاق">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mobile-search-input-wrapper">
+            <i class="fas fa-search mobile-input-icon"></i>
+            <input type="text" id="mobileNavSearchInput" placeholder="اكتب اسم الأستاذ أو الطالب..." autocomplete="off" oninput="handleNavUserSearch(this.value, true)" />
+            <button type="button" id="mobileNavSearchClearBtn" class="mobile-search-clear-btn" onclick="clearNavUserSearch(true)" style="display:none;" title="مسح">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+
+        <div class="mobile-search-filter-bar">
+            <button type="button" class="mobile-filter-btn active" data-filter="all" onclick="setNavSearchFilter('all', true)">الكل</button>
+            <button type="button" class="mobile-filter-btn" data-filter="teacher" onclick="setNavSearchFilter('teacher', true)"><i class="fas fa-chalkboard-user"></i> أساتذة</button>
+            <button type="button" class="mobile-filter-btn" data-filter="student" onclick="setNavSearchFilter('student', true)"><i class="fas fa-user-graduate"></i> طلاب</button>
+        </div>
+
+        <div class="mobile-search-results-list" id="mobileNavSearchResultsList">
+            <div class="nav-search-placeholder">
+                <i class="fas fa-search" style="font-size: 1.8rem; color: #94a3b8; margin-bottom: 8px;"></i>
+                <p>اكتب اسم الأستاذ أو الطالب للبحث الفوري...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main-wrapper">
@@ -10627,37 +10834,75 @@
         let currentNavSearchFilter = 'all';
         let lastNavSearchQuery = '';
 
-        function setNavSearchFilter(filter) {
+        function openMobileSearchModal() {
+            const modal = document.getElementById('mobileSearchModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            const input = document.getElementById('mobileNavSearchInput');
+            if (input) {
+                setTimeout(() => {
+                    input.focus();
+                    if (!input.value.trim() && currentNavSearchFilter === 'all') {
+                        performNavUserSearch('', true);
+                    } else if (input.value.trim()) {
+                        performNavUserSearch(input.value, true);
+                    }
+                }, 100);
+            }
+        }
+
+        function closeMobileSearchModal() {
+            const modal = document.getElementById('mobileSearchModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function setNavSearchFilter(filter, isMobile = false) {
             currentNavSearchFilter = filter;
             document.querySelectorAll('#navSearchDropdown .nav-filter-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.filter === filter);
             });
-            const input = document.getElementById('navSearchInput');
+            document.querySelectorAll('#mobileSearchModal .mobile-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            const input = isMobile ? document.getElementById('mobileNavSearchInput') : document.getElementById('navSearchInput');
             if (input) {
-                performNavUserSearch(input.value);
+                performNavUserSearch(input.value, isMobile);
             }
         }
 
-        function handleNavUserSearch(val) {
-            const clearBtn = document.getElementById('navSearchClearBtn');
+        function handleNavUserSearch(val, isMobile = false) {
+            const clearBtn = document.getElementById(isMobile ? 'mobileNavSearchClearBtn' : 'navSearchClearBtn');
             if (clearBtn) {
                 clearBtn.style.display = val && val.trim() ? 'flex' : 'none';
             }
+            if (isMobile) {
+                const desktopInput = document.getElementById('navSearchInput');
+                if (desktopInput) desktopInput.value = val;
+            } else {
+                const mobileInput = document.getElementById('mobileNavSearchInput');
+                if (mobileInput) mobileInput.value = val;
+            }
             clearTimeout(navSearchDebounceTimer);
             navSearchDebounceTimer = setTimeout(() => {
-                performNavUserSearch(val);
-            }, 220);
+                performNavUserSearch(val, isMobile);
+            }, 200);
         }
 
-        function clearNavUserSearch() {
-            const input = document.getElementById('navSearchInput');
+        function clearNavUserSearch(isMobile = false) {
+            const input = document.getElementById(isMobile ? 'mobileNavSearchInput' : 'navSearchInput');
             if (input) {
                 input.value = '';
                 input.focus();
             }
-            const clearBtn = document.getElementById('navSearchClearBtn');
-            if (clearBtn) clearBtn.style.display = 'none';
-            performNavUserSearch('');
+            const clearBtn1 = document.getElementById('navSearchClearBtn');
+            if (clearBtn1) clearBtn1.style.display = 'none';
+            const clearBtn2 = document.getElementById('mobileNavSearchClearBtn');
+            if (clearBtn2) clearBtn2.style.display = 'none';
+            performNavUserSearch('', isMobile);
         }
 
         function openNavSearchResults() {
@@ -10666,7 +10911,7 @@
                 dropdown.style.display = 'block';
                 const input = document.getElementById('navSearchInput');
                 if (input && (!dropdown.dataset.loaded || input.value.trim())) {
-                    performNavUserSearch(input.value);
+                    performNavUserSearch(input.value, false);
                     dropdown.dataset.loaded = '1';
                 }
             }
@@ -10684,31 +10929,45 @@
             }
         });
 
-        async function performNavUserSearch(query) {
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeNavSearchResults();
+                closeMobileSearchModal();
+            }
+        });
+
+        async function performNavUserSearch(query, isMobile = false) {
             const trimmed = (query || '').trim();
             lastNavSearchQuery = trimmed;
-            const listEl = document.getElementById('navSearchResultsList');
+            const desktopList = document.getElementById('navSearchResultsList');
+            const mobileList = document.getElementById('mobileNavSearchResultsList');
             const dropdown = document.getElementById('navSearchDropdown');
-            if (!listEl || !dropdown) return;
 
-            dropdown.style.display = 'block';
+            if (!isMobile && dropdown) {
+                dropdown.style.display = 'block';
+            }
+
+            const placeholderEmpty = `
+                <div class="nav-search-placeholder">
+                    <i class="fas fa-search" style="font-size: ${isMobile ? '1.8rem' : '1.5rem'}; color: #94a3b8; margin-bottom: 6px;"></i>
+                    <p>اكتب اسم الأستاذ أو الطالب للبحث الفوري...</p>
+                </div>
+            `;
 
             if (!trimmed && currentNavSearchFilter === 'all') {
-                listEl.innerHTML = `
-                    <div class="nav-search-placeholder">
-                        <i class="fas fa-search" style="font-size: 1.5rem; color: #94a3b8; margin-bottom: 6px;"></i>
-                        <p>اكتب اسم الأستاذ أو الطالب للبحث الفوري...</p>
-                    </div>
-                `;
+                if (desktopList) desktopList.innerHTML = placeholderEmpty;
+                if (mobileList) mobileList.innerHTML = placeholderEmpty;
                 return;
             }
 
-            listEl.innerHTML = `
+            const loadingHtml = `
                 <div class="nav-search-placeholder">
                     <i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 6px;"></i>
                     <p>جاري البحث...</p>
                 </div>
             `;
+            if (desktopList) desktopList.innerHTML = loadingHtml;
+            if (mobileList) mobileList.innerHTML = loadingHtml;
 
             try {
                 const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -10720,16 +10979,18 @@
                 if (lastNavSearchQuery !== trimmed) return;
 
                 if (!data.success || !data.users || data.users.length === 0) {
-                    listEl.innerHTML = `
+                    const noResultsHtml = `
                         <div class="nav-search-placeholder">
                             <i class="fas fa-user-slash" style="font-size: 1.5rem; color: #cbd5e1; margin-bottom: 6px;"></i>
                             <p style="color: #64748b; font-weight: 600;">لا توجد نتائج مطابقة لـ "${escapeHtml(trimmed)}"</p>
                         </div>
                     `;
+                    if (desktopList) desktopList.innerHTML = noResultsHtml;
+                    if (mobileList) mobileList.innerHTML = noResultsHtml;
                     return;
                 }
 
-                listEl.innerHTML = data.users.map(u => {
+                const resultsHtml = data.users.map(u => {
                     const isTeacher = u.user_role === 'teacher';
                     const name = escapeHtml(isTeacher ? (u.full_name || 'أستاذ') : (u.name || 'طالب'));
                     const avatar = u.profile_image || u.avatar || '/images/default-avatar.svg';
@@ -10753,19 +11014,19 @@
                         : `showStudentProfile(${u.id})`;
 
                     const chatBtn = `
-                        <button type="button" class="nav-search-action-btn chat-action" onclick="event.stopPropagation(); closeNavSearchResults(); openDirectChat(${u.id}, '${name.replace(/'/g, "\\'")}', '${avatar.replace(/'/g, "\\'")}', '${isTeacher ? 'teacher' : 'student'}')" title="مراسلة فورية">
+                        <button type="button" class="nav-search-action-btn chat-action" onclick="event.stopPropagation(); closeNavSearchResults(); closeMobileSearchModal(); openDirectChat(${u.id}, '${name.replace(/'/g, "\\'")}', '${avatar.replace(/'/g, "\\'")}', '${isTeacher ? 'teacher' : 'student'}')" title="مراسلة فورية">
                             <i class="fas fa-comment-dots"></i> مراسلة
                         </button>
                     `;
 
                     const profileBtn = `
-                        <button type="button" class="nav-search-action-btn profile-action" onclick="event.stopPropagation(); closeNavSearchResults(); ${profileOnClick}" title="عرض الملف">
+                        <button type="button" class="nav-search-action-btn profile-action" onclick="event.stopPropagation(); closeNavSearchResults(); closeMobileSearchModal(); ${profileOnClick}" title="عرض الملف">
                             <i class="fas ${isTeacher ? 'fa-user' : 'fa-id-card'}"></i> الملف
                         </button>
                     `;
 
                     return `
-                        <div class="nav-search-item" onclick="${profileOnClick}; closeNavSearchResults();">
+                        <div class="nav-search-item" onclick="${profileOnClick}; closeNavSearchResults(); closeMobileSearchModal();">
                             <div class="nav-search-user-info">
                                 <div class="nav-search-avatar-wrapper">
                                     <img src="${avatar}" alt="${name}" class="nav-search-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
@@ -10787,14 +11048,19 @@
                     `;
                 }).join('');
 
+                if (desktopList) desktopList.innerHTML = resultsHtml;
+                if (mobileList) mobileList.innerHTML = resultsHtml;
+
             } catch (e) {
                 console.error('Error in nav user search:', e);
-                listEl.innerHTML = `
+                const errorHtml = `
                     <div class="nav-search-placeholder">
                         <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: #ef4444; margin-bottom: 6px;"></i>
                         <p style="color: #ef4444;">حدث خطأ أثناء البحث</p>
                     </div>
                 `;
+                if (desktopList) desktopList.innerHTML = errorHtml;
+                if (mobileList) mobileList.innerHTML = errorHtml;
             }
         }
 
