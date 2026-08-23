@@ -4332,6 +4332,50 @@ app.post('/api/subscribe', authenticate, async (req, res) => {
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // رابط تحميل التطبيق (PWA)
+// رابط تحميل التطبيق الأصلي (APK) ومسار PWA
+app.get('/zoomdz.apk', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const apkPath = path.join(__dirname, 'public', 'downloads', 'zoomdz.apk');
+    if (fs.existsSync(apkPath)) {
+        res.download(apkPath, 'zoomdz.apk');
+    } else {
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>تنبيه - ملف APK غير متوفر بعد</title>
+                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                <style>
+                    body { font-family: 'Cairo', sans-serif; text-align: center; padding: 40px 20px; background-color: #f8fafc; color: #0f172a; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+                    .container { max-width: 500px; background: white; padding: 40px 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+                    .icon { font-size: 64px; color: #f59e0b; margin-bottom: 20px; }
+                    h1 { margin-bottom: 15px; font-size: 22px; color: #1e293b; }
+                    p { font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 30px; text-align: right; }
+                    .btn { display: inline-block; padding: 12px 30px; background: #3b82f6; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; transition: background 0.3s; cursor: pointer; border: none; }
+                    .btn:hover { background: #1d4ed8; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <i class="fas fa-exclamation-triangle icon"></i>
+                    <h1>تنبيه للمطور والمستخدم</h1>
+                    <p>أهلاً بك! لقد قمنا ببرمجة وتجميع تطبيق الأندرويد الأصلي (ZoomDz) بنجاح داخل بيئة العمل.</p>
+                    <p><strong>خطوات التفعيل النهائية للمسؤول:</strong><br>
+                    1. قم بتحميل ملف الـ APK المجمع من خلال القائمة العلوية لإعدادات البناء في AI Studio (بصيغة APK).<br>
+                    2. قم برفع هذا الملف ووضعه في المجلد <code>public/downloads/</code> باسم <code>zoomdz.apk</code>.<br>
+                    3. بعد ذلك، سيصبح الزر فعالاً فوراً وقابلاً للتحميل المباشر لجميع زوار موقعك!</p>
+                    <button onclick="window.history.back()" class="btn">العودة للخلف</button>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+});
+
 app.get('/download-app', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -4339,48 +4383,132 @@ app.get('/download-app', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>تثبيت التطبيق</title>
-            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+            <title>تحميل تطبيق ZoomDz الرسمي للهواتف</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <style>
                 body { font-family: 'Cairo', sans-serif; text-align: center; padding: 40px 20px; background-color: #f8fafc; color: #0f172a; margin: 0; }
-                .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-                .icon { font-size: 64px; color: #0f5cbf; margin-bottom: 20px; }
-                h1 { margin-bottom: 15px; font-size: 24px; color: #1e293b; }
-                p { font-size: 16px; color: #64748b; line-height: 1.6; margin-bottom: 30px; }
-                .instructions { text-align: right; background: #f1f5f9; padding: 20px; border-radius: 16px; margin-bottom: 30px; }
-                .instructions h3 { margin-top: 0; font-size: 18px; color: #0f5cbf; }
+                .header-logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 30px; cursor: pointer; text-decoration: none; }
+                .logo-icon { width: 48px; height: 48px; background: #3b82f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); }
+                .logo-text { font-size: 1.8rem; font-weight: 900; color: #0f172a; }
+                .logo-text-highlight { background: linear-gradient(135deg, #3b82f6, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+                .container { max-width: 800px; margin: 0 auto; }
+                h1 { margin-bottom: 10px; font-size: 28px; color: #0f172a; font-weight: 900; }
+                .subtitle { font-size: 16px; color: #64748b; margin-bottom: 40px; }
+                
+                /* Cards Grid */
+                .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 50px; text-align: right; }
+                .card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+                .card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                .card-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+                .card-title i { font-size: 20px; }
+                .card-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
+                
+                /* Buttons */
+                .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; text-align: center; }
+                .btn-android { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+                .btn-android:hover { background: #059669; transform: translateY(-2px); }
+                .btn-ios { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; border: 1.5px solid #cbd5e1; }
+                .btn-pwa { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); margin-top: 15px; }
+                .btn-pwa:hover { background: #1d4ed8; }
+                
+                /* PWA Section */
+                .pwa-section { background: white; border-radius: 24px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; margin-top: 40px; text-align: right; }
+                .pwa-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+                .pwa-title i { color: #3b82f6; }
+                .instructions { background: #f8fafc; padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
+                .instructions h3 { margin-top: 0; font-size: 16px; color: #3b82f6; display: flex; align-items: center; gap: 8px; }
                 .instructions ol { padding-right: 20px; margin: 0; }
-                .instructions li { margin-bottom: 12px; color: #475569; }
-                .btn { display: inline-block; padding: 14px 30px; background: #0f5cbf; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; transition: background 0.3s; }
-                .btn:hover { background: #0d4a99; }
+                .instructions li { margin-bottom: 10px; color: #475569; font-size: 14px; line-height: 1.6; }
+                
+                .footer { margin-top: 50px; font-size: 13px; color: #94a3b8; }
+                
+                @media (max-width: 600px) {
+                    .cards-grid { grid-template-columns: 1fr; }
+                    .pwa-section { padding: 25px; }
+                }
             </style>
         </head>
         <body>
             <div class="container">
-                <i class="fab fa-chrome icon"></i>
-                <h1>تثبيت التطبيق على هاتفك</h1>
-                <p>تطبيقنا الجديد تم تطويره كتطبيق ويب حديث (PWA). لا تحتاج إلى تحميل ملف APK! يمكنك تثبيته مباشرة من المتصفح ليعمل كتطبيق عادي وسريع على هاتفك.</p>
+                <a href="/" class="header-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span>Zoom</span><span class="logo-text-highlight">Dz</span>
+                    </div>
+                </a>
                 
-                <div class="instructions">
-                    <h3><i class="fab fa-android"></i> لأجهزة الأندرويد (Android):</h3>
-                    <ol>
-                        <li>افتح هذا الرابط في متصفح <b>Google Chrome</b>.</li>
-                        <li>اضغط على النقاط الثلاث (⋮) في أعلى المتصفح.</li>
-                        <li>اختر <b>"الإضافة إلى الشاشة الرئيسية"</b> (Add to Home screen) أو <b>"تثبيت التطبيق"</b> (Install app).</li>
-                    </ol>
+                <h1>تحميل تطبيق ZoomDz للهواتف الذكية</h1>
+                <p class="subtitle">احصل على أفضل تجربة تعليمية وتواصل مرئي تفاعلي وسلس مباشرة من هاتفك الذكي</p>
+                
+                <div class="cards-grid">
+                    <!-- Android Native Card -->
+                    <div class="card">
+                        <div>
+                            <div class="card-title" style="color: #10b981;">
+                                <i class="fab fa-android"></i>
+                                <span>تطبيق الأندرويد الأصلي (APK)</span>
+                            </div>
+                            <p class="card-desc">تحميل وتثبيت التطبيق الأصلي الكامل (Native App) المصمم خصيصاً لهواتف الأندرويد بجودة ممتازة وسرعة بث فائقة وميزات التنبيهات والدروس والتمارين المدمجة.</p>
+                        </div>
+                        <a href="/zoomdz.apk" class="btn btn-android">
+                            <i class="fas fa-download"></i> تحميل ملف الـ APK
+                        </a>
+                    </div>
+                    
+                    <!-- iOS Card -->
+                    <div class="card">
+                        <div>
+                            <div class="card-title" style="color: #64748b;">
+                                <i class="fab fa-apple"></i>
+                                <span>تطبيق الآيفون (iOS)</span>
+                            </div>
+                            <p class="card-desc">تطبيق الآيفون والآيباد الأصلي قيد المراجعة حالياً على متجر App Store. يمكنك في الوقت الحالي تثبيت نسخة الويب السريعة (PWA) عبر المتصفح كما هو موضح بالأسفل وتعمل بكفاءة تامة.</p>
+                        </div>
+                        <button class="btn btn-ios" disabled>
+                            <i class="fab fa-apple"></i> قريباً على App Store
+                        </button>
+                    </div>
                 </div>
+                
+                <!-- PWA Section -->
+                <div class="pwa-section">
+                    <div class="pwa-title">
+                        <i class="fas fa-globe"></i>
+                        <span>تثبيت تطبيق الويب السريع (PWA) دون تحميل</span>
+                    </div>
+                    <p style="font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 25px;">
+                        تطبيق الويب التقدمي (PWA) هو تقنية حديثة تسمح لك بتثبيت المنصة مباشرة من متصفح الويب لتعمل كتطبيق سريع ومستقل على شاشة هاتفك الرئيسية، دون الحاجة لتحميل ملفات خارجية أو استهلاك مساحة كبيرة من جهازك.
+                    </p>
+                    
+                    <div class="instructions">
+                        <h3><i class="fab fa-chrome"></i> لأجهزة الأندرويد (Google Chrome):</h3>
+                        <ol dir="rtl">
+                            <li>افتح موقع المنصة الرئيسي في متصفح <b>Google Chrome</b>.</li>
+                            <li>اضغط على النقاط الثلاث (⋮) في أعلى المتصفح.</li>
+                            <li>اختر <b>"الإضافة إلى الشاشة الرئيسية"</b> أو <b>"تثبيت التطبيق"</b>.</li>
+                        </ol>
+                    </div>
 
-                <div class="instructions">
-                    <h3><i class="fab fa-apple"></i> لأجهزة الآيفون (iOS):</h3>
-                    <ol>
-                        <li>افتح هذا الرابط في متصفح <b>Safari</b>.</li>
-                        <li>اضغط على زر المشاركة <i class="fas fa-share-square"></i> في أسفل الشاشة.</li>
-                        <li>اختر <b>"إضافة إلى الصفحة الرئيسية"</b> (Add to Home Screen).</li>
-                    </ol>
+                    <div class="instructions">
+                        <h3><i class="fab fa-safari" style="color: #0284c7;"></i> لأجهزة الآيفون (Safari):</h3>
+                        <ol dir="rtl">
+                            <li>افتح موقع المنصة الرئيسي في متصفح <b>Safari</b>.</li>
+                            <li>اضغط على زر المشاركة <i class="fas fa-share-square"></i> في أسفل الشاشة.</li>
+                            <li>اختر <b>"إضافة إلى الصفحة الرئيسية"</b> (Add to Home Screen).</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="/" class="btn btn-pwa"><i class="fas fa-home"></i> الذهاب إلى المنصة وتثبيتها الآن</a>
+                    </div>
                 </div>
-
-                <a href="/app" class="btn">الذهاب إلى التطبيق الآن</a>
+                
+                <div class="footer">
+                    <p>© 2026 ZoomDz. جميع الحقوق محفوظة لـ عثمانية محمد الصالح.</p>
+                </div>
             </div>
         </body>
         </html>
