@@ -4591,6 +4591,87 @@ app.post('/api/admin/settings/revenue_settings', authenticate, authorize(['admin
 });
 
 // ============================================================
+// Platform Settings (Site & Login Images)
+// ============================================================
+
+const defaultSiteImages = {
+    hero_image: '/images/student_hero1.jpg',
+    landing_card1_image: '/images/student_lab1.jpg',
+    landing_card2_image: '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png',
+    login_student_img: '/images/student_character1.jpg',
+    login_teacher_img: '/images/teacher_character1.jpg',
+    login_admin_img: '/images/admin_character1.jpg'
+};
+let inMemorySiteImages = { ...defaultSiteImages };
+
+app.get('/api/settings/site_images', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('platform_settings')
+            .select('value')
+            .eq('key', 'site_images')
+            .single();
+            
+        if (error || !data || !data.value) {
+            return res.json(inMemorySiteImages);
+        }
+        res.json({ ...defaultSiteImages, ...data.value });
+    } catch (e) {
+        res.json(inMemorySiteImages);
+    }
+});
+
+app.get('/api/admin/settings/site_images', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('platform_settings')
+            .select('value')
+            .eq('key', 'site_images')
+            .single();
+            
+        if (error || !data || !data.value) {
+            return res.json(inMemorySiteImages);
+        }
+        res.json({ ...defaultSiteImages, ...data.value });
+    } catch (e) {
+        res.json(inMemorySiteImages);
+    }
+});
+
+app.post('/api/admin/settings/site_images', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const {
+            hero_image,
+            landing_card1_image,
+            landing_card2_image,
+            login_student_img,
+            login_teacher_img,
+            login_admin_img
+        } = req.body;
+
+        const updatedImages = {
+            hero_image: (hero_image && hero_image.trim()) || defaultSiteImages.hero_image,
+            landing_card1_image: (landing_card1_image && landing_card1_image.trim()) || defaultSiteImages.landing_card1_image,
+            landing_card2_image: (landing_card2_image && landing_card2_image.trim()) || defaultSiteImages.landing_card2_image,
+            login_student_img: (login_student_img && login_student_img.trim()) || defaultSiteImages.login_student_img,
+            login_teacher_img: (login_teacher_img && login_teacher_img.trim()) || defaultSiteImages.login_teacher_img,
+            login_admin_img: (login_admin_img && login_admin_img.trim()) || defaultSiteImages.login_admin_img
+        };
+
+        inMemorySiteImages = updatedImages;
+
+        await supabase
+            .from('platform_settings')
+            .upsert({ key: 'site_images', value: updatedImages });
+
+        res.json({ success: true, site_images: updatedImages });
+    } catch (e) {
+        console.error('Error saving site images:', e);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// ============================================================
 // مسارات السجلات والمراقبة (للأدمن)
 // ============================================================
 

@@ -4188,7 +4188,7 @@
                 <!-- Left Visual Hero -->
                 <div class="hero-responsive-visual" style="flex: 1; min-width: 280px; display: flex; align-items: center; justify-content: center; position: relative;">
                     <div style="position: relative; width: 400px; height: 400px; max-width: 100%; border-radius: 30px; overflow: hidden; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12); border: 4px solid white;">
-                        <img src="/images/student_hero1.jpg" alt="الطلاب" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <img id="heroMainImage" src="/images/student_hero1.jpg" alt="الطلاب" style="width: 100%; height: 100%; object-fit: cover;" />
                     </div>
                 </div>
             </div>
@@ -4600,17 +4600,17 @@
                 <div class="role-grid">
                     <div class="role-card active" data-role="student" onclick="selectRole('student')">
                         <div class="check-icon"><i class="fas fa-check"></i></div>
-                        <img src="/images/student_character1.jpg" alt="طالب" class="char-img" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_character1.jpg">
+                        <img src="/images/student_character1.jpg" alt="طالب" class="char-img char-img-student" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_character1.jpg">
                         <span class="role-name">طالب</span>
                     </div>
                     <div class="role-card" data-role="teacher" onclick="selectRole('teacher')">
                         <div class="check-icon"><i class="fas fa-check"></i></div>
-                        <img src="/images/teacher_character1.jpg" alt="أستاذ" class="char-img" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/teacher_character1.jpg">
+                        <img src="/images/teacher_character1.jpg" alt="أستاذ" class="char-img char-img-teacher" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/teacher_character1.jpg">
                         <span class="role-name">أستاذ</span>
                     </div>
                     <div class="role-card" data-role="admin" onclick="selectRole('admin')">
                         <div class="check-icon"><i class="fas fa-check"></i></div>
-                        <img src="/images/admin_character1.jpg" alt="مدير" class="char-img" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/admin_character1.jpg">
+                        <img src="/images/admin_character1.jpg" alt="مدير" class="char-img char-img-admin" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/admin_character1.jpg">
                         <span class="role-name">مدير</span>
                     </div>
                 </div>
@@ -4633,12 +4633,12 @@
                 <div class="role-grid two-cols">
                     <div class="role-card reset-role-card active" data-role="student" onclick="selectResetRole('student')">
                         <div class="check-icon"><i class="fas fa-check"></i></div>
-                        <img src="/images/student_character1.jpg" alt="طالب" class="char-img" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_character1.jpg">
+                        <img src="/images/student_character1.jpg" alt="طالب" class="char-img char-img-student" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_character1.jpg">
                         <span class="role-name">طالب</span>
                     </div>
                     <div class="role-card reset-role-card" data-role="teacher" onclick="selectResetRole('teacher')">
                         <div class="check-icon"><i class="fas fa-check"></i></div>
-                        <img src="/images/teacher_character.jpg" alt="أستاذ" class="char-img" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/teacher_character1.jpg">
+                        <img src="/images/teacher_character1.jpg" alt="أستاذ" class="char-img char-img-teacher" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/teacher_character1.jpg">
                         <span class="role-name">أستاذ</span>
                     </div>
                 </div>
@@ -4970,7 +4970,7 @@
                     <!-- Card 1 -->
                     <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: transform 0.3s ease;">
                         <div style="height: 240px; overflow: hidden;">
-                            <img src="/images/student_lab1.jpg" alt="تعاون الطلاب" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                            <img id="landingCard1Img" src="/images/student_lab1.jpg" alt="تعاون الطلاب" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
                         </div>
                         <div style="padding: 24px;">
                             <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
@@ -4983,7 +4983,7 @@
                     <!-- Card 2 -->
                     <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: transform 0.3s ease;">
                         <div style="height: 240px; overflow: hidden;">
-                            <img src="/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png" alt="بث مباشر تفاعلي" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                            <img id="landingCard2Img" src="/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png" alt="بث مباشر تفاعلي" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
                         </div>
                         <div style="padding: 24px;">
                             <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
@@ -5029,6 +5029,52 @@
 
 
     <script>
+        // ============================================================
+        // DYNAMIC SITE IMAGES (Imgur / Custom URLs)
+        // ============================================================
+        async function loadAndApplySiteImages() {
+            try {
+                var res = await fetch('/api/settings/site_images');
+                if (!res.ok) return;
+                var images = await res.json();
+                if (!images) return;
+
+                if (images.hero_image) {
+                    var el = document.getElementById('heroMainImage');
+                    if (el) el.src = images.hero_image;
+                }
+                if (images.landing_card1_image) {
+                    var el = document.getElementById('landingCard1Img');
+                    if (el) el.src = images.landing_card1_image;
+                }
+                if (images.landing_card2_image) {
+                    var el = document.getElementById('landingCard2Img');
+                    if (el) el.src = images.landing_card2_image;
+                }
+                if (images.login_student_img) {
+                    document.querySelectorAll('.char-img-student').forEach(function(el) {
+                        el.src = images.login_student_img;
+                        el.setAttribute('data-original-url', images.login_student_img);
+                    });
+                }
+                if (images.login_teacher_img) {
+                    document.querySelectorAll('.char-img-teacher').forEach(function(el) {
+                        el.src = images.login_teacher_img;
+                        el.setAttribute('data-original-url', images.login_teacher_img);
+                    });
+                }
+                if (images.login_admin_img) {
+                    document.querySelectorAll('.char-img-admin').forEach(function(el) {
+                        el.src = images.login_admin_img;
+                        el.setAttribute('data-original-url', images.login_admin_img);
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading dynamic site images:', e);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadAndApplySiteImages);
+
         // ============================================================
         // IMAGE MODAL
         // ============================================================
