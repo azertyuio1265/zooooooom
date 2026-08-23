@@ -68,6 +68,28 @@ if (!supabaseUrl || !supabaseKey) {
                 is_banned: false
             }
         ],
+        students: [
+            {
+                id: 1,
+                full_name: 'ياسين بن علي',
+                grade: 'ثالثة ثانوي (BAC)',
+                education_level: '3eme_as',
+                wilaya: 'الجزائر العاصمة',
+                profile_image: '',
+                profile_url: '/images/default-avatar.svg',
+                is_banned: false
+            },
+            {
+                id: 2,
+                full_name: 'سارة مرابط',
+                grade: 'رابعة متوسط (BEM)',
+                education_level: '4eme_am',
+                wilaya: 'وهران',
+                profile_image: '',
+                profile_url: '/images/default-avatar.svg',
+                is_banned: false
+            }
+        ],
         offers: [
             {
                 id: 101,

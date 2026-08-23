@@ -1032,4 +1032,188 @@ router.post('/reports', authenticate, async (req, res) => {
     }
 });
 
+// ============================================================
+// 🔍 GET /api/search/users & /api/public/search/users
+// البحث الموحد في قاعدة البيانات عن الأساتذة والطلاب
+// ============================================================
+router.get(['/search/users', '/public/search/users'], async (req, res) => {
+    try {
+        const query = (req.query.q || req.query.query || '').trim();
+        const role = (req.query.role || 'all').toLowerCase().trim(); // 'all' | 'teacher' | 'student'
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+
+        let teachers = [];
+        let students = [];
+
+        // 1. جلب وبحث الأساتذة
+        if (role === 'all' || role === 'teacher') {
+            try {
+                let tData = null;
+                // جلب الأساتذة أولاً أو بالبحث
+                if (query) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('teachers')
+                            .select('id, full_name, name, specialization, subject, bio, rank, profile_image, profile_url, teaching_level, is_banned, status')
+                            .eq('is_banned', false)
+                            .or(`full_name.ilike.%${query}%,specialization.ilike.%${query}%,bio.ilike.%${query}%`)
+                            .limit(limit);
+                        if (!error && data && data.length > 0) {
+                            tData = data;
+                        }
+                    } catch (e) {}
+                }
+
+                if (!tData) {
+                    const { data, error } = await supabase
+                        .from('teachers')
+                        .select('id, full_name, name, specialization, subject, bio, rank, profile_image, profile_url, teaching_level, is_banned, status')
+                        .eq('is_banned', false)
+                        .limit(50);
+                    if (!error && data) {
+                        tData = data;
+                    }
+                }
+
+                if (!tData || tData.length === 0) {
+                    tData = await fetchApprovedTeachers();
+                }
+
+                if (tData && tData.length > 0) {
+                    const processed = tData.map(t => processUserProfile(t, 'teacher'));
+                    teachers = processed.filter(t => {
+                        if (!query) return true;
+                        const q = query.toLowerCase();
+                        const matchName = (t.full_name || t.name || '').toLowerCase().includes(q);
+                        const matchSpec = (t.specialization || t.subject || '').toLowerCase().includes(q);
+                        const matchBio = (t.bio || '').toLowerCase().includes(q);
+                        const matchRank = (t.rank || '').toLowerCase().includes(q);
+                        return matchName || matchSpec || matchBio || matchRank;
+                    });
+                }
+            } catch (te) {
+                logger.error('Exception searching teachers:', te.message);
+            }
+        }
+
+        // 2. جلب وبحث الطلاب
+        if (role === 'all' || role === 'student') {
+            try {
+                let sData = null;
+                if (query) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('students')
+                            .select('id, full_name, name, grade, education_level, wilaya, profile_image, profile_url, is_banned')
+                            .eq('is_banned', false)
+                            .or(`full_name.ilike.%${query}%,education_level.ilike.%${query}%,grade.ilike.%${query}%,wilaya.ilike.%${query}%`)
+                            .limit(limit);
+                        if (!error && data && data.length > 0) {
+                            sData = data;
+                        }
+                    } catch (e) {}
+                }
+
+                if (!sData) {
+                    const { data, error } = await supabase
+                        .from('students')
+                        .select('id, full_name, name, grade, education_level, wilaya, profile_image, profile_url, is_banned')
+                        .eq('is_banned', false)
+                        .limit(50);
+                    if (!error && data) {
+                        sData = data;
+                    }
+                }
+
+                if (sData && sData.length > 0) {
+                    students = sData.filter(s => {
+                        if (!query) return true;
+                        const q = query.toLowerCase();
+                        const matchName = (s.full_name || s.name || '').toLowerCase().includes(q);
+                        const matchGrade = (s.grade || s.education_level || '').toLowerCase().includes(q);
+                        const matchWilaya = (s.wilaya || '').toLowerCase().includes(q);
+                        return matchName || matchGrade || matchWilaya;
+                    });
+                }
+            } catch (se) {
+                logger.error('Exception searching students:', se.message);
+            }
+        }
+
+        // 3. تنسيق النتائج وتوحيدها
+        const formattedTeachers = teachers.map(t => {
+            const rawImg = t.profile_url || t.profile_image;
+            let img = '/images/default-avatar.svg';
+            if (rawImg && rawImg !== 'null' && rawImg !== 'undefined' && rawImg !== 'NULL') {
+                if (rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('data:') || rawImg.startsWith('/')) {
+                    img = rawImg;
+                } else {
+                    img = getPublicImageUrl('profiles', 'teachers', rawImg) || rawImg;
+                }
+            }
+
+            return {
+                id: t.id,
+                user_role: 'teacher',
+                full_name: t.full_name || t.name || 'أستاذ',
+                subject: t.specialization || t.subject || 'أستاذ معتمد',
+                rank: t.rank || '',
+                bio: t.bio || '',
+                teaching_level: t.teaching_level || '',
+                profile_image: img,
+                avatar: img
+            };
+        });
+
+        const formattedStudents = students.map(s => {
+            const rawImg = s.profile_url || s.profile_image;
+            let img = '/images/default-avatar.svg';
+            if (rawImg && rawImg !== 'null' && rawImg !== 'undefined' && rawImg !== 'NULL') {
+                if (rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('data:') || rawImg.startsWith('/')) {
+                    img = rawImg;
+                } else {
+                    img = getPublicImageUrl('profiles', 'students', rawImg) || rawImg;
+                }
+            }
+
+            return {
+                id: s.id,
+                user_role: 'student',
+                name: s.full_name || s.name || 'طالب',
+                full_name: s.full_name || s.name || 'طالب',
+                grade: s.grade || s.education_level || 'طالب مسجل',
+                education_level: s.education_level || s.grade || '',
+                wilaya: s.wilaya || '',
+                profile_image: img,
+                avatar: img
+            };
+        });
+
+        let combined = [];
+        if (role === 'teacher') {
+            combined = formattedTeachers;
+        } else if (role === 'student') {
+            combined = formattedStudents;
+        } else {
+            // دمج النتائج بشكل متوازن
+            const maxLength = Math.max(formattedTeachers.length, formattedStudents.length);
+            for (let i = 0; i < maxLength; i++) {
+                if (i < formattedTeachers.length) combined.push(formattedTeachers[i]);
+                if (i < formattedStudents.length) combined.push(formattedStudents[i]);
+            }
+        }
+
+        res.json({
+            success: true,
+            total: combined.length,
+            users: combined.slice(0, limit)
+        });
+
+    } catch (error) {
+        logger.error('❌ Exception in /api/search/users:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ أثناء البحث' });
+    }
+});
+
 module.exports = router;
+
