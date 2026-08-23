@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    ZoomDzWebView(url = "https://zoomdz.com")
+                    ZoomDzWebView(url = "https://zooooooom-mown.vercel.app")
                 }
             }
         }
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
                             val targetUrl = request?.url?.toString() ?: return false
                             
                             // Open external links in external browser, keep platform links in the app
-                            if (targetUrl.contains("zoomdz.com") || targetUrl.startsWith("file://") || targetUrl.contains("localhost")) {
+                            if (targetUrl.contains("zoomdz.com") || targetUrl.contains("zooooooom-mown.vercel.app") || targetUrl.startsWith("file://") || targetUrl.contains("localhost")) {
                                 return false
                             }
                             
