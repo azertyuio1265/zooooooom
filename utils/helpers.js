@@ -229,11 +229,73 @@ async function remove(table, column, value) {
     }
 }
 
+async function isNameTaken(name, excludeUserId = null, excludeRole = null) {
+    if (!name || typeof name !== 'string') return { taken: false };
+    const cleanName = name.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!cleanName) return { taken: false };
+
+    try {
+        // 1. فحص جدول الأساتذة
+        try {
+            const { data: teachers, error: tErr } = await supabase
+                .from('teachers')
+                .select('id, full_name, name')
+                .limit(500);
+
+            if (!tErr && teachers && teachers.length > 0) {
+                const match = teachers.find(t => {
+                    if (excludeRole === 'teacher' && excludeUserId && String(t.id) === String(excludeUserId)) {
+                        return false;
+                    }
+                    const tFullName = (t.full_name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    const tName = (t.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    return (tFullName && tFullName === cleanName) || (tName && tName === cleanName);
+                });
+                if (match) {
+                    return { taken: true, role: 'teacher', user: match };
+                }
+            }
+        } catch (te) {
+            logger.warn('خطأ في فحص اسم الأستاذ:', te.message);
+        }
+
+        // 2. فحص جدول الطلاب
+        try {
+            const { data: students, error: sErr } = await supabase
+                .from('students')
+                .select('id, full_name, name')
+                .limit(500);
+
+            if (!sErr && students && students.length > 0) {
+                const match = students.find(s => {
+                    if (excludeRole === 'student' && excludeUserId && String(s.id) === String(excludeUserId)) {
+                        return false;
+                    }
+                    const sFullName = (s.full_name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    const sName = (s.name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    return (sFullName && sFullName === cleanName) || (sName && sName === cleanName);
+                });
+                if (match) {
+                    return { taken: true, role: 'student', user: match };
+                }
+            }
+        } catch (se) {
+            logger.warn('خطأ في فحص اسم الطالب:', se.message);
+        }
+
+        return { taken: false };
+    } catch (err) {
+        logger.error('استثناء في التحقق من فرادة الاسم:', err.message);
+        return { taken: false };
+    }
+}
+
 module.exports = {
     sanitizeInput,
     sanitizeObject,
     generateVerificationToken,
     generateReferralCode,
+    isNameTaken,
     getOne,
     insert,
     update,

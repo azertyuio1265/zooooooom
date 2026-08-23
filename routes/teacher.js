@@ -11,7 +11,7 @@ const path = require('path');
 const { supabase } = require('../config/database');
 const { ADMIN_EMAIL } = require('../utils/adminConfig');
 const { authenticate, authorize, checkBanned } = require('../middleware/auth');
-const { getOne, insert, update, remove, loadLocalTeacherFollowers, saveLocalTeacherFollowers } = require('../utils/helpers');
+const { getOne, insert, update, remove, isNameTaken, loadLocalTeacherFollowers, saveLocalTeacherFollowers } = require('../utils/helpers');
 const { uploadToSupabase, validateUploadedFiles, getPublicImageUrl, processUserProfile } = require('../utils/upload');
 const { isValidDzPhone } = require('../utils/validation');
 const { sendWithdrawalOtpEmail } = require('../utils/email');
@@ -359,7 +359,17 @@ router.post('/update-profile-with-social', authenticate, authorize(['teacher', '
 
         // تحديث المعلومات الأساسية والتعليمية
         if (full_name !== undefined && full_name !== null && full_name.trim() !== '') {
-            updateData.full_name = full_name.trim();
+            const newName = full_name.trim();
+            if (newName !== (oldTeacher.full_name || oldTeacher.name)) {
+                const nameCheck = await isNameTaken(newName, teacher_id, 'teacher');
+                if (nameCheck.taken) {
+                    return res.status(400).json({
+                        success: false,
+                        error: '⚠️ هذا الاسم مستخدم مسبقاً في المنصة. يرجى اختيار اسم فريد.'
+                    });
+                }
+            }
+            updateData.full_name = newName;
         }
 
         if (phone !== undefined && phone !== null && phone.trim() !== '') {

@@ -2774,6 +2774,7 @@
         // ===== reCAPTCHA MANAGED FROM /js/recaptcha.js =====
 
         // ===== NAME VALIDATION =====
+        var tpNameCheckDebounceTimer = null;
         function validateLatinName(type) {
             var input, errorEl;
             if (type === 'student') {
@@ -2783,19 +2784,36 @@
                 input = document.getElementById('teacherName');
                 errorEl = document.getElementById('teacherNameError');
             }
+            if (!input || !errorEl) return true;
 
             var value = input.value;
-            var latinPattern = /^[A-Za-z\s\.\-']+$/;
+            var latinPattern = /^[A-Za-z\u0600-\u06FF\s\.\-']+$/;
             var hasNumbers = /\d/.test(value);
-            var hasSpecialChars = /[^A-Za-z\s\.\-']/.test(value);
+            var hasSpecialChars = /[^A-Za-z\u0600-\u06FF\s\.\-']/.test(value);
 
             if (value.length > 0 && (hasNumbers || hasSpecialChars || !latinPattern.test(value))) {
+                errorEl.innerHTML = '<i class="fas fa-exclamation-circle" aria-hidden="true"></i> الاسم يجب أن يحتوي على أحرف صحيحة فقط (عربي أو إنجليزي)';
                 errorEl.classList.add('show');
                 input.style.borderColor = '#dc2626';
                 return false;
             } else if (value.length > 0) {
                 errorEl.classList.remove('show');
                 input.style.borderColor = '#047857';
+
+                if (value.trim().length >= 3) {
+                    clearTimeout(tpNameCheckDebounceTimer);
+                    tpNameCheckDebounceTimer = setTimeout(function() {
+                        fetch('/api/check-name?name=' + encodeURIComponent(value.trim()))
+                            .then(function(r) { return r.json(); })
+                            .then(function(d) {
+                                if (d && d.taken) {
+                                    errorEl.innerHTML = '<i class="fas fa-exclamation-circle" aria-hidden="true"></i> ' + (d.message || '⚠️ هذا الاسم مسجل مسبقاً، يرجى اختيار اسم فريد');
+                                    errorEl.classList.add('show');
+                                    input.style.borderColor = '#dc2626';
+                                }
+                            }).catch(function() {});
+                    }, 400);
+                }
                 return true;
             } else {
                 errorEl.classList.remove('show');
@@ -2806,10 +2824,11 @@
 
         function isNameValid(type) {
             var input = type === 'student' ? document.getElementById('studentName') : document.getElementById('teacherName');
+            if (!input) return false;
             var value = input.value.trim();
             if (!value) return false;
-            var latinPattern = /^[A-Za-z\s\.\-']+$/;
-            return !/\d/.test(value) && !/[^A-Za-z\s\.\-']/.test(value) && latinPattern.test(value);
+            var latinPattern = /^[A-Za-z\u0600-\u06FF\s\.\-']+$/;
+            return !/\d/.test(value) && !/[^A-Za-z\u0600-\u06FF\s\.\-']/.test(value) && latinPattern.test(value);
         }
 
         // ============================================================

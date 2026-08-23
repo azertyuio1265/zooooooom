@@ -11,7 +11,7 @@ const path = require('path');
 
 const { supabase } = require('../config/database');
 const { authenticate, authorize, checkBanned } = require('../middleware/auth');
-const { getOne, insert, update, remove } = require('../utils/helpers');
+const { getOne, insert, update, remove, isNameTaken } = require('../utils/helpers');
 const { uploadToSupabase, validateUploadedFiles, getPublicImageUrl, processUserProfile } = require('../utils/upload');
 const { isValidDzPhone } = require('../utils/validation');
 
@@ -329,7 +329,19 @@ router.post('/update-profile', authenticate, authorize(['student']), upload.sing
             }
             updateData.phone = trimmedPhone; 
         }
-        if (full_name !== undefined && String(full_name).trim()) { updateData.full_name = String(full_name).trim(); }
+        if (full_name !== undefined && String(full_name).trim()) { 
+            const newName = String(full_name).trim();
+            if (newName !== (oldStudent.full_name || oldStudent.name)) {
+                const nameCheck = await isNameTaken(newName, student_id, 'student');
+                if (nameCheck.taken) {
+                    return res.status(400).json({
+                        success: false,
+                        error: '⚠️ هذا الاسم مستخدم مسبقاً في المنصة. يرجى اختيار اسم فريد.'
+                    });
+                }
+            }
+            updateData.full_name = newName; 
+        }
         if (education_level !== undefined && String(education_level).trim()) { updateData.education_level = String(education_level).trim(); }
 
         if (Object.keys(updateData).length === 0) {
@@ -410,7 +422,19 @@ router.post('/update-profile-with-social', authenticate, authorize(['student']),
             updateData.profile_url = profile_image;
         }
         if (phone !== undefined) { updateData.phone = String(phone).trim(); }
-        if (full_name !== undefined && String(full_name).trim()) { updateData.full_name = String(full_name).trim(); }
+        if (full_name !== undefined && String(full_name).trim()) { 
+            const newName = String(full_name).trim();
+            if (newName !== (oldStudent.full_name || oldStudent.name)) {
+                const nameCheck = await isNameTaken(newName, student_id, 'student');
+                if (nameCheck.taken) {
+                    return res.status(400).json({
+                        success: false,
+                        error: '⚠️ هذا الاسم مستخدم مسبقاً في المنصة. يرجى اختيار اسم فريد.'
+                    });
+                }
+            }
+            updateData.full_name = newName; 
+        }
         if (education_level !== undefined && String(education_level).trim()) { updateData.education_level = String(education_level).trim(); }
 
         console.log('💾 البيانات المراد تحديثها:', updateData);

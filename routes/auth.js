@@ -13,7 +13,7 @@ const path = require('path');
 const { supabase } = require('../config/database');
 const { authenticate, authorize, checkBanned } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimit');
-const { getOne, insert, update, generateVerificationToken, generateReferralCode, sanitizeObject } = require('../utils/helpers');
+const { getOne, insert, update, generateVerificationToken, generateReferralCode, sanitizeObject, isNameTaken } = require('../utils/helpers');
 const { encrypt, maskIP } = require('../utils/encryption');
 const { sendVerificationEmail, sendResetEmail, sendTeacherApprovalEmail, sendTeacherRejectionEmail } = require('../utils/email');
 const { processReferralOnRegister } = require('../utils/referral');
@@ -202,7 +202,16 @@ router.post('/teacher/register', checkBanned, [
             });
         }
 
-        // ✅ 3. التحقق من وجود البريد
+        // ✅ 3. التحقق من فرادة الاسم وعدم تكراره في المنصة (أساتذة وطلاب)
+        const nameCheck = await isNameTaken(full_name);
+        if (nameCheck.taken) {
+            return res.status(400).json({
+                success: false,
+                error: '⚠️ هذا الاسم الكامل مستخدم مسبقاً في المنصة. يرجى اختيار اسم فريد لتمييز حسابك.'
+            });
+        }
+
+        // ✅ 4. التحقق من وجود البريد
         const existingTeacher = await getOne('teachers', 'email', email);
         if (existingTeacher) {
             return res.status(400).json({
@@ -211,7 +220,7 @@ router.post('/teacher/register', checkBanned, [
             });
         }
 
-        // ✅ 4. التحقق من وجود البريد في جدول الطلاب أيضاً
+        // ✅ 5. التحقق من وجود البريد في جدول الطلاب أيضاً
         const existingStudent = await getOne('students', 'email', email);
         if (existingStudent) {
             return res.status(400).json({
@@ -220,10 +229,10 @@ router.post('/teacher/register', checkBanned, [
             });
         }
 
-        // ✅ 5. تشفير كلمة المرور
+        // ✅ 6. تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        // ✅ 6. إنشاء الأستاذ في قاعدة البيانات (حالة pending - الخطوة الأولى فقط)
+        // ✅ 7. إنشاء الأستاذ في قاعدة البيانات (حالة pending - الخطوة الأولى فقط)
         const newTeacher = await insert('teachers', {
             full_name: full_name.trim(),
             email: email.trim().toLowerCase(),
@@ -355,7 +364,16 @@ router.post('/student/register', checkBanned, [
             });
         }
 
-        // ✅ 3. التحقق من وجود البريد في جدول الطلاب
+        // ✅ 3. التحقق من فرادة الاسم وعدم تكراره في المنصة (أساتذة وطلاب)
+        const nameCheck = await isNameTaken(full_name);
+        if (nameCheck.taken) {
+            return res.status(400).json({
+                success: false,
+                error: '⚠️ هذا الاسم الكامل مستخدم مسبقاً في المنصة. يرجى اختيار اسم فريد لتمييز حسابك.'
+            });
+        }
+
+        // ✅ 4. التحقق من وجود البريد في جدول الطلاب
         const existingStudent = await getOne('students', 'email', email);
         if (existingStudent) {
             return res.status(400).json({
@@ -364,7 +382,7 @@ router.post('/student/register', checkBanned, [
             });
         }
 
-        // ✅ 4. التحقق من وجود البريد في جدول الأساتذة أيضاً
+        // ✅ 5. التحقق من وجود البريد في جدول الأساتذة أيضاً
         const existingTeacher = await getOne('teachers', 'email', email);
         if (existingTeacher) {
             return res.status(400).json({
@@ -373,10 +391,10 @@ router.post('/student/register', checkBanned, [
             });
         }
 
-        // ✅ 5. تشفير كلمة المرور
+        // ✅ 6. تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        // ✅ 6. إنشاء الطالب في قاعدة البيانات
+        // ✅ 7. إنشاء الطالب في قاعدة البيانات
         const newStudent = await insert('students', {
             full_name: full_name.trim(),
             email: email.trim().toLowerCase(),
@@ -1117,6 +1135,38 @@ router.get('/me', authenticate, async (req, res) => {
     } catch (error) {
         logger.error('خطأ في جلب معلومات المستخدم:', error.message);
         res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
+    }
+});
+
+// ============================================================
+// ✅ التحقق من توفر الاسم (عدم التكرار)
+// ============================================================
+router.get('/check-name', async (req, res) => {
+    try {
+        const { name, exclude_user_id, exclude_role } = req.query;
+        if (!name || !String(name).trim()) {
+            return res.json({ available: false, error: 'الاسم مطلوب' });
+        }
+
+        const nameCheck = await isNameTaken(String(name).trim(), exclude_user_id, exclude_role);
+        if (nameCheck.taken) {
+            return res.json({
+                available: false,
+                taken: true,
+                message: nameCheck.role === 'teacher' 
+                    ? '⚠️ هذا الاسم مسجل مسبقاً لأستاذ على المنصة.'
+                    : '⚠️ هذا الاسم مسجل مسبقاً لطالب على المنصة.'
+            });
+        }
+
+        res.json({
+            available: true,
+            taken: false,
+            message: '✅ الاسم متاح ويمكن استخدامه'
+        });
+    } catch (e) {
+        logger.error('خطأ في التحقق من الاسم:', e.message);
+        res.status(500).json({ available: true, error: e.message });
     }
 });
 

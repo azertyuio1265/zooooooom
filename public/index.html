@@ -5150,6 +5150,7 @@
         // ============================================================
         // NAME VALIDATION
         // ============================================================
+        var nameCheckDebounceTimer = null;
         function validateLatinName(type) {
             var input = type === 'student' ? document.getElementById('studentName') : document.getElementById('teacherName');
             var errorEl = type === 'student' ? document.getElementById('studentNameError') : document.getElementById('teacherNameError');
@@ -5163,15 +5164,30 @@
             var isValid = true;
             if (value.length > 0 && (hasNumbers || hasSpecialChars || !latinPattern.test(value))) {
                 isValid = false;
+                errorEl.innerHTML = '<i class="fas fa-exclamation-circle" aria-hidden="true"></i> الاسم يجب أن يحتوي على أحرف صحيحة فقط (عربي أو إنجليزي)';
             }
 
             requestAnimationFrame(function() {
                 if (!isValid) {
                     errorEl.classList.add('show');
                     input.style.borderColor = '#dc2626';
-                } else if (value.length > 0) {
+                } else if (value.trim().length >= 3) {
                     errorEl.classList.remove('show');
                     input.style.borderColor = '#047857';
+
+                    // فحص فوري لتوفر الاسم
+                    clearTimeout(nameCheckDebounceTimer);
+                    nameCheckDebounceTimer = setTimeout(function() {
+                        fetch('/api/check-name?name=' + encodeURIComponent(value.trim()))
+                            .then(function(r) { return r.json(); })
+                            .then(function(d) {
+                                if (d && d.taken) {
+                                    errorEl.innerHTML = '<i class="fas fa-exclamation-circle" aria-hidden="true"></i> ' + (d.message || '⚠️ هذا الاسم مسجل مسبقاً، يرجى اختيار اسم فريد');
+                                    errorEl.classList.add('show');
+                                    input.style.borderColor = '#dc2626';
+                                }
+                            }).catch(function() {});
+                    }, 400);
                 } else {
                     errorEl.classList.remove('show');
                     input.style.borderColor = '#edf2f7';
