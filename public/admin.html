@@ -846,7 +846,12 @@
     <div class="navbar">
         <div class="nav-container">
             <div class="logo" onclick="location.reload()"><i class="fas fa-chalkboard-user"></i> لوحة المدير</div>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="triggerNewReleaseModal()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 8px rgba(16,185,129,0.3); font-size: 0.85rem; transition: 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                    <i class="fas fa-rocket"></i> إطلاق إشعار إصدار جديد
+                </button>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+            </div>
         </div>
     </div>
 
@@ -1423,6 +1428,36 @@
                 </button>
                 <div id="streamProofModalContent">
                     <!-- سيتم تعبئته ديناميكياً -->
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال إطلاق إصدار جديد للمنصة (Broadcast New Release) -->
+        <div id="newReleaseModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.7); z-index: 99999; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);">
+            <div style="background: #ffffff; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border: 1px solid #e2e8f0; padding: 24px; position: relative;">
+                <button onclick="closeNewReleaseModal()" style="position: absolute; top: 16px; left: 16px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem; color: #64748b; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: #ecfdf5; color: #10b981; border-radius: 50%; font-size: 1.8rem; margin-bottom: 12px; border: 2px solid #a7f3d0;">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 style="margin: 0; color: #0f172a; font-weight: 800; font-size: 1.25rem;">إطلاق إشعار إصدار جديد للمنصة 🚀</h3>
+                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 6px; margin-bottom: 0;">عند الضغط على إطلاق الاصدار، سيظهر تنبيه عاجل لجميع الطلاب والأساتذة بوجود تحديث جديد مع زر "تحديث الآن". عند الضغط عليه ستحدث الصفحة تلقائياً لضمان استلام التحديثات.</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.88rem; margin-bottom: 6px;">ملاحظة التحديث / مميزات الاصدار (اختياري):</label>
+                    <textarea id="newReleaseNoteInput" rows="3" placeholder="مثال: تم إضافة ميزات جديدة وتحسين أداء البث المباشر. يرجى تحديث الصفحة الآن." style="width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-family: 'Cairo'; font-size: 0.85rem; outline: none; transition: 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='#10b981'"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="submitNewRelease()" id="submitReleaseBtn" style="flex: 1; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cairo', sans-serif; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+                        <i class="fas fa-paper-plane"></i> إطلاق التحديث للجميع الآن
+                    </button>
+                    <button onclick="closeNewReleaseModal()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; font-family: 'Cairo', sans-serif;">
+                        إلغاء
+                    </button>
                 </div>
             </div>
         </div>
@@ -4921,6 +4956,58 @@
                 };
                 reader.onerror = () => resolve(file);
             });
+        }
+
+        // ============================================================
+        // ✅ إطلاق إصدار جديد للمنصة
+        // ============================================================
+        function triggerNewReleaseModal() {
+            const modal = document.getElementById('newReleaseModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeNewReleaseModal() {
+            const modal = document.getElementById('newReleaseModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function submitNewRelease() {
+            const noteInput = document.getElementById('newReleaseNoteInput');
+            const note = noteInput ? noteInput.value.trim() : '';
+            const btn = document.getElementById('submitReleaseBtn');
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إطلاق الاصدار...';
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/admin/broadcast-release', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ note })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ تم إطلاق الاصدار الجديد للمنصة بنجاح! سيظهر التنبيه وزر التحديث لجميع الطلبة والأساتذة فوراً.');
+                    closeNewReleaseModal();
+                    if (noteInput) noteInput.value = '';
+                } else {
+                    alert('❌ فشل إطلاق الاصدار: ' + (data.error || 'خطأ غير معروف'));
+                }
+            } catch (error) {
+                alert('❌ خطأ في الاتصال بالسيرفر: ' + error.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> إطلاق التحديث للجميع الآن';
+                }
+            }
         }
 
         document.addEventListener('change', async function(e) {

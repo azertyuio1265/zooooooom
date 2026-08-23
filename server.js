@@ -4423,6 +4423,34 @@ function normalizeNewsTickerSettings(raw) {
     return res;
 }
 
+// ✅ جلب الاصدار الحالي للمنصة (عمومي للطلاب والأساتذة)
+app.get('/api/platform-version', async (req, res) => {
+    try {
+        let versionData = global.latestPlatformVersion;
+
+        if (!versionData) {
+            const { data } = await supabase
+                .from('platform_settings')
+                .select('value')
+                .eq('key', 'platform_version')
+                .single();
+
+            if (data && data.value) {
+                versionData = data.value;
+                global.latestPlatformVersion = versionData;
+            }
+        }
+
+        if (!versionData) {
+            versionData = { version: 1, note: 'هناك إصدار جديد للمنصة، قم بعمل تحديث الآن للحصول على أحدث المميزات.' };
+        }
+
+        res.json({ success: true, ...versionData });
+    } catch (error) {
+        res.json({ success: true, version: global.latestPlatformVersion?.version || 1, note: 'هناك إصدار جديد للمنصة، قم بعمل تحديث الآن.' });
+    }
+});
+
 app.get('/api/settings/news_ticker', async (req, res) => {
     try {
         const role = req.query.role || req.query.target;

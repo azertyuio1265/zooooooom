@@ -10228,6 +10228,83 @@
             });
         }
 
+        // ============================================================
+        // ✅ فحص تلقائي لوجود إصدار جديد للمنصة وتنبيه المستخدم بـ "زر التحديث"
+        // ============================================================
+        async function checkPlatformVersion() {
+            try {
+                const res = await fetch('/api/platform-version');
+                const data = await res.json();
+
+                if (data && data.success && data.version) {
+                    const serverVersion = String(data.version);
+                    const ackVersion = localStorage.getItem('acknowledged_platform_version');
+
+                    if (ackVersion && String(ackVersion) === serverVersion) {
+                        removeNewReleaseAlertBanner();
+                        return;
+                    }
+
+                    if (!ackVersion || String(ackVersion) !== serverVersion) {
+                        showNewReleaseAlertBanner(serverVersion, data.note);
+                    }
+                }
+            } catch (err) {
+                console.warn('⚠️ فشل التحقق من اصدار المنصة:', err.message);
+            }
+        }
+
+        function showNewReleaseAlertBanner(version, note) {
+            if (document.getElementById('newReleaseAlertBanner')) return;
+
+            const bannerHtml = `
+                <div id="newReleaseAlertBanner" style="position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999999; background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; padding: 14px 22px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(16,185,129,0.25); border: 1px solid #10b981; display: flex; align-items: center; gap: 16px; max-width: 92vw; width: 560px; animation: slideDownAlert 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+                    <style>
+                        @keyframes slideDownAlert {
+                            from { transform: translate(-50%, -100%); opacity: 0; }
+                            to { transform: translate(-50%, 0); opacity: 1; }
+                        }
+                    </style>
+                    <div style="width: 44px; height: 44px; background: rgba(16,185,129,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #34d399; flex-shrink: 0; border: 1px solid rgba(16,185,129,0.3);">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #f8fafc; margin-bottom: 2px;">هناك إصدار جديد للمنصة 🚀</div>
+                        <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.3;">${escapeHtml(note || 'قم بعمل تحديث الآن للحصول على أحدث المميزات والتحسينات.')}</div>
+                    </div>
+                    <button onclick="applyPlatformUpdate('${version}')" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(16,185,129,0.4); display: flex; align-items: center; gap: 6px; font-family: 'Cairo', sans-serif; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-sync-alt"></i> تحديث الآن
+                    </button>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', bannerHtml);
+        }
+
+        function removeNewReleaseAlertBanner() {
+            const banner = document.getElementById('newReleaseAlertBanner');
+            if (banner) banner.remove();
+        }
+
+        function applyPlatformUpdate(version) {
+            localStorage.setItem('acknowledged_platform_version', String(version));
+            removeNewReleaseAlertBanner();
+
+            const btn = event?.currentTarget;
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+            }
+
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 300);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkPlatformVersion();
+            setInterval(checkPlatformVersion, 15000);
+        });
+
         document.addEventListener('change', async function(e) {
             const input = e.target;
             if (input && input.type === 'file' && input.files && input.files[0]) {

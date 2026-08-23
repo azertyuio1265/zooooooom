@@ -2831,9 +2831,10 @@
                         <i class="fas fa-bell"></i>
                         <h4>الإشعارات</h4>
                     </div>
-                    <div style="display:flex; align-items:center;">
+                    <div style="display:flex; align-items:center; gap: 6px;">
                         <span class="notif-count" id="notifCountLabel">0</span>
                         <button class="mark-read" onclick="markAllNotifications()">تحديد الكل كمقروء</button>
+                        <button class="mark-read" onclick="clearAllNotifications()" style="color: #ef4444; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 6px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="مسح جميع الإشعارات"><i class="fas fa-trash-alt"></i> مسح الكل</button>
                     </div>
                 </div>
                 <div class="notif-list" id="notifList">
@@ -5414,6 +5415,33 @@
         updateNotifBadge();
         renderNotifications();
         showToast('تم تحديد جميع الإشعارات كمقروءة', 'success');
+    }
+
+    async function clearAllNotifications() {
+        if (!notifications || notifications.length === 0) {
+            showToast('لا توجد إشعارات لمسحها', 'info');
+            return;
+        }
+        if (!confirm('هل أنت متأكد من مسح جميع الإشعارات؟')) return;
+
+        try {
+            const teacherId = currentUser ? currentUser.id : null;
+            if (!teacherId) return;
+
+            const res = await fetchWithAuth(`/api/notifications/clear-all/${teacherId}/teacher`, { method: 'DELETE' });
+            if (res && res.success) {
+                notifications = [];
+                unreadCount = 0;
+                updateNotifBadge();
+                renderNotifications();
+                showToast('تم مسح جميع الإشعارات بنجاح', 'success');
+            } else {
+                showToast('فشل مسح الإشعارات', 'error');
+            }
+        } catch(e) {
+            console.error('Clear notifications error:', e);
+            showToast('حدث خطأ أثناء مسح الإشعارات', 'error');
+        }
     }
 
     // ================================================================
@@ -12929,6 +12957,83 @@ function updateUI() {
                 showToast('❌ حدث خطأ أثناء إلغاء الحظر', 'error');
             }
         }
+
+        // ============================================================
+        // ✅ فحص تلقائي لوجود إصدار جديد للمنصة وتنبيه المستخدم بـ "زر التحديث"
+        // ============================================================
+        async function checkPlatformVersion() {
+            try {
+                const res = await fetch('/api/platform-version');
+                const data = await res.json();
+
+                if (data && data.success && data.version) {
+                    const serverVersion = String(data.version);
+                    const ackVersion = localStorage.getItem('acknowledged_platform_version');
+
+                    if (ackVersion && String(ackVersion) === serverVersion) {
+                        removeNewReleaseAlertBanner();
+                        return;
+                    }
+
+                    if (!ackVersion || String(ackVersion) !== serverVersion) {
+                        showNewReleaseAlertBanner(serverVersion, data.note);
+                    }
+                }
+            } catch (err) {
+                console.warn('⚠️ فشل التحقق من اصدار المنصة:', err.message);
+            }
+        }
+
+        function showNewReleaseAlertBanner(version, note) {
+            if (document.getElementById('newReleaseAlertBanner')) return;
+
+            const bannerHtml = `
+                <div id="newReleaseAlertBanner" style="position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999999; background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; padding: 14px 22px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(16,185,129,0.25); border: 1px solid #10b981; display: flex; align-items: center; gap: 16px; max-width: 92vw; width: 560px; animation: slideDownAlert 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+                    <style>
+                        @keyframes slideDownAlert {
+                            from { transform: translate(-50%, -100%); opacity: 0; }
+                            to { transform: translate(-50%, 0); opacity: 1; }
+                        }
+                    </style>
+                    <div style="width: 44px; height: 44px; background: rgba(16,185,129,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #34d399; flex-shrink: 0; border: 1px solid rgba(16,185,129,0.3);">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #f8fafc; margin-bottom: 2px;">هناك إصدار جديد للمنصة 🚀</div>
+                        <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.3;">${escapeHtml(note || 'قم بعمل تحديث الآن للحصول على أحدث المميزات والتحسينات.')}</div>
+                    </div>
+                    <button onclick="applyPlatformUpdate('${version}')" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(16,185,129,0.4); display: flex; align-items: center; gap: 6px; font-family: 'Cairo', sans-serif; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-sync-alt"></i> تحديث الآن
+                    </button>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', bannerHtml);
+        }
+
+        function removeNewReleaseAlertBanner() {
+            const banner = document.getElementById('newReleaseAlertBanner');
+            if (banner) banner.remove();
+        }
+
+        function applyPlatformUpdate(version) {
+            localStorage.setItem('acknowledged_platform_version', String(version));
+            removeNewReleaseAlertBanner();
+
+            const btn = event?.currentTarget;
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+            }
+
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 300);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkPlatformVersion();
+            setInterval(checkPlatformVersion, 15000);
+        });
     </script>
 </body>
 </html>

@@ -988,6 +988,73 @@ router.delete('/archived-streams/:id', authenticate, authorize(['admin']), async
 });
 
 // ============================================================
+// ✅ إطلاق إصدار جديد للمنصة (تنبيه جميع الطلبة والأساتذة بضرورة التحديث)
+// ============================================================
+router.post('/broadcast-release', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const note = req.body.note || 'هناك إصدار جديد للمنصة، قم بعمل تحديث الآن للحصول على أحدث المميزات.';
+        const newVersion = Date.now();
+
+        const releaseData = {
+            version: newVersion,
+            note: note,
+            released_at: new Date().toISOString()
+        };
+
+        global.latestPlatformVersion = releaseData;
+
+        // 1. الحفظ في platform_settings
+        try {
+            await supabase
+                .from('platform_settings')
+                .upsert({ key: 'platform_version', value: releaseData });
+        } catch (dbErr) {
+            logger.warn('⚠️ تعذر الحفظ في platform_settings، تم الاعتماد على الذاكرة:', dbErr.message);
+        }
+
+        // 2. إرسال إشعار في جدول notifications لجميع الطلاب والأساتذة
+        try {
+            const { data: students } = await supabase.from('students').select('id');
+            const { data: teachers } = await supabase.from('teachers').select('id');
+
+            const notifications = [];
+            if (students && students.length > 0) {
+                students.forEach(s => notifications.push({
+                    user_id: s.id,
+                    user_type: 'student',
+                    title: '🚀 إصدار جديد للمنصة متوفر!',
+                    message: note,
+                    type: 'system',
+                    is_read: false
+                }));
+            }
+            if (teachers && teachers.length > 0) {
+                teachers.forEach(t => notifications.push({
+                    user_id: t.id,
+                    user_type: 'teacher',
+                    title: '🚀 إصدار جديد للمنصة متوفر!',
+                    message: note,
+                    type: 'system',
+                    is_read: false
+                }));
+            }
+
+            if (notifications.length > 0) {
+                await supabase.from('notifications').insert(notifications);
+            }
+        } catch (notifErr) {
+            logger.warn('⚠️ تعذر إدخال إشعارات الاصدار في جدول notifications:', notifErr.message);
+        }
+
+        logger.info(`🚀 تم إطلاق الاصدار الجديد بنجاح! Version: ${newVersion}`);
+        res.json({ success: true, version: newVersion, message: 'تم إطلاق الاصدار الجديد بنجاح' });
+    } catch (error) {
+        logger.error('❌ خطأ في إطلاق الاصدار الجديد:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ في الخادم أثناء إطلاق الاصدار' });
+    }
+});
+
+// ============================================================
 // ✅ حذف الأستاذ
 // ============================================================
 router.delete('/delete-teacher/:id', [
