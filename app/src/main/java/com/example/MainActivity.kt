@@ -1,142 +1,201 @@
 package com.example
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.webkit.*
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.ui.ZoomDzViewModel
-import com.example.ui.screens.*
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import com.example.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: ZoomDzViewModel by viewModels()
+
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private var webView: WebView? = null
+
+    // File chooser launcher
+    private val fileChooserLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (filePathCallback != null) {
+            val results = if (result.resultCode == RESULT_OK) {
+                val dataString = result.data?.dataString
+                val clipData = result.data?.clipData
+                if (clipData != null) {
+                    val count = clipData.itemCount
+                    val uris = Array(count) { i -> clipData.getItemAt(i).uri }
+                    uris
+                } else if (dataString != null) {
+                    arrayOf(Uri.parse(dataString))
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
+            filePathCallback?.onReceiveValue(results)
+            filePathCallback = null
+        }
+    }
+
+    // Permission launcher for Camera and Microphone
+    private val requestPermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
+        if (!cameraGranted || !audioGranted) {
+            Toast.makeText(this, "يرجى منح صلاحيات الكاميرا والمايك لدعم البث المباشر", Toast.LENGTH_LONG).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Request permissions early for smooth live sessions
+        requestPermissions()
+
         setContent {
             MyApplicationTheme {
-                var showOnboarding by remember { mutableStateOf(true) }
-                var selectedTab by remember { mutableStateOf(0) }
-                var tutorInitialPrompt by remember { mutableStateOf("") }
-
-                if (showOnboarding) {
-                    OnboardingScreen(onFinish = { showOnboarding = false })
-                } else {
-                    Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag("main_scaffold"),
-                        bottomBar = {
-                            NavigationBar(
-                                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                tonalElevation = 8.dp
-                            ) {
-                                NavigationBarItem(
-                                    selected = selectedTab == 0,
-                                    onClick = { selectedTab = 0 },
-                                    icon = { Icon(imageVector = Icons.Default.Book, contentDescription = "الدورات") },
-                                    label = { Text("الدورات", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                    )
-                                )
-                                NavigationBarItem(
-                                    selected = selectedTab == 1,
-                                    onClick = { selectedTab = 1 },
-                                    icon = { Icon(imageVector = Icons.Default.TaskAlt, contentDescription = "التمارين") },
-                                    label = { Text("التمارين", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                    )
-                                )
-                                NavigationBarItem(
-                                    selected = selectedTab == 2,
-                                    onClick = { selectedTab = 2 },
-                                    icon = { Icon(imageVector = Icons.Default.Videocam, contentDescription = "بث مباشر") },
-                                    label = { Text("بث مباشر", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                    )
-                                )
-                                NavigationBarItem(
-                                    selected = selectedTab == 3,
-                                    onClick = { selectedTab = 3 },
-                                    icon = { Icon(imageVector = Icons.Default.Psychology, contentDescription = "الأستاذ الذكي") },
-                                    label = { Text("الأستاذ الذكي", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                    )
-                                )
-                                NavigationBarItem(
-                                    selected = selectedTab == 4,
-                                    onClick = { selectedTab = 4 },
-                                    icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "الملف") },
-                                    label = { Text("الملف", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                                    )
-                                )
-                            }
-                        }
-                    ) { innerPadding ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            AnimatedContent(
-                                targetState = selectedTab,
-                                transitionSpec = {
-                                    fadeIn() togetherWith fadeOut()
-                                },
-                                label = "tab_transition"
-                            ) { tab ->
-                                when (tab) {
-                                    0 -> CoursesScreen(viewModel = viewModel)
-                                    1 -> ExercisesScreen(
-                                        viewModel = viewModel,
-                                        onNavigateToTutor = { prompt ->
-                                            tutorInitialPrompt = prompt
-                                            selectedTab = 3
-                                        }
-                                    )
-                                    2 -> LiveClassScreen(viewModel = viewModel)
-                                    3 -> {
-                                        TutorScreen(viewModel = viewModel, initialPrompt = tutorInitialPrompt)
-                                        // Clear after passing it
-                                        LaunchedEffect(Unit) {
-                                            tutorInitialPrompt = ""
-                                        }
-                                    }
-                                    4 -> ProfileScreen(viewModel = viewModel)
-                                }
-                            }
-                        }
-                    }
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    ZoomDzWebView(url = "https://zoomdz.com")
                 }
             }
         }
     }
+
+    private fun requestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.CAMERA)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    @Composable
+    fun ZoomDzWebView(url: String) {
+        val context = remember { this }
+
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { ctx ->
+                WebView(ctx).apply {
+                    webView = this
+                    layoutParams = android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    
+                    // Setup WebView Client
+                    webViewClient = object : WebViewClient() {
+                        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                            val targetUrl = request?.url?.toString() ?: return false
+                            
+                            // Open external links in external browser, keep platform links in the app
+                            if (targetUrl.contains("zoomdz.com") || targetUrl.startsWith("file://") || targetUrl.contains("localhost")) {
+                                return false
+                            }
+                            
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
+                                context.startActivity(intent)
+                                return true
+                            } catch (e: Exception) {
+                                return false
+                            }
+                        }
+
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            super.onPageFinished(view, url)
+                        }
+                    }
+
+                    // Setup WebChromeClient to support File upload & Live streams
+                    webChromeClient = object : WebChromeClient() {
+                        // Support file uploading (HW, assignments, profile pictures)
+                        override fun onShowFileChooser(
+                            webView: WebView?,
+                            filePathCallback: ValueCallback<Array<Uri>>?,
+                            fileChooserParams: FileChooserParams?
+                        ): Boolean {
+                            this@MainActivity.filePathCallback?.onReceiveValue(null)
+                            this@MainActivity.filePathCallback = filePathCallback
+
+                            val intent = fileChooserParams?.createIntent()
+                            if (intent != null) {
+                                try {
+                                    fileChooserLauncher.launch(intent)
+                                } catch (e: Exception) {
+                                    this@MainActivity.filePathCallback = null
+                                    return false
+                                }
+                            }
+                            return true
+                        }
+
+                        // Support Camera and Mic request within WebView (for video classrooms)
+                        override fun onPermissionRequest(request: PermissionRequest?) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                val resources = request?.resources ?: emptyArray()
+                                request?.grant(resources)
+                            }
+                        }
+                    }
+
+                    // Settings Optimization
+                    settings.apply {
+                        javaScriptEnabled = true
+                        domStorageEnabled = true
+                        databaseEnabled = true
+                        allowFileAccess = true
+                        allowContentAccess = true
+                        loadWithOverviewMode = true
+                        useWideViewPort = true
+                        mediaPlaybackRequiresUserGesture = false
+                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        cacheMode = WebSettings.LOAD_DEFAULT
+                    }
+
+                    loadUrl(url)
+                }
+            },
+            update = { view ->
+                // Keep reference up to date
+                webView = view
+            }
+        )
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val tempWebView = webView
+        if (tempWebView != null && tempWebView.canGoBack()) {
+            tempWebView.goBack()
+        } else {
+            @Suppress("DEPRECATION")
+            super.onBackPressed()
+        }
+    }
 }
+
