@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>مدونة ZoomDz التعليمية | نصائح واستراتيجيات</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -305,7 +306,7 @@
 
                     return `
                         <div class="blog-card">
-                            <img src="${cover}" alt="${escapeHtml(b.title)}" class="blog-card-img" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80'">
+                            <img src="${cover}" alt="${escapeHtml(b.title)}" class="blog-card-img" referrerpolicy="no-referrer" loading="lazy" onerror="if(!this.dataset.proxy && this.src.includes('imgur.com')){this.dataset.proxy=1;this.src='/api/proxy-image?url='+encodeURIComponent('${cover}');}else{this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80';}">
                             <div class="blog-card-body">
                                 <h3 class="blog-card-title">${escapeHtml(b.title)}</h3>
                                 <p class="blog-card-excerpt">${escapeHtml(b.excerpt || '')}</p>
@@ -357,7 +358,7 @@
                 statusEl.style.display = 'none';
                 singleEl.style.display = 'block';
 
-                const cover = blog.cover_image ? `<img src="${blog.cover_image}" alt="${escapeHtml(blog.title)}" class="article-cover">` : '';
+                const cover = blog.cover_image ? `<img src="${blog.cover_image}" alt="${escapeHtml(blog.title)}" class="article-cover" referrerpolicy="no-referrer" onerror="if(!this.dataset.proxy && this.src.includes('imgur.com')){this.dataset.proxy=1;this.src='/api/proxy-image?url='+encodeURIComponent('${blog.cover_image}');}">` : '';
                 const dateStr = blog.created_at ? new Date(blog.created_at).toLocaleDateString('ar-DZ', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
                 const author = blog.author || 'إدارة ZoomDz';
 
@@ -370,6 +371,18 @@
                     ${cover}
                     <div class="article-content">${blog.content}</div>
                 `;
+
+                // Also ensure any images in article content have referrerpolicy
+                const contentImgs = singleEl.querySelectorAll('.article-content img');
+                contentImgs.forEach(img => {
+                    img.setAttribute('referrerpolicy', 'no-referrer');
+                    img.onerror = function() {
+                        if (!this.dataset.proxy && this.src.includes('imgur.com')) {
+                            this.dataset.proxy = '1';
+                            this.src = '/api/proxy-image?url=' + encodeURIComponent(this.src);
+                        }
+                    };
+                });
 
             } catch (err) {
                 console.error('Error loading article:', err);

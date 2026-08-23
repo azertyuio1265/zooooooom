@@ -55,7 +55,7 @@
                     if (token && userData && !isGuest) {
                         var user = JSON.parse(userData);
                         if (user && user.role) {
-                            var redirectPath = user.role === 'teacher' ? '/teacher-dashboard.html' : '/student-dashboard.html';
+                            var redirectPath = (user.role === 'admin' || user.role === 'Admin' || user.role === 'ADMIN') ? '/admin.html' : (user.role === 'teacher' ? '/teacher-dashboard.html' : '/student-dashboard.html');
                             window.location.replace(redirectPath + window.location.search);
                             return;
                         }
@@ -67,7 +67,7 @@
                 } else if (token && userData && !isGuest) {
                     var user = JSON.parse(userData);
                     if (user && user.role) {
-                        var redirectPath = user.role === 'teacher' ? '/teacher-dashboard.html' : '/student-dashboard.html';
+                        var redirectPath = (user.role === 'admin' || user.role === 'Admin' || user.role === 'ADMIN') ? '/admin.html' : (user.role === 'teacher' ? '/teacher-dashboard.html' : '/student-dashboard.html');
                         window.location.replace(redirectPath);
                         return;
                     }

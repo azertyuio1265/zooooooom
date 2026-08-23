@@ -4,6 +4,7 @@
     <script src="/js/anti-rapid-click.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
     <title>لوحة المدير - ZoomDz</title>
         <!-- ===== FAVICON & BRANDING - GOOGLE SEARCH OPTIMIZED ===== -->
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
@@ -1696,36 +1697,28 @@
         // ✅ التحقق من صلاحية المدير
         // ============================================================
         (function checkAdminAccess() {
-            console.log('🔐 التحقق من صلاحية المدير...');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            const userDataStr = localStorage.getItem('userData') || sessionStorage.getItem('userData');
             
-            const token = localStorage.getItem('token');
-            const userDataStr = localStorage.getItem('userData');
-            
-            console.log('Token:', token);
-            console.log('UserData:', userDataStr);
-            
-            if (!userDataStr) {
-                console.log('❌ لا توجد بيانات مستخدم - توجيه إلى الصفحة الرئيسية');
-                window.location.href = '/';
+            if (!token || !userDataStr) {
+                console.warn('❌ لا توجد جلسة مدير مسجلة - توجيه لتسجيل الدخول');
+                window.location.replace('/?login=true&role=admin');
                 return;
             }
             
             try {
                 const userData = JSON.parse(userDataStr);
-                console.log('UserData parsed:', userData);
+                const role = String(userData.role || '').toLowerCase();
+                const email = String(userData.email || '').toLowerCase();
                 
-                if (!userData.role || (userData.role !== 'admin' && userData.role !== 'Admin' && userData.role !== 'ADMIN')) {
-                    console.log('❌ المستخدم ليس مديراً - الدور:', userData.role);
-                    window.location.href = '/';
+                if (role !== 'admin' && email !== 'admin@zoomdz.com') {
+                    console.warn('❌ المستخدم ليس مديراً - الدور:', userData.role);
+                    window.location.replace('/');
                     return;
                 }
-                
-                console.log('✅ تم التحقق من صلاحية المدير بنجاح');
-                console.log('👤 مرحباً مدير المنصة');
-                
             } catch (e) {
                 console.error('❌ خطأ في قراءة بيانات المستخدم:', e);
-                window.location.href = '/';
+                window.location.replace('/?login=true&role=admin');
             }
         })();
 
@@ -2305,6 +2298,36 @@
 
         var windowAdminBlogsData = [];
 
+        function formatImgurUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            var trimmed = url.trim();
+            if (!trimmed) return '';
+
+            // If protocol is missing, prepend https://
+            if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+                if (trimmed.includes('imgur.com')) {
+                    trimmed = 'https://' + trimmed;
+                }
+            }
+
+            // Strip query params and hashes
+            trimmed = trimmed.split('?')[0].split('#')[0];
+
+            if (trimmed.includes('imgur.com')) {
+                if (trimmed.includes('i.imgur.com')) {
+                    if (!/\.(png|jpg|jpeg|gif|webp)$/i.test(trimmed)) {
+                        trimmed += '.png';
+                    }
+                    return trimmed;
+                }
+                var match = trimmed.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]+)/i);
+                if (match && match[1]) {
+                    return 'https://i.imgur.com/' + match[1] + '.png';
+                }
+            }
+            return trimmed;
+        }
+
         function previewBlogCoverImage(url) {
             var previewContainer = document.getElementById('blogCoverPreview');
             var previewImg = document.getElementById('blogCoverPreviewImg');
@@ -2315,14 +2338,17 @@
                 return;
             }
 
-            var formattedUrl = url.trim();
-            if (formattedUrl.includes('imgur.com') && !formattedUrl.includes('i.imgur.com')) {
-                var match = formattedUrl.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9]+\/)?([a-zA-Z0-9]+)/);
-                if (match && match[1]) {
-                    formattedUrl = 'https://i.imgur.com/' + match[1] + '.png';
+            var formattedUrl = formatImgurUrl(url);
+            previewImg.referrerPolicy = 'no-referrer';
+            previewImg.dataset.proxy = '';
+            previewImg.onerror = function() {
+                if (!this.dataset.proxy && formattedUrl.includes('imgur.com')) {
+                    this.dataset.proxy = '1';
+                    this.src = '/api/proxy-image?url=' + encodeURIComponent(formattedUrl);
+                } else {
+                    this.src = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80';
                 }
-            }
-
+            };
             previewImg.src = formattedUrl;
             previewContainer.style.display = 'block';
         }
@@ -2396,7 +2422,8 @@
                 }
 
                 container.innerHTML = blogs.map(b => {
-                    var imgHtml = b.cover_image ? `<img src="${escapeHtml(b.cover_image)}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1; flex-shrink: 0;" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80'">` : '';
+                    var formattedImg = formatImgurUrl(b.cover_image || '');
+                    var imgHtml = formattedImg ? `<img src="${escapeHtml(formattedImg)}" referrerpolicy="no-referrer" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1; flex-shrink: 0;" onerror="if(!this.dataset.proxy && this.src.includes('imgur.com')){this.dataset.proxy=1;this.src='/api/proxy-image?url='+encodeURIComponent('${escapeHtml(formattedImg)}');}else{this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80';}">` : '';
                     return `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; gap: 12px; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
@@ -2427,7 +2454,8 @@
             var slug = document.getElementById('blogSlugInput').value.trim();
             var excerpt = document.getElementById('blogExcerptInput').value.trim();
             var keywords = document.getElementById('blogKeywordsInput').value.trim();
-            var image = document.getElementById('blogImageInput').value.trim();
+            var rawImage = document.getElementById('blogImageInput').value.trim();
+            var formattedImage = formatImgurUrl(rawImage);
             var content = document.getElementById('blogContentInput').value.trim();
 
             if (!title || !content) {
@@ -2455,7 +2483,7 @@
                         slug: slug,
                         excerpt: excerpt,
                         content: content,
-                        cover_image: image,
+                        cover_image: formattedImage,
                         seo_keywords: keywords,
                         meta_description: excerpt
                     })

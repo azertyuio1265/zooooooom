@@ -8,8 +8,30 @@ const logger = require('../utils/logger');
 function formatImgurUrl(url) {
     if (!url || typeof url !== 'string') return '';
     let trimmed = url.trim();
-    if (trimmed.includes('imgur.com') && !trimmed.includes('i.imgur.com')) {
-        const match = trimmed.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9]+\/)?([a-zA-Z0-9]+)/);
+    if (!trimmed) return '';
+
+    // If protocol is missing, prepend https://
+    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+        if (trimmed.includes('imgur.com')) {
+            trimmed = 'https://' + trimmed;
+        }
+    }
+
+    // Strip query parameters and hashes
+    trimmed = trimmed.split('?')[0].split('#')[0];
+
+    // Handle Imgur URLs
+    if (trimmed.includes('imgur.com')) {
+        // Direct i.imgur.com link
+        if (trimmed.includes('i.imgur.com')) {
+            if (!/\.(png|jpg|jpeg|gif|webp)$/i.test(trimmed)) {
+                trimmed += '.png';
+            }
+            return trimmed;
+        }
+
+        // Match gallery, album, or direct image hash
+        const match = trimmed.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]+)/i);
         if (match && match[1]) {
             return `https://i.imgur.com/${match[1]}.png`;
         }
