@@ -1344,6 +1344,12 @@ app.get(['/sitemap.xml', '/public/sitemap.xml'], async (req, res) => {
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://zoomdz.com/blog</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://zoomdz.com/privacy-policy.html</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
@@ -1424,6 +1430,25 @@ app.get(['/sitemap.xml', '/public/sitemap.xml'], async (req, res) => {
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>`;
+            });
+        }
+
+        // Fetch blog articles (SEO enhancement)
+        const { data: blogs } = await supabase
+            .from('blogs')
+            .select('slug');
+
+        if (blogs && blogs.length > 0) {
+            blogs.forEach(b => {
+                if (b.slug) {
+                    xml += `
+  <url>
+    <loc>https://zoomdz.com/blog/${encodeURIComponent(b.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+                }
             });
         }
 
