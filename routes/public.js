@@ -1054,21 +1054,23 @@ router.get(['/search/users', '/public/search/users'], async (req, res) => {
                     try {
                         const { data, error } = await supabase
                             .from('teachers')
-                            .select('id, full_name, name, specialization, subject, bio, rank, profile_image, profile_url, teaching_level, is_banned, status')
-                            .eq('is_banned', false)
+                            .select('*')
+                            .neq('is_banned', true)
                             .or(`full_name.ilike.%${query}%,specialization.ilike.%${query}%,bio.ilike.%${query}%`)
                             .limit(limit);
                         if (!error && data && data.length > 0) {
                             tData = data;
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        logger.warn('⚠️ تصفية الأساتذة بـ ilike واجهت خطأ:', e.message);
+                    }
                 }
 
-                if (!tData) {
+                if (!tData || tData.length === 0) {
                     const { data, error } = await supabase
                         .from('teachers')
-                        .select('id, full_name, name, specialization, subject, bio, rank, profile_image, profile_url, teaching_level, is_banned, status')
-                        .eq('is_banned', false)
+                        .select('*')
+                        .neq('is_banned', true)
                         .limit(50);
                     if (!error && data) {
                         tData = data;
@@ -1082,13 +1084,17 @@ router.get(['/search/users', '/public/search/users'], async (req, res) => {
                 if (tData && tData.length > 0) {
                     const processed = tData.map(t => processUserProfile(t, 'teacher'));
                     teachers = processed.filter(t => {
+                        if (t.is_banned === true) return false;
                         if (!query) return true;
                         const q = query.toLowerCase();
+                        const rawLevel = (t.teaching_level || '').toLowerCase();
+                        const transLevel = (levelMap[t.teaching_level] || '').toLowerCase();
                         const matchName = (t.full_name || t.name || '').toLowerCase().includes(q);
                         const matchSpec = (t.specialization || t.subject || '').toLowerCase().includes(q);
                         const matchBio = (t.bio || '').toLowerCase().includes(q);
                         const matchRank = (t.rank || '').toLowerCase().includes(q);
-                        return matchName || matchSpec || matchBio || matchRank;
+                        const matchLevel = rawLevel.includes(q) || transLevel.includes(q);
+                        return matchName || matchSpec || matchBio || matchRank || matchLevel;
                     });
                 }
             } catch (te) {
@@ -1096,7 +1102,7 @@ router.get(['/search/users', '/public/search/users'], async (req, res) => {
             }
         }
 
-        // 2. جلب وبحث الطلاب
+        // 2. جلب وبحث الطلاب من جدول students
         if (role === 'all' || role === 'student') {
             try {
                 let sData = null;
@@ -1104,35 +1110,57 @@ router.get(['/search/users', '/public/search/users'], async (req, res) => {
                     try {
                         const { data, error } = await supabase
                             .from('students')
-                            .select('id, full_name, name, grade, education_level, wilaya, profile_image, profile_url, is_banned')
-                            .eq('is_banned', false)
-                            .or(`full_name.ilike.%${query}%,education_level.ilike.%${query}%,grade.ilike.%${query}%,wilaya.ilike.%${query}%`)
+                            .select('*')
+                            .neq('is_banned', true)
+                            .or(`full_name.ilike.%${query}%,education_level.ilike.%${query}%`)
                             .limit(limit);
                         if (!error && data && data.length > 0) {
                             sData = data;
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        logger.warn('⚠️ تصفية الطلاب بـ ilike واجهت خطأ:', e.message);
+                    }
                 }
 
-                if (!sData) {
-                    const { data, error } = await supabase
-                        .from('students')
-                        .select('id, full_name, name, grade, education_level, wilaya, profile_image, profile_url, is_banned')
-                        .eq('is_banned', false)
-                        .limit(50);
-                    if (!error && data) {
-                        sData = data;
+                if (!sData || sData.length === 0) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('students')
+                            .select('*')
+                            .neq('is_banned', true)
+                            .order('created_at', { ascending: false })
+                            .limit(100);
+                        if (!error && data && data.length > 0) {
+                            sData = data;
+                        } else {
+                            // محاولة استعلام بسيط بدون order
+                            const { data: rawD, error: rawE } = await supabase
+                                .from('students')
+                                .select('*')
+                                .limit(100);
+                            if (!rawE && rawD) {
+                                sData = rawD;
+                            }
+                        }
+                    } catch (e) {
+                        logger.warn('⚠️ خطأ في جلب الطلاب العام:', e.message);
                     }
                 }
 
                 if (sData && sData.length > 0) {
-                    students = sData.filter(s => {
+                    const processed = sData.map(s => processUserProfile(s, 'student'));
+                    students = processed.filter(s => {
+                        if (s.is_banned === true) return false;
                         if (!query) return true;
                         const q = query.toLowerCase();
+                        const rawLevel = (s.education_level || s.grade || '').toLowerCase();
+                        const transLevel = (levelMap[s.education_level] || '').toLowerCase();
                         const matchName = (s.full_name || s.name || '').toLowerCase().includes(q);
-                        const matchGrade = (s.grade || s.education_level || '').toLowerCase().includes(q);
-                        const matchWilaya = (s.wilaya || '').toLowerCase().includes(q);
-                        return matchName || matchGrade || matchWilaya;
+                        const matchLevel = rawLevel.includes(q) || transLevel.includes(q);
+                        const matchWilaya = (s.wilaya || s.city || '').toLowerCase().includes(q);
+                        const matchEmail = (s.email || '').toLowerCase().includes(q);
+                        const matchPhone = (s.phone || '').includes(q);
+                        return matchName || matchLevel || matchWilaya || matchEmail || matchPhone;
                     });
                 }
             } catch (se) {
@@ -1176,14 +1204,16 @@ router.get(['/search/users', '/public/search/users'], async (req, res) => {
                 }
             }
 
+            const gradeDisplay = levelMap[s.education_level] || s.education_level || s.grade || 'طالب مسجل';
+
             return {
                 id: s.id,
                 user_role: 'student',
                 name: s.full_name || s.name || 'طالب',
                 full_name: s.full_name || s.name || 'طالب',
-                grade: s.grade || s.education_level || 'طالب مسجل',
-                education_level: s.education_level || s.grade || '',
-                wilaya: s.wilaya || '',
+                grade: gradeDisplay,
+                education_level: s.education_level || '',
+                wilaya: s.wilaya || s.city || '',
                 profile_image: img,
                 avatar: img
             };
