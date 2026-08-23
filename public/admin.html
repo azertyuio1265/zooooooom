@@ -894,8 +894,9 @@
 
         <div id="blogs-adminTab" class="tab-content" style="display:none;">
             <div class="card" style="background: white; padding: 30px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                <h3 style="margin-bottom: 20px; font-weight: 800; color: #0f172a;"><i class="fas fa-plus-circle" style="color: #3b82f6;"></i> نشر مقال جديد في المدونة (متوافق تماماً مع محرك بحث Google SEO)</h3>
+                <h3 id="blogFormTitle" style="margin-bottom: 20px; font-weight: 800; color: #0f172a;"><i class="fas fa-plus-circle" style="color: #3b82f6;"></i> نشر مقال جديد في المدونة (متوافق تماماً مع محرك بحث Google SEO)</h3>
                 <form id="createBlogForm" onsubmit="handleCreateBlog(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                    <input type="hidden" id="editingBlogId" value="">
                     <div>
                         <label style="display:block; font-weight:700; margin-bottom:6px; color:#1e293b;">عنوان المقال الأساسي (Title Tag / H1)</label>
                         <input type="text" id="blogTitleInput" required placeholder="مثال: كيف تحصل على معدل ممتاز في البكالوريا" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo';">
@@ -913,16 +914,26 @@
                         <input type="text" id="blogKeywordsInput" placeholder="باكالوريا 2026, نصائح دراسية, مراجعة الرياضيات, ZoomDz" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo';">
                     </div>
                     <div>
-                        <label style="display:block; font-weight:700; margin-bottom:6px; color:#1e293b;">رابط صورة الغلاف (Cover Image URL)</label>
-                        <input type="text" id="blogImageInput" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo';">
+                        <label style="display:block; font-weight:700; margin-bottom:6px; color:#1e293b;"><i class="fas fa-image" style="color:#10b981;"></i> رابط صورة الغلاف من Imgur (Cover Image URL)</label>
+                        <input type="text" id="blogImageInput" placeholder="https://i.imgur.com/example.png أو https://imgur.com/a/xxxx" oninput="previewBlogCoverImage(this.value)" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo';">
+                        <p style="font-size:0.78rem; color:#64748b; margin-top:4px; margin-bottom:0;"><i class="fas fa-info-circle"></i> يمكنك وضع رابط الصورة المباشر من Imgur أو رابط الألبوم وسيقوم النظام بتنسيقه تلقائياً.</p>
+                        <div id="blogCoverPreview" style="display:none; margin-top:10px;">
+                            <span style="display:block; font-size:0.78rem; font-weight:700; color:#475569; margin-bottom:4px;">معاينة الغلاف:</span>
+                            <img id="blogCoverPreviewImg" src="" style="max-height: 140px; border-radius: 8px; border: 1px solid #cbd5e1; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80'">
+                        </div>
                     </div>
                     <div>
                         <label style="display:block; font-weight:700; margin-bottom:6px; color:#1e293b;">محتوى المقال (Rich HTML Content مع ترويسات H2 و H3 لتعزيز السيو)</label>
                         <textarea id="blogContentInput" rows="10" placeholder="<h2>مقدمة</h2><p>اكتب محتوى المقال هنا...</p>" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo';"></textarea>
                     </div>
-                    <button type="submit" style="background: #2563eb; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem;">
-                        <i class="fas fa-paper-plane"></i> نشر المقال في المدونة فوراً
-                    </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="submit" id="blogSubmitBtn" style="flex: 1; background: #2563eb; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; font-family: 'Cairo';">
+                            <i class="fas fa-paper-plane" id="blogSubmitIcon"></i> <span id="blogSubmitText">نشر المقال في المدونة فوراً</span>
+                        </button>
+                        <button type="button" id="cancelBlogEditBtn" onclick="resetBlogForm()" style="display:none; background: #64748b; color: white; border: none; padding: 14px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: 'Cairo';">
+                            <i class="fas fa-times"></i> إلغاء التعديل
+                        </button>
+                    </div>
                 </form>
             </div>
 
@@ -2292,6 +2303,83 @@
             else if (tab === 'archived-streams') loadArchivedStreamsAdmin();
         }
 
+        var windowAdminBlogsData = [];
+
+        function previewBlogCoverImage(url) {
+            var previewContainer = document.getElementById('blogCoverPreview');
+            var previewImg = document.getElementById('blogCoverPreviewImg');
+            if (!previewContainer || !previewImg) return;
+
+            if (!url || !url.trim()) {
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            var formattedUrl = url.trim();
+            if (formattedUrl.includes('imgur.com') && !formattedUrl.includes('i.imgur.com')) {
+                var match = formattedUrl.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9]+\/)?([a-zA-Z0-9]+)/);
+                if (match && match[1]) {
+                    formattedUrl = 'https://i.imgur.com/' + match[1] + '.png';
+                }
+            }
+
+            previewImg.src = formattedUrl;
+            previewContainer.style.display = 'block';
+        }
+
+        function resetBlogForm() {
+            var form = document.getElementById('createBlogForm');
+            if (form) form.reset();
+            document.getElementById('editingBlogId').value = '';
+
+            var titleEl = document.getElementById('blogFormTitle');
+            if (titleEl) titleEl.innerHTML = '<i class="fas fa-plus-circle" style="color: #3b82f6;"></i> نشر مقال جديد في المدونة (متوافق تماماً مع محرك بحث Google SEO)';
+
+            var submitText = document.getElementById('blogSubmitText');
+            if (submitText) submitText.textContent = 'نشر المقال في المدونة فوراً';
+
+            var submitIcon = document.getElementById('blogSubmitIcon');
+            if (submitIcon) submitIcon.className = 'fas fa-paper-plane';
+
+            var cancelBtn = document.getElementById('cancelBlogEditBtn');
+            if (cancelBtn) cancelBtn.style.display = 'none';
+
+            var previewContainer = document.getElementById('blogCoverPreview');
+            if (previewContainer) previewContainer.style.display = 'none';
+        }
+
+        function editAdminBlog(id) {
+            var blog = windowAdminBlogsData.find(b => String(b.id) === String(id));
+            if (!blog) return;
+
+            document.getElementById('editingBlogId').value = blog.id;
+            document.getElementById('blogTitleInput').value = blog.title || '';
+            document.getElementById('blogSlugInput').value = blog.slug || '';
+            document.getElementById('blogExcerptInput').value = blog.excerpt || '';
+            document.getElementById('blogKeywordsInput').value = blog.seo_keywords || '';
+            document.getElementById('blogImageInput').value = blog.cover_image || '';
+            document.getElementById('blogContentInput').value = blog.content || '';
+
+            var titleEl = document.getElementById('blogFormTitle');
+            if (titleEl) titleEl.innerHTML = '<i class="fas fa-edit" style="color: #d97706;"></i> تعديل المقال المنشور #' + blog.id;
+
+            var submitText = document.getElementById('blogSubmitText');
+            if (submitText) submitText.textContent = 'حفظ التعديلات على المقال';
+
+            var submitIcon = document.getElementById('blogSubmitIcon');
+            if (submitIcon) submitIcon.className = 'fas fa-save';
+
+            var cancelBtn = document.getElementById('cancelBlogEditBtn');
+            if (cancelBtn) cancelBtn.style.display = 'inline-block';
+
+            previewBlogCoverImage(blog.cover_image || '');
+
+            var formCard = document.getElementById('createBlogForm');
+            if (formCard) {
+                formCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
         async function loadAdminBlogs() {
             var container = document.getElementById('adminBlogsList');
             if (!container) return;
@@ -2300,24 +2388,32 @@
                 var res = await fetch('/api/blogs');
                 var data = await res.json();
                 var blogs = data.blogs || [];
+                windowAdminBlogsData = blogs;
 
                 if (blogs.length === 0) {
                     container.innerHTML = '<p style="text-align:center; padding:20px; color:#94a3b8;">لا توجد مقالات منشورة</p>';
                     return;
                 }
 
-                container.innerHTML = blogs.map(b => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-                        <div>
-                            <h4 style="font-weight: 800; color: #0f172a; margin-bottom: 4px;">${escapeHtml(b.title)}</h4>
-                            <p style="font-size: 0.85rem; color: #64748b;">الرابط: /blog/${b.slug || b.id} | التاريخ: ${new Date(b.created_at).toLocaleDateString('ar-DZ')}</p>
+                container.innerHTML = blogs.map(b => {
+                    var imgHtml = b.cover_image ? `<img src="${escapeHtml(b.cover_image)}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1; flex-shrink: 0;" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80'">` : '';
+                    return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; gap: 12px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                            ${imgHtml}
+                            <div style="min-width: 0; flex: 1;">
+                                <h4 style="font-weight: 800; color: #0f172a; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(b.title)}</h4>
+                                <p style="font-size: 0.85rem; color: #64748b; margin: 0;">الرابط: /blog/${b.slug || b.id} | التاريخ: ${new Date(b.created_at).toLocaleDateString('ar-DZ')}</p>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <a href="/?blog=${b.slug || b.id}" target="_blank" style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 0.85rem;"><i class="fas fa-eye"></i> معاينة</a>
-                            <button onclick="deleteAdminBlog(${b.id})" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem;"><i class="fas fa-trash"></i> حذف</button>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <a href="/blog/${encodeURIComponent(b.slug || b.id)}" target="_blank" style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-eye"></i> معاينة</a>
+                            <button onclick="editAdminBlog('${b.id}')" style="background: #fef3c7; color: #d97706; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-edit"></i> تعديل</button>
+                            <button onclick="deleteAdminBlog('${b.id}')" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-trash"></i> حذف</button>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             } catch(e) {
                 console.error(e);
                 container.innerHTML = '<p style="text-align:center; color:#dc2626;">حدث خطأ في تحميل المقالات</p>';
@@ -2326,6 +2422,7 @@
 
         async function handleCreateBlog(event) {
             event.preventDefault();
+            var editingId = document.getElementById('editingBlogId').value;
             var title = document.getElementById('blogTitleInput').value.trim();
             var slug = document.getElementById('blogSlugInput').value.trim();
             var excerpt = document.getElementById('blogExcerptInput').value.trim();
@@ -2338,10 +2435,17 @@
                 return;
             }
 
+            var btn = document.getElementById('blogSubmitBtn');
+            if (btn) btn.disabled = true;
+
             try {
                 var token = localStorage.getItem('token') || sessionStorage.getItem('token');
-                var res = await fetch('/api/admin/blogs', {
-                    method: 'POST',
+                var isEdit = Boolean(editingId);
+                var url = isEdit ? ('/api/admin/blogs/' + editingId) : '/api/admin/blogs';
+                var method = isEdit ? 'PUT' : 'POST';
+
+                var res = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token
@@ -2358,15 +2462,17 @@
                 });
                 var data = await res.json();
                 if (data.success) {
-                    alert('تم نشر المقال بنجاح وتوافقه مع قوقل SEO!');
-                    document.getElementById('createBlogForm').reset();
+                    alert(isEdit ? '✅ تم تحديث المقال بنجاح!' : '✅ تم نشر المقال بنجاح وتوافقه مع قوقل SEO!');
+                    resetBlogForm();
                     loadAdminBlogs();
                 } else {
-                    alert('خطأ: ' + (data.error || 'تعذر النشر'));
+                    alert('خطأ: ' + (data.error || 'تعذر الإجراء'));
                 }
             } catch(e) {
                 console.error(e);
                 alert('حدث خطأ في الاتصال بالخادم');
+            } finally {
+                if (btn) btn.disabled = false;
             }
         }
 

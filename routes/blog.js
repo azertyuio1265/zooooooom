@@ -4,6 +4,19 @@ const { supabase } = require('../config/database');
 const { authenticate, authorize } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
+// Helper function to format Imgur URLs into direct image links
+function formatImgurUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    let trimmed = url.trim();
+    if (trimmed.includes('imgur.com') && !trimmed.includes('i.imgur.com')) {
+        const match = trimmed.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9]+\/)?([a-zA-Z0-9]+)/);
+        if (match && match[1]) {
+            return `https://i.imgur.com/${match[1]}.png`;
+        }
+    }
+    return trimmed;
+}
+
 // Get all published blog posts
 router.get('/blogs', async (req, res) => {
     try {
@@ -13,7 +26,6 @@ router.get('/blogs', async (req, res) => {
             .order('created_at', { ascending: false });
 
         if (error) {
-            // If table doesn't exist yet, return empty array gracefully
             if (error.code === '42P01') {
                 return res.json({ success: true, blogs: [] });
             }
@@ -32,14 +44,12 @@ router.get('/blogs/:identifier', async (req, res) => {
     try {
         const identifier = decodeURIComponent(req.params.identifier);
         
-        // Try searching by slug first
         let { data, error } = await supabase
             .from('blogs')
             .select('*')
             .eq('slug', identifier)
             .maybeSingle();
 
-        // If not found by slug and identifier is numeric, try searching by id
         if (!data && !isNaN(identifier) && Number.isInteger(Number(identifier))) {
             const idRes = await supabase
                 .from('blogs')
@@ -67,9 +77,10 @@ router.post('/admin/blogs', authenticate, authorize(['admin']), async (req, res)
         const { title, slug, excerpt, content, cover_image, seo_keywords, meta_description, author } = req.body;
 
         if (!title || !content) {
-            return res.status(400).json({ success: false, error: 'العنوان والمحتوى مطلوبان' });
+            return res.status(400).json({ success: false, error: 'العنوان ومحتوى المقال مطلوبان' });
         }
 
+        const formattedCoverImage = formatImgurUrl(cover_image);
         const finalSlug = slug ? slug.trim().toLowerCase().replace(/\s+/g, '-') : title.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
 
         const newBlog = {
@@ -77,7 +88,7 @@ router.post('/admin/blogs', authenticate, authorize(['admin']), async (req, res)
             slug: finalSlug,
             excerpt: excerpt || '',
             content,
-            cover_image: cover_image || '',
+            cover_image: formattedCoverImage,
             seo_keywords: seo_keywords || '',
             meta_description: meta_description || excerpt || '',
             author: author || 'إدارة ZoomDz',
@@ -91,7 +102,6 @@ router.post('/admin/blogs', authenticate, authorize(['admin']), async (req, res)
             .single();
 
         if (error) {
-            // If table doesn't exist, create instruction or error
             if (error.code === '42P01') {
                 return res.status(400).json({ success: false, error: 'جدول المقالات (blogs) غير موجود في قاعدة البيانات' });
             }
@@ -101,6 +111,48 @@ router.post('/admin/blogs', authenticate, authorize(['admin']), async (req, res)
         res.json({ success: true, blog: data });
     } catch (e) {
         logger.error('Error creating blog:', e);
+        res.status(500).json({ success: false, error: e.message || 'Internal server error' });
+    }
+});
+
+// Admin: Update existing blog post
+router.put('/admin/blogs/:id', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const blogId = req.params.id;
+        const { title, slug, excerpt, content, cover_image, seo_keywords, meta_description, author } = req.body;
+
+        if (!title || !content) {
+            return res.status(400).json({ success: false, error: 'العنوان ومحتوى المقال مطلوبان' });
+        }
+
+        const formattedCoverImage = formatImgurUrl(cover_image);
+        const finalSlug = slug ? slug.trim().toLowerCase().replace(/\s+/g, '-') : title.trim().toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+
+        const updatedData = {
+            title,
+            slug: finalSlug,
+            excerpt: excerpt || '',
+            content,
+            cover_image: formattedCoverImage,
+            seo_keywords: seo_keywords || '',
+            meta_description: meta_description || excerpt || '',
+            updated_at: new Date().toISOString()
+        };
+
+        if (author) updatedData.author = author;
+
+        const { data, error } = await supabase
+            .from('blogs')
+            .update(updatedData)
+            .eq('id', blogId)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        res.json({ success: true, blog: data, message: 'تم تحديث المقال بنجاح' });
+    } catch (e) {
+        logger.error('Error updating blog:', e);
         res.status(500).json({ success: false, error: e.message || 'Internal server error' });
     }
 });
