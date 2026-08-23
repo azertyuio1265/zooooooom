@@ -908,6 +908,86 @@ router.get('/logs', authenticate, authorize(['admin']), async (req, res) => {
 });
 
 // ============================================================
+// ✅ جلب أرشيف وسجلات البث المحذوفة (مع كافة التفاصيل والأدلة القاطعة)
+// ============================================================
+router.get('/archived-streams', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        logger.info('📥 جلب أرشيف وسجلات البث المحذوفة...');
+        let logsList = [];
+
+        // 1. تجربة الجلب من جدول archived_stream_logs في Supabase
+        try {
+            const { data, error } = await supabase
+                .from('archived_stream_logs')
+                .select('*')
+                .order('archived_at', { ascending: false })
+                .limit(200);
+
+            if (!error && data && data.length > 0) {
+                logsList = data;
+            }
+        } catch (dbErr) {
+            logger.warn('⚠️ فشل الجلب من جدول archived_stream_logs، الجلب من platform_settings:', dbErr.message);
+        }
+
+        // 2. إذا كان الجدول فارغاً أو غير موجود، تجربة الجلب من platform_settings
+        if (logsList.length === 0) {
+            try {
+                const { data: psData } = await supabase
+                    .from('platform_settings')
+                    .select('value')
+                    .eq('key', 'archived_stream_logs')
+                    .single();
+
+                if (psData && Array.isArray(psData.value)) {
+                    logsList = psData.value;
+                }
+            } catch (psErr) {
+                logger.warn('⚠️ تعذر الجلب من platform_settings:', psErr.message);
+            }
+        }
+
+        res.json({ success: true, count: logsList.length, logs: logsList });
+    } catch (error) {
+        logger.error('❌ خطأ في جلب أرشيف البث:', error.message);
+        res.status(500).json({ success: false, error: 'فشل جلب أرشيف البث', details: error.message });
+    }
+});
+
+// ✅ حذف سجل أرشيف محدد من الإدارة
+router.delete('/archived-streams/:id', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const logId = req.params.id;
+
+        // حذف من جدول archived_stream_logs إن وجد
+        try {
+            await supabase.from('archived_stream_logs').delete().eq('id', logId);
+        } catch (e) {}
+
+        // حذف من platform_settings
+        try {
+            const { data: psData } = await supabase
+                .from('platform_settings')
+                .select('value')
+                .eq('key', 'archived_stream_logs')
+                .single();
+
+            if (psData && Array.isArray(psData.value)) {
+                const updated = psData.value.filter(item => item.id !== logId && String(item.offer_id) !== String(logId));
+                await supabase
+                    .from('platform_settings')
+                    .upsert({ key: 'archived_stream_logs', value: updated });
+            }
+        } catch (e) {}
+
+        res.json({ success: true, message: 'تم حذف سجل الأرشيف بنجاح' });
+    } catch (error) {
+        logger.error('❌ خطأ في حذف سجل الأرشيف:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
 // ✅ حذف الأستاذ
 // ============================================================
 router.delete('/delete-teacher/:id', [

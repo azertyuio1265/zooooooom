@@ -790,6 +790,13 @@ async function forceEndStream(offerId, reason = 'grace_timeout') {
     const completion = await verifyStreamCompletion(offerId);
     await processStreamPayments(offerId, false);
 
+    // أرشفة سجل البث
+    try {
+        await archiveStreamLog(offerId, `force_ended_${reason}`, offer.teacher_id);
+    } catch (archErr) {
+        logger.error('⚠️ خطأ في أرشفة البث الإجباري:', archErr.message);
+    }
+
     await supabase.from('offers').update({
         status: 'completed',
         completed_at: new Date().toISOString(),
@@ -816,6 +823,199 @@ async function forceEndStream(offerId, reason = 'grace_timeout') {
     });
 
     console.log(`✅ تم الإغلاق الإجباري للبث ${offerId}`);
+}
+
+/**
+ * أرشفة وحفظ سجل البث المحذوف/المنتهي بكافة تفاصيله قبل الحذف
+ * @param {number} offerId - معرف الدرس
+ * @param {string} deleteReason - سبب الحذف/الإنهاء ('ended', 'deleted', 'early_end', 'force_ended')
+ * @param {number|string} endedByUserId - معرف من قام بإيقاف/حذف البث
+ */
+async function archiveStreamLog(offerId, deleteReason = 'ended', endedByUserId = null) {
+    try {
+        if (!offerId) return null;
+
+        // 1. جلب بيانات الدرس بالكامل من جدول offers
+        const { data: offer } = await supabase
+            .from('offers')
+            .select('*')
+            .eq('id', offerId)
+            .single();
+
+        if (!offer) {
+            logger.warn(`archiveStreamLog: لم يتم العثور على الدرس ${offerId} لأرشفته`);
+            return null;
+        }
+
+        // 2. جلب بيانات الأستاذ
+        let teacherName = `أستاذ رقم ${offer.teacher_id}`;
+        let teacherEmail = '';
+        let teacherPhone = '';
+        if (offer.teacher_id) {
+            const { data: teacher } = await supabase
+                .from('teachers')
+                .select('full_name, email, phone')
+                .eq('id', offer.teacher_id)
+                .single();
+            if (teacher) {
+                teacherName = teacher.full_name || teacherName;
+                teacherEmail = teacher.email || '';
+                teacherPhone = teacher.phone || '';
+            }
+        }
+
+        // 3. حساب نسب ومدد البث الفعلية
+        let completion = { completion_percentage: offer.completion_percentage || 0, actual_seconds: offer.actual_duration || offer.actual_live_seconds || 0 };
+        try {
+            completion = await verifyStreamCompletion(offerId);
+        } catch (e) {}
+
+        // 4. جلب جميع الطلاب المسجلين/الحاضرين في الجلسات والغرفة لهذا البث
+        let studentList = [];
+        let totalEarningsCalculated = 0;
+        let totalRefundedCalculated = 0;
+
+        try {
+            const { data: sessions } = await supabase
+                .from('sessions')
+                .select('id, student_id, payment_amount, payment_status, completion_percentage, actual_duration, partial_payment_note, created_at')
+                .eq('offer_id', offerId);
+
+            if (sessions && sessions.length > 0) {
+                const studentIds = Array.from(new Set(sessions.map(s => s.student_id).filter(Boolean)));
+                let studentMap = {};
+
+                if (studentIds.length > 0) {
+                    const { data: students } = await supabase
+                        .from('students')
+                        .select('id, full_name, email, phone')
+                        .in('id', studentIds);
+
+                    if (students) {
+                        students.forEach(st => { studentMap[st.id] = st; });
+                    }
+                }
+
+                studentList = sessions.map(sess => {
+                    const st = studentMap[sess.student_id] || {};
+                    const pAmount = Number(sess.payment_amount || offer.price || 0);
+                    if (sess.payment_status === 'paid') {
+                        totalEarningsCalculated += pAmount;
+                    } else if (sess.payment_status === 'refunded') {
+                        totalRefundedCalculated += pAmount;
+                    }
+                    return {
+                        session_id: sess.id,
+                        student_id: sess.student_id,
+                        student_name: st.full_name || `طالب رقم ${sess.student_id}`,
+                        student_email: st.email || '',
+                        student_phone: st.phone || '',
+                        payment_amount: pAmount,
+                        payment_status: sess.payment_status || 'unknown',
+                        note: sess.partial_payment_note || ''
+                    };
+                });
+            } else {
+                // إذا لم توجد جلسات، نبحث في غرفة الانتظار
+                const { data: waiting } = await supabase
+                    .from('waiting_room')
+                    .select('student_id, created_at')
+                    .eq('offer_id', offerId);
+
+                if (waiting && waiting.length > 0) {
+                    const studentIds = Array.from(new Set(waiting.map(w => w.student_id).filter(Boolean)));
+                    if (studentIds.length > 0) {
+                        const { data: students } = await supabase
+                            .from('students')
+                            .select('id, full_name, email, phone')
+                            .in('id', studentIds);
+
+                        studentList = (students || []).map(st => ({
+                            student_id: st.id,
+                            student_name: st.full_name || `طالب رقم ${st.id}`,
+                            student_email: st.email || '',
+                            student_phone: st.phone || '',
+                            payment_amount: offer.price || 0,
+                            payment_status: 'joined_waiting_room',
+                            note: 'انضم لغرفة الانتظار/البث'
+                        }));
+                    }
+                }
+            }
+        } catch (sessErr) {
+            logger.error('archiveStreamLog: خطأ في جلب تفاصيل الطلاب والجلسات:', sessErr.message);
+        }
+
+        const expectedSeconds = offer.total_seconds || (offer.duration * 60) || (offer.duration_minutes * 60) || 3600;
+        const actualLiveSeconds = completion.actual_seconds || offer.actual_duration || offer.actual_live_seconds || 0;
+        const completionPct = Math.round(completion.completion_percentage || offer.completion_percentage || 0);
+
+        // 5. بناء كائن الأرشيف النهائي الشامل
+        const archiveRecord = {
+            id: `stream_log_${Date.now()}_${offerId}`,
+            offer_id: offerId,
+            subject_name: offer.subject_name || offer.title || 'درس بدون عنوان',
+            teacher_id: offer.teacher_id,
+            teacher_name: teacherName,
+            teacher_email: teacherEmail,
+            teacher_phone: teacherPhone,
+            price: Number(offer.price || 0),
+            is_free: !!(offer.is_free || offer.price === 0),
+            expected_duration_seconds: expectedSeconds,
+            expected_duration_minutes: Math.round(expectedSeconds / 60),
+            actual_live_seconds: actualLiveSeconds,
+            actual_live_minutes: Math.round(actualLiveSeconds / 60),
+            completion_percentage: completionPct,
+            is_completed_80pct: completionPct >= 80,
+            students_count: studentList.length,
+            students_list: studentList,
+            total_earned: totalEarningsCalculated,
+            total_refunded: totalRefundedCalculated,
+            stream_started_at: offer.stream_started_at || offer.created_at || null,
+            stream_ended_at: new Date().toISOString(),
+            archived_at: new Date().toISOString(),
+            delete_reason: deleteReason,
+            ended_by_user_id: endedByUserId,
+            original_status: offer.status || 'unknown'
+        };
+
+        // 6. الحفظ في جدول archived_stream_logs أولاً
+        try {
+            await supabase.from('archived_stream_logs').insert(archiveRecord);
+        } catch (dbErr) {
+            logger.warn('archiveStreamLog: لم يتم الحفظ في جدول archived_stream_logs، سيتم الحفظ في platform_settings:', dbErr.message);
+        }
+
+        // 7. الحفظ أيضاً في platform_settings تحت المفتاح archived_stream_logs لضمان استمرارية الحفظ 100%
+        try {
+            const { data: settingData } = await supabase
+                .from('platform_settings')
+                .select('value')
+                .eq('key', 'archived_stream_logs')
+                .single();
+
+            let logsList = (settingData && Array.isArray(settingData.value)) ? settingData.value : [];
+            // تجنب تكرار إدخال نفس ID للدرس
+            logsList = logsList.filter(item => String(item.offer_id) !== String(offerId));
+            logsList.unshift(archiveRecord);
+            if (logsList.length > 500) {
+                logsList = logsList.slice(0, 500);
+            }
+
+            await supabase
+                .from('platform_settings')
+                .upsert({ key: 'archived_stream_logs', value: logsList });
+
+            logger.info(`✅ تم أرشفة بيانات البث ${offerId} بنجاح في platform_settings`);
+        } catch (psErr) {
+            logger.error('archiveStreamLog: خطأ أثناء الحفظ في platform_settings:', psErr.message);
+        }
+
+        return archiveRecord;
+    } catch (error) {
+        logger.error('❌ خطأ كلي في archiveStreamLog:', error.message);
+        return null;
+    }
 }
 
 /**
@@ -913,5 +1113,6 @@ module.exports = {
     getStreamVerification,
     expireOverdueOffer,
     forceEndStream,
-    checkAndExpireOverdueOffers
+    checkAndExpireOverdueOffers,
+    archiveStreamLog
 };

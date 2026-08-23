@@ -882,6 +882,9 @@
             <button class="nav-tab" onclick="showTab('blogs-admin')">
                 <i class="fas fa-blog" style="color: #3b82f6;"></i> إدارة المدونة SEO
             </button>
+            <button class="nav-tab" onclick="showTab('archived-streams')" id="archivedStreamsNavBtn">
+                <i class="fas fa-history" style="color: #ec4899;"></i> أرشيف وأدلة البث المحذوفة
+            </button>
         </div>
 
         <div id="blogs-adminTab" class="tab-content" style="display:none;">
@@ -1340,6 +1343,86 @@
                 <!-- Logs List Container -->
                 <div id="adminLogsContent">
                     <p style="text-align: center; color: #94a3b8; padding: 30px;"><i class="fas fa-spinner fa-spin fa-2x"></i> جاري تحميل سجلات النظام والأخطاء...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- أرشيف وأدلة البث المحذوفة (Archived Streams & Proof Log) -->
+        <div id="archived-streamsTab" style="display: none; margin-top: 20px;">
+            <div style="background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="color: #0f172a; margin: 0; font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-shield-alt" style="color: #ec4899;"></i>
+                            <span>سجلات وأدلة البث المحذوفة (حماية الإدارة ودحض الشكاوى)</span>
+                        </h3>
+                        <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px; margin-bottom: 0;">يتم هنا حفظ أرشفة تلقائية فورية وغير قابلة للتعديل لكل بث يُنهيه أو يحذفه الأستاذ (المدة الفعلية بالثانية، عدد الطلاب، السعر، ونسب الإكتمال) لاستعمالها كدليل قاطع.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <input type="text" id="archivedStreamSearch" onkeyup="filterArchivedStreams()" placeholder="🔍 بحث باسم الأستاذ، المادة، أو ID البث..." style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem; min-width: 250px;">
+                        <button onclick="loadArchivedStreamsAdmin()" class="btn-small" style="background: #ec4899; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-sync-alt"></i> تحديث الأرشيف
+                        </button>
+                    </div>
+                </div>
+
+                <!-- إحصائيات الأرشيف -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                    <div style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 12px; padding: 14px; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #db2777;" id="archivedTotalCount">0</div>
+                        <div style="font-size: 0.8rem; color: #9d174d; font-weight: 700; margin-top: 4px;"><i class="fas fa-history"></i> إجمالي البثوث المؤرشفة</div>
+                    </div>
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #2563eb;" id="archivedCompletedCount">0</div>
+                        <div style="font-size: 0.8rem; color: #1e40af; font-weight: 700; margin-top: 4px;"><i class="fas fa-check-circle"></i> بثوث مكتملة (≥80%)</div>
+                    </div>
+                    <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 14px; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #ea580c;" id="archivedIncompleteCount">0</div>
+                        <div style="font-size: 0.8rem; color: #9a3412; font-weight: 700; margin-top: 4px;"><i class="fas fa-exclamation-circle"></i> بثوث مبكرة/ناقصة</div>
+                    </div>
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #16a34a;" id="archivedStudentsCount">0</div>
+                        <div style="font-size: 0.8rem; color: #166534; font-weight: 700; margin-top: 4px;"><i class="fas fa-users"></i> إجمالي حضور الطلاب</div>
+                    </div>
+                </div>
+
+                <!-- جدول سجلات الأرشيف -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.88rem;">
+                        <thead>
+                            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569;">
+                                <th style="padding: 12px;">ID البث</th>
+                                <th style="padding: 12px;">المادة والدرس</th>
+                                <th style="padding: 12px;">الأستاذ</th>
+                                <th style="padding: 12px;">سعر الحصة</th>
+                                <th style="padding: 12px;">المدة (المخططة vs الفعلية)</th>
+                                <th style="padding: 12px;">نسبة الإكتمال</th>
+                                <th style="padding: 12px;">الطلاب الحاضرين</th>
+                                <th style="padding: 12px;">تاريخ الإنهاء/الحذف</th>
+                                <th style="padding: 12px; text-align: center;">الدليل والإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archivedStreamsTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 30px; color: #64748b;">
+                                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    <div style="margin-top: 10px;">جاري تحميل سجلات البث المؤرشفة...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال كرت الدليل والإثبات للبث (Stream Proof Modal) -->
+        <div id="streamProofModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.7); z-index: 99999; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);">
+            <div style="background: #ffffff; border-radius: 20px; max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border: 1px solid #e2e8f0; padding: 24px; position: relative;">
+                <button onclick="closeStreamProofModal()" style="position: absolute; top: 16px; left: 16px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem; color: #64748b; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div id="streamProofModalContent">
+                    <!-- سيتم تعبئته ديناميكياً -->
                 </div>
             </div>
         </div>
@@ -2145,6 +2228,7 @@
             if (document.getElementById('reportsTabContent')) document.getElementById('reportsTabContent').style.display = tab === 'reports' ? 'block' : 'none';
             if (document.getElementById('logsTab')) document.getElementById('logsTab').style.display = tab === 'logs' ? 'block' : 'none';
             if (document.getElementById('blogs-adminTab')) document.getElementById('blogs-adminTab').style.display = tab === 'blogs-admin' ? 'block' : 'none';
+            if (document.getElementById('archived-streamsTab')) document.getElementById('archived-streamsTab').style.display = tab === 'archived-streams' ? 'block' : 'none';
             
             document.querySelectorAll('.nav-tab').forEach(t => {
                 t.classList.remove('active');
@@ -2170,6 +2254,7 @@
             else if (tab === 'reports') loadReportsAdmin();
             else if (tab === 'logs') loadAdminLogs();
             else if (tab === 'blogs-admin') loadAdminBlogs();
+            else if (tab === 'archived-streams') loadArchivedStreamsAdmin();
         }
 
         async function loadAdminBlogs() {
@@ -4467,6 +4552,324 @@
             }
         }
         
+        // ============================================================
+        // ✅ جلب وإدارة أرشيف وسجلات البث المحذوفة والأدلة
+        // ============================================================
+        let allArchivedStreams = [];
+
+        async function loadArchivedStreamsAdmin() {
+            const tbody = document.getElementById('archivedStreamsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 30px; color: #64748b;">
+                        <i class="fas fa-spinner fa-spin fa-2x" style="color: #ec4899;"></i>
+                        <div style="margin-top: 10px; font-weight: 700;">جاري جلب سجلات البث والأدلة القاطعة...</div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/admin/archived-streams', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.logs)) {
+                    allArchivedStreams = data.logs;
+                    renderArchivedStreamsTable(allArchivedStreams);
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 20px; color: #ef4444;">
+                                <i class="fas fa-exclamation-triangle"></i> فشل جلب أرشيف البث: ${escapeHtml(data.error || 'خطأ غير معروف')}
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading archived streams:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 20px; color: #ef4444;">
+                            <i class="fas fa-exclamation-triangle"></i> خطأ في الاتصال بالسيرفر: ${escapeHtml(error.message)}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function filterArchivedStreams() {
+            const query = (document.getElementById('archivedStreamSearch')?.value || '').toLowerCase().trim();
+            if (!query) {
+                renderArchivedStreamsTable(allArchivedStreams);
+                return;
+            }
+
+            const filtered = allArchivedStreams.filter(item => {
+                const offerId = String(item.offer_id || '');
+                const teacherName = (item.teacher_name || '').toLowerCase();
+                const subjectName = (item.subject_name || '').toLowerCase();
+                const teacherEmail = (item.teacher_email || '').toLowerCase();
+
+                return offerId.includes(query) || teacherName.includes(query) || subjectName.includes(query) || teacherEmail.includes(query);
+            });
+
+            renderArchivedStreamsTable(filtered);
+        }
+
+        function renderArchivedStreamsTable(list) {
+            const tbody = document.getElementById('archivedStreamsTableBody');
+            if (!tbody) return;
+
+            let completedCount = 0;
+            let incompleteCount = 0;
+            let totalStudentsCount = 0;
+
+            list.forEach(item => {
+                if (item.completion_percentage >= 80) completedCount++;
+                else incompleteCount++;
+                totalStudentsCount += (item.students_count || 0);
+            });
+
+            document.getElementById('archivedTotalCount').innerText = list.length;
+            document.getElementById('archivedCompletedCount').innerText = completedCount;
+            document.getElementById('archivedIncompleteCount').innerText = incompleteCount;
+            document.getElementById('archivedStudentsCount').innerText = totalStudentsCount;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            <i class="fas fa-folder-open fa-3x" style="margin-bottom: 10px; color: #cbd5e1; display: block;"></i>
+                            <div style="font-weight: 700; font-size: 1rem;">لا توجد سجلات بث مؤرشفة حتى الآن</div>
+                            <div style="font-size: 0.82rem; margin-top: 4px;">سيتم إنشاء الأرشيف تلقائياً فور إنهاء أو حذف أي أستاذ لبث مباشر.</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            list.forEach(item => {
+                const completion = item.completion_percentage || 0;
+                let badgeStyle = completion >= 80 ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
+                let completionText = completion >= 80 ? `🟢 ${completion}% (مكتمل)` : `🔴 ${completion}% (غير مكتمل)`;
+
+                const expectedMin = item.expected_duration_minutes || Math.round((item.expected_duration_seconds || 3600) / 60);
+                const actualMin = item.actual_live_minutes || Math.round((item.actual_live_seconds || 0) / 60);
+
+                const priceText = item.is_free ? '<span style="color: #16a34a; font-weight: 700;">مجاني</span>' : `<span style="font-weight: 700; color: #2563eb;">${item.price} دج</span>`;
+
+                const endedDate = item.stream_ended_at ? new Date(item.stream_ended_at).toLocaleString('ar-DZ') : (item.archived_at ? new Date(item.archived_at).toLocaleString('ar-DZ') : 'غير محدد');
+
+                let reasonBadge = '<span style="background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem;">إنهاء بث</span>';
+                if (item.delete_reason === 'deleted') reasonBadge = '<span style="background: #fef2f2; color: #dc2626; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">حذف الدرس</span>';
+                else if (item.delete_reason === 'early_end') reasonBadge = '<span style="background: #fff7ed; color: #c2410c; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">إنهاء مبكر</span>';
+
+                html += `
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                        <td style="padding: 12px; font-weight: 800; color: #6366f1;">#${item.offer_id}</td>
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 700; color: #1e293b;">${escapeHtml(item.subject_name)}</div>
+                            <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">${reasonBadge}</div>
+                        </td>
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 700; color: #334155;">${escapeHtml(item.teacher_name)}</div>
+                            <div style="font-size: 0.75rem; color: #64748b;">${escapeHtml(item.teacher_email || '')}</div>
+                        </td>
+                        <td style="padding: 12px;">${priceText}</td>
+                        <td style="padding: 12px;">
+                            <div style="font-weight: 700; color: #0f172a;">${actualMin} دقيقة <span style="font-size: 0.78rem; color: #64748b; font-weight: 400;">(${item.actual_live_seconds || 0} ثانية)</span></div>
+                            <div style="font-size: 0.78rem; color: #64748b;">المحتملة: ${expectedMin} دقيقة</div>
+                        </td>
+                        <td style="padding: 12px;">
+                            <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 800; ${badgeStyle}">
+                                ${completionText}
+                            </span>
+                        </td>
+                        <td style="padding: 12px;">
+                            <span style="background: #f1f5f9; color: #1e293b; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.82rem;">
+                                <i class="fas fa-user-graduate" style="color: #6366f1;"></i> ${item.students_count || 0} طالب
+                            </span>
+                        </td>
+                        <td style="padding: 12px; font-size: 0.8rem; color: #475569;">
+                            <i class="far fa-clock" style="margin-left: 4px;"></i> ${endedDate}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            <div style="display: flex; gap: 6px; justify-content: center;">
+                                <button onclick="viewStreamProof('${item.id}')" style="background: #ec4899; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: 'Cairo';">
+                                    <i class="fas fa-file-contract"></i> كرت الدليل
+                                </button>
+                                <button onclick="deleteArchivedStream('${item.id}')" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;" title="حذف من الأرشيف">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function viewStreamProof(logId) {
+            const item = allArchivedStreams.find(s => s.id === logId || String(s.offer_id) === String(logId));
+            if (!item) {
+                alert('لم يتم العثور على تفاصيل السجل المحدد');
+                return;
+            }
+
+            const modal = document.getElementById('streamProofModal');
+            const content = document.getElementById('streamProofModalContent');
+            if (!modal || !content) return;
+
+            const completion = item.completion_percentage || 0;
+            const isCompleted = completion >= 80;
+
+            const startDate = item.stream_started_at ? new Date(item.stream_started_at).toLocaleString('ar-DZ') : 'غير مسجل';
+            const endDate = item.stream_ended_at ? new Date(item.stream_ended_at).toLocaleString('ar-DZ') : 'غير مسجل';
+
+            let studentsTableHtml = '';
+            if (Array.isArray(item.students_list) && item.students_list.length > 0) {
+                studentsTableHtml = `
+                    <div style="margin-top: 16px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: right;">
+                            <thead>
+                                <tr style="background: #f1f5f9; color: #334155;">
+                                    <th style="padding: 8px;">اسم الطالب</th>
+                                    <th style="padding: 8px;">البريد الإلكتروني</th>
+                                    <th style="padding: 8px;">رقم الهاتف</th>
+                                    <th style="padding: 8px;">المبلغ المدفوع</th>
+                                    <th style="padding: 8px;">حالة المستحقات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                item.students_list.forEach(st => {
+                    let stStatusBadge = '<span style="color: #0284c7; font-weight: 700;">محجوز/انضمام</span>';
+                    if (st.payment_status === 'paid') stStatusBadge = '<span style="color: #16a34a; font-weight: 700;">تم التحويل للأستاذ 🟢</span>';
+                    else if (st.payment_status === 'refunded') stStatusBadge = '<span style="color: #dc2626; font-weight: 700;">تم الاسترداد للطالب 🔴</span>';
+
+                    studentsTableHtml += `
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 8px; font-weight: 700; color: #1e293b;">${escapeHtml(st.student_name)}</td>
+                            <td style="padding: 8px; color: #64748b;">${escapeHtml(st.student_email || '-')}</td>
+                            <td style="padding: 8px; color: #64748b;">${escapeHtml(st.student_phone || '-')}</td>
+                            <td style="padding: 8px; font-weight: 700;">${st.payment_amount || 0} دج</td>
+                            <td style="padding: 8px;">${stStatusBadge}</td>
+                        </tr>
+                    `;
+                });
+
+                studentsTableHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                studentsTableHtml = `
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 8px; text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 12px;">
+                        لم يقم أي طالب بالدخول أو حجز هذه الحصة أثناء فترة فتح البث.
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <div style="text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #fce7f3; color: #db2777; border-radius: 50%; font-size: 1.5rem; margin-bottom: 8px;">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h2 style="margin: 0; color: #0f172a; font-weight: 800; font-size: 1.3rem;">وثيقة الدليل القاطع لمتابعة البث وحماية المنصة</h2>
+                    <p style="color: #64748b; font-size: 0.82rem; margin-top: 4px; margin-bottom: 0;">سجل رقمي موثق ومستخرج مباشرة من سيرفرات البث لرفض ادعاءات الأستاذ بوجود خلل في المنصة</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+                        <span style="font-size: 0.78rem; color: #64748b; font-weight: 700;">الأستاذ المعني:</span>
+                        <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem; margin-top: 2px;">${escapeHtml(item.teacher_name)}</div>
+                        <div style="font-size: 0.8rem; color: #475569; margin-top: 2px;"><i class="fas fa-envelope"></i> ${escapeHtml(item.teacher_email || 'غير مسجل')}</div>
+                        <div style="font-size: 0.8rem; color: #475569; margin-top: 2px;"><i class="fas fa-phone"></i> ${escapeHtml(item.teacher_phone || 'غير مسجل')}</div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+                        <span style="font-size: 0.78rem; color: #64748b; font-weight: 700;">تفاصيل الدرس:</span>
+                        <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem; margin-top: 2px;">${escapeHtml(item.subject_name)}</div>
+                        <div style="font-size: 0.8rem; color: #6366f1; margin-top: 2px;">ID الدرس: #${item.offer_id}</div>
+                        <div style="font-size: 0.8rem; color: #2563eb; font-weight: 700; margin-top: 2px;">سعر الحصة: ${item.price || 0} دج</div>
+                    </div>
+                </div>
+
+                <!-- كرت التوقيت والدليل الزمني -->
+                <div style="background: ${isCompleted ? '#f0fdf4' : '#fff1f2'}; border: 1px solid ${isCompleted ? '#bbf7d0' : '#fecdd3'}; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                        <div style="font-weight: 800; color: ${isCompleted ? '#166534' : '#9f1239'}; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas ${isCompleted ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                            <span>${isCompleted ? 'البث استوفى شروط الإكتمال (أكثر من 80%)' : 'البث لم يستوفِ شروط الإكتمال القاطعة'}</span>
+                        </div>
+                        <span style="background: ${isCompleted ? '#15803d' : '#be123c'}; color: white; font-weight: 800; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">
+                            نسبة الإكتمال: ${completion}%
+                        </span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.85rem;">
+                        <div>⏱️ <strong>المدة المحددة بالأصل:</strong> ${item.expected_duration_minutes || 60} دقيقة (${item.expected_duration_seconds || 3600} ثانية)</div>
+                        <div>📡 <strong>المدة الفعلية المفتوحة:</strong> <strong style="color: #2563eb;">${item.actual_live_minutes || 0} دقيقة</strong> (${item.actual_live_seconds || 0} ثانية)</div>
+                        <div>⏰ <strong>تاريخ بدء البث:</strong> ${startDate}</div>
+                        <div>🛑 <strong>تاريخ النهاية/الحذف:</strong> ${endDate}</div>
+                    </div>
+                </div>
+
+                <!-- تفاصيل الطلاب والمالية -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #1e293b; font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fas fa-users" style="color: #6366f1;"></i> قائمة الطلاب الحاضرين (${item.students_count || 0} طالب)</span>
+                        <span style="font-size: 0.8rem; color: #16a34a; font-weight: 700;">المسترد للطلاب: ${item.total_refunded || 0} دج</span>
+                    </h4>
+                    ${studentsTableHtml}
+                </div>
+
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 0.8rem; color: #475569; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div><i class="fas fa-info-circle" style="color: #2563eb;"></i> سبب الأرشفة: <strong>${escapeHtml(item.delete_reason || 'ended')}</strong></div>
+                    <button onclick="window.print()" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: 'Cairo'; font-size: 0.78rem;">
+                        <i class="fas fa-print"></i> طباعة الوثيقة
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeStreamProofModal() {
+            const modal = document.getElementById('streamProofModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function deleteArchivedStream(logId) {
+            if (!confirm('هل أنت متأكد من حذف هذا السجل من الأرشيف؟ سيتم إزالته من السجلات.')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/admin/archived-streams/${logId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ تم حذف سجل الأرشيف بنجاح');
+                    loadArchivedStreamsAdmin();
+                } else {
+                    alert('❌ فشل حذف السجل: ' + (data.error || 'خطأ غير معروف'));
+                }
+            } catch (error) {
+                alert('❌ خطأ في الاتصال بالسيرفر: ' + error.message);
+            }
+        }
+
         // Update counts every 30 seconds
         setInterval(updateAdminCounts, 120000);
         updateAdminCounts();

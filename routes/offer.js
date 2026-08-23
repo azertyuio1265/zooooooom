@@ -18,7 +18,7 @@ const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 }
 });
-const { processStreamPayments } = require('../utils/streamVerification');
+const { processStreamPayments, archiveStreamLog } = require('../utils/streamVerification');
 const { sendPushNotification } = require('../utils/notification');
 
 // ✅ دالة مساعدة لحساب واسترجاع الوقت المتبقي للبث
@@ -894,6 +894,13 @@ router.delete('/offer/delete/:offer_id', authenticate, authorize(['teacher']), [
                 logger.error('❌ خطأ أثناء معالجة الاستردادات عند الحذف:', refundError.message);
                 // نكمل الحذف حتى لو فشل الاسترداد لبعض الحالات، أو يمكن التوقف هنا
             }
+        }
+
+        // ✅ أرشفة وسجل تفاصيل البث المحذوف كدليل قاطع للمدير قبل الحذف
+        try {
+            await archiveStreamLog(offer_id, 'deleted', teacher_id);
+        } catch (archErr) {
+            logger.error('⚠️ خطأ في أرشفة الدرس المحذوف:', archErr.message);
         }
 
         // ✅ حذف البيانات المرتبطة

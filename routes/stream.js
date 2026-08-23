@@ -21,7 +21,8 @@ const {
     processStreamPayments, 
     getStreamVerification,
     verifyStreamCompletion,
-    forceEndStream
+    forceEndStream,
+    archiveStreamLog
 } = require('../utils/streamVerification');
 
 // دالة مساعدة لحماية HTML
@@ -198,6 +199,13 @@ router.post('/end/:offer_id', authenticate, authorize(['teacher']), validateOffe
             }
         } catch (payErr) {
             logger.error('⚠️ خطأ في معالجة مدفوعات البث:', payErr.message);
+        }
+
+        // ✅ أرشفة وحفظ سجل البث كاملاً بجميع إحصائياته وتفاصيل الطلاب لاستخدامه كدليل إثبات للمدير
+        try {
+            await archiveStreamLog(offer_id, early_end ? 'early_end' : 'ended', req.user ? req.user.userId : null);
+        } catch (archErr) {
+            logger.error('⚠️ خطأ في أرشفة البث قبل الحذف:', archErr.message);
         }
 
         // ✅ تصفير offer_id في الجداول التي تحتفظ بالسجلات لتجنب قيود المفتاح الأجنبي (Foreign Key Constraints)
