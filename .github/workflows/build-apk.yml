@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - 'public/downloads/**'
       - 'dist/**'
-      - '.github/workflows/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
