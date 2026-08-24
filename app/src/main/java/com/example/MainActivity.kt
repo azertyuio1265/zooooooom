@@ -2,32 +2,67 @@ package com.example
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.*
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var webView: WebView? = null
+    private var customView: View? = null
+    private var originalSystemUiVisibility: Int = 0
 
-    // File chooser launcher
+    companion object {
+        private const val PLATFORM_URL = "https://zoomdz.com"
+        private val INTERNAL_DOMAINS = listOf(
+            "zoomdz.com",
+            "www.zoomdz.com",
+            "zooooooom-mown.vercel.app"
+        )
+    }
+
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -37,8 +72,7 @@ class MainActivity : ComponentActivity() {
                 val clipData = result.data?.clipData
                 if (clipData != null) {
                     val count = clipData.itemCount
-                    val uris = Array(count) { i -> clipData.getItemAt(i).uri }
-                    uris
+                    Array(count) { i -> clipData.getItemAt(i).uri }
                 } else if (dataString != null) {
                     arrayOf(Uri.parse(dataString))
                 } else {
@@ -52,7 +86,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Permission launcher for Camera and Microphone
     private val requestPermissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -67,73 +100,178 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Request permissions early for smooth live sessions
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        window.statusBarColor = Color.parseColor("#0B172A")
+
         requestPermissions()
 
         setContent {
             MyApplicationTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    ZoomDzWebView(url = "https://zooooooom-mown.vercel.app")
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = ComposeColor(0xFF0B172A)
+                ) {
+                    ZoomDzApp()
                 }
             }
         }
     }
 
-    private fun requestPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.CAMERA)
+    @Composable
+    private fun ZoomDzApp() {
+        var isLoading by remember { mutableStateOf(true) }
+        val context = remember { this }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            ZoomDzWebView(
+                url = PLATFORM_URL,
+                onPageFinished = { isLoading = false }
+            )
+
+            if (isLoading) {
+                LoadingScreen()
+            }
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+    }
+
+    @Composable
+    private fun LoadingScreen() {
+        val infiniteTransition = rememberInfiniteTransition(label = "loading")
+        val rotation by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "rotation"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            ComposeColor(0xFF0B172A),
+                            ComposeColor(0xFF1E3A8A)
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(96.dp)
+                        .background(ComposeColor(0xFF1E40AF), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Z",
+                        color = ComposeColor.White,
+                        fontSize = 52.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                CircularProgressIndicator(
+                    color = ComposeColor(0xFF60A5FA),
+                    strokeWidth = 3.dp,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "ZoomDz",
+                    color = ComposeColor.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "جاري التحميل...",
+                    color = ComposeColor(0xFF94A3B8),
+                    fontSize = 14.sp
+                )
+            }
         }
-        if (permissionsToRequest.isNotEmpty()) {
-            requestPermissionsLauncher.launch(permissionsToRequest.toTypedArray())
-        }
+    }
+
+    private fun isInternalUrl(url: String): Boolean {
+        val uri = Uri.parse(url)
+        val host = uri.host ?: return false
+        return INTERNAL_DOMAINS.any { host.equals(it, ignoreCase = true) }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Composable
-    fun ZoomDzWebView(url: String) {
-        val context = remember { this }
-
+    fun ZoomDzWebView(url: String, onPageFinished: (String) -> Unit) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
                 WebView(ctx).apply {
                     webView = this
-                    layoutParams = android.view.ViewGroup.LayoutParams(
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    
-                    // Setup WebView Client
+
                     webViewClient = object : WebViewClient() {
                         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                             val targetUrl = request?.url?.toString() ?: return false
-                            
-                            // Open external links in external browser, keep platform links in the app
-                            if (targetUrl.contains("zoomdz.com") || targetUrl.contains("zooooooom-mown.vercel.app") || targetUrl.startsWith("file://") || targetUrl.contains("localhost")) {
+
+                            if (isInternalUrl(targetUrl) || targetUrl.startsWith("file://") || targetUrl.contains("localhost")) {
                                 return false
                             }
-                            
-                            try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
-                                context.startActivity(intent)
-                                return true
-                            } catch (e: Exception) {
-                                return false
+
+                            if (targetUrl.startsWith("intent://")) {
+                                try {
+                                    val intent = Intent.parseUri(targetUrl, Intent.URI_INTENT_SCHEME)
+                                    if (intent.resolveActivity(ctx.packageManager) != null) {
+                                        ctx.startActivity(intent)
+                                        return true
+                                    }
+                                    val fallbackUrl = intent.getStringExtra("browser_fallback_url")
+                                    if (fallbackUrl != null) {
+                                        view?.loadUrl(fallbackUrl)
+                                        return true
+                                    }
+                                } catch (e: Exception) {
+                                    return true
+                                }
                             }
+
+                            if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    ctx.startActivity(intent)
+                                    return true
+                                } catch (e: Exception) {
+                                    return false
+                                }
+                            }
+
+                            return false
                         }
 
-                        override fun onPageFinished(view: WebView?, url: String?) {
-                            super.onPageFinished(view, url)
+                        override fun onPageFinished(view: WebView?, finishedUrl: String?) {
+                            super.onPageFinished(view, finishedUrl)
+                            finishedUrl?.let { onPageFinished(it) }
+                        }
+
+                        override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                            super.onReceivedError(view, request, error)
+                            if (request?.isForMainFrame == true) {
+                                onPageFinished(url)
+                            }
                         }
                     }
 
-                    // Setup WebChromeClient to support File upload & Live streams
                     webChromeClient = object : WebChromeClient() {
-                        // Support file uploading (HW, assignments, profile pictures)
                         override fun onShowFileChooser(
                             webView: WebView?,
                             filePathCallback: ValueCallback<Array<Uri>>?,
@@ -154,16 +292,70 @@ class MainActivity : ComponentActivity() {
                             return true
                         }
 
-                        // Support Camera and Mic request within WebView (for video classrooms)
                         override fun onPermissionRequest(request: PermissionRequest?) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                val resources = request?.resources ?: emptyArray()
-                                request?.grant(resources)
+                            request?.grant(request.resources)
+                        }
+
+                        override fun onGeolocationPermissionsShowPrompt(
+                            origin: String?,
+                            callback: GeolocationPermissions.Callback?
+                        ) {
+                            callback?.invoke(origin, true, false)
+                        }
+
+                        // Fullscreen support for video/live streams
+                        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                            if (customView != null) {
+                                callback?.onCustomViewHidden()
+                                return
+                            }
+                            customView = view
+                            (window.decorView as FrameLayout).addView(
+                                view,
+                                FrameLayout.LayoutParams(
+                                    FrameLayout.LayoutParams.MATCH_PARENT,
+                                    FrameLayout.LayoutParams.MATCH_PARENT
+                                )
+                            )
+                            originalSystemUiVisibility = window.decorView.systemUiVisibility
+                            window.decorView.systemUiVisibility = (
+                                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            )
+                        }
+
+                        override fun onHideCustomView() {
+                            (window.decorView as? FrameLayout)?.removeView(customView)
+                            customView = null
+                            window.decorView.systemUiVisibility = originalSystemUiVisibility
+                        }
+                    }
+
+                    // Download support
+                    setDownloadListener { downloadUrl, userAgent, contentDisposition, mimetype, contentLength ->
+                        try {
+                            val request = DownloadManager.Request(Uri.parse(downloadUrl))
+                            request.allowScanningByMediaScanner()
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                            request.setDestinationInExternalPublicDir(
+                                Environment.DIRECTORY_DOWNLOADS,
+                                Uri.parse(downloadUrl).lastPathSegment ?: "zoomdz_download"
+                            )
+                            val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                            dm.enqueue(request)
+                            Toast.makeText(ctx, "جاري تنزيل الملف...", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            val i = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            try {
+                                ctx.startActivity(i)
+                            } catch (ex: Exception) {
+                                Toast.makeText(ctx, "تعذر تنزيل الملف", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
 
-                    // Settings Optimization
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
@@ -173,22 +365,65 @@ class MainActivity : ComponentActivity() {
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mediaPlaybackRequiresUserGesture = false
-                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
                         cacheMode = WebSettings.LOAD_DEFAULT
+                        javaScriptCanOpenWindowsAutomatically = true
+                        setSupportMultipleWindows(false)
+                        setSupportZoom(true)
+                        builtInZoomControls = true
+                        displayZoomControls = false
+                        textZoom = 100
                     }
+
+                    // Inject a small JS bridge to handle share/copy from the web platform
+                    addJavascriptInterface(object {
+                        @JavascriptInterface
+                        fun shareText(text: String) {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, text)
+                            }
+                            startActivity(Intent.createChooser(intent, "مشاركة عبر"))
+                        }
+
+                        @JavascriptInterface
+                        fun copyToClipboard(text: String) {
+                            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("ZoomDz", text))
+                            Toast.makeText(this@MainActivity, "تم النسخ", Toast.LENGTH_SHORT).show()
+                        }
+                    }, "ZoomDzNative")
 
                     loadUrl(url)
                 }
             },
             update = { view ->
-                // Keep reference up to date
                 webView = view
             }
         )
     }
 
+    private fun requestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.CAMERA)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        if (customView != null) {
+            (window.decorView as? FrameLayout)?.removeView(customView)
+            customView = null
+            window.decorView.systemUiVisibility = originalSystemUiVisibility
+            return
+        }
         val tempWebView = webView
         if (tempWebView != null && tempWebView.canGoBack()) {
             tempWebView.goBack()
@@ -197,5 +432,14 @@ class MainActivity : ComponentActivity() {
             super.onBackPressed()
         }
     }
-}
 
+    override fun onDestroy() {
+        webView?.apply {
+            stopLoading()
+            removeJavascriptInterface("ZoomDzNative")
+            destroy()
+        }
+        webView = null
+        super.onDestroy()
+    }
+}

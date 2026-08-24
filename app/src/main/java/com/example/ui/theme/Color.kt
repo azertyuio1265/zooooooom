@@ -2,18 +2,21 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Warm light palette
-val PrimaryTeal = Color(0xFF008080) // Emerald Teal
-val SecondaryEmerald = Color(0xFF10B981) // Bright Green Accent
-val AmberGold = Color(0xFFF59E0B) // Warning/Progress Gold
-val DarkSlate = Color(0xFF0F172A) // Slate Background for Dark Mode
-val LightCream = Color(0xFFF8FAFC) // Very Light Grey-Blue
+val PrimaryBlue = Color(0xFF1E40AF)
+val PrimaryBlueDark = Color(0xFF1E3A8A)
+val SecondaryGreen = Color(0xFF047857)
+val AccentGold = Color(0xFFF59E0B)
+val DarkSlate = Color(0xFF0F172A)
+val LightBackground = Color(0xFFF8FAFC)
+val SurfaceLight = Color(0xFFFFFFFF)
+val OnPrimaryWhite = Color(0xFFFFFFFF)
+val OnDarkText = Color(0xFFF1F5F9)
+val OnLightText = Color(0xFF0F172A)
 
-val Purple80 = Color(0xFF008080)
-val PurpleGrey80 = Color(0xFF10B981)
-val Pink80 = Color(0xFFF59E0B)
+val Purple80 = PrimaryBlue
+val PurpleGrey80 = SecondaryGreen
+val Pink80 = AccentGold
 
-val Purple40 = Color(0xFF006666)
+val Purple40 = PrimaryBlueDark
 val PurpleGrey40 = Color(0xFF0D9488)
 val Pink40 = Color(0xFFD97706)
-
