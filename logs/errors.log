@@ -198,3 +198,39 @@
 [2026-08-24 10:00:15.390] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
 [2026-08-24 10:15:47.654] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
 [2026-08-24 10:15:47.744] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 10:47:56.322] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.238.146"
+    }
+[2026-08-24 10:47:56.451] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.238.146"
+    }
+[2026-08-24 10:47:56.453] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.238.146"
+    }
+[2026-08-24 10:47:56.454] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.238.146"
+    }
+[2026-08-24 10:47:56.455] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.238.146"
+    }
+[2026-08-24 10:47:56.593] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.238.146"
+    }
