@@ -4331,51 +4331,128 @@ app.post('/api/subscribe', authenticate, async (req, res) => {
 
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
-// رابط تحميل التطبيق (PWA)
-// رابط تحميل التطبيق الأصلي (APK) ومسار PWA
-const SUPABASE_PROJECT_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-const SUPABASE_EDGE_APK_URL = SUPABASE_PROJECT_URL.replace(/\/$/, '') + '/functions/v1/serve-apk';
+// ============================================================
+// Platform Settings (App Download & APK Cloud Storage URL)
+// ============================================================
+const defaultAppDownloadSettings = {
+    apk_url: '',
+    version: '1.0.0',
+    version_code: 1,
+    update_notes: 'تحسينات عامة على الأداء وسرعة البث المباشر واستقرار المنصة',
+    is_active: true
+};
+let inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings };
 
-app.get('/zoomdz.apk', (req, res) => {
-    const fs = require('fs');
-    const path = require('path');
-    const apkPath = path.join(__dirname, 'public', 'downloads', 'zoomdz.apk');
-    if (fs.existsSync(apkPath)) {
-        res.download(apkPath, 'zoomdz.apk');
-    } else if (SUPABASE_PROJECT_URL) {
-        res.redirect(302, SUPABASE_EDGE_APK_URL);
-    } else {
-        res.status(404).send('ملف التطبيق غير متوفر حالياً');
-    }
-});
-
-app.get('/api/app-download', async (req, res) => {
+async function getAppDownloadSettings() {
     try {
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('platform_settings')
             .select('value')
             .eq('key', 'app_download')
             .single();
 
-        const settings = data?.value || { url: '', version: '1.0', active: false };
-        res.json({
-            success: true,
-            url: settings.active && settings.url ? settings.url : (SUPABASE_PROJECT_URL ? SUPABASE_EDGE_APK_URL : '/zoomdz.apk'),
-            version: settings.version || '1.0',
-            active: true,
-            note: settings.note || ''
-        });
-    } catch (error) {
-        res.json({
-            success: true,
-            url: SUPABASE_PROJECT_URL ? SUPABASE_EDGE_APK_URL : '/zoomdz.apk',
-            version: '1.0',
-            active: true
-        });
+        if (data && data.value) {
+            inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings, ...data.value };
+            return inMemoryAppDownloadSettings;
+        }
+    } catch (e) {
+        // Fallback
+    }
+    return inMemoryAppDownloadSettings;
+}
+
+// API عام لجلب رابط ومعلومات تحميل التطبيق
+app.get('/api/settings/app_download', async (req, res) => {
+    try {
+        const settings = await getAppDownloadSettings();
+        res.json({ success: true, ...settings });
+    } catch (e) {
+        res.json({ success: true, ...inMemoryAppDownloadSettings });
     }
 });
 
-app.get('/download-app', (req, res) => {
+// API الأدمن لجلب إعدادات تحميل التطبيق
+app.get('/api/admin/settings/app_download', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const settings = await getAppDownloadSettings();
+        res.json({ success: true, ...settings });
+    } catch (e) {
+        res.json({ success: true, ...inMemoryAppDownloadSettings });
+    }
+});
+
+// API الأدمن لحفظ وتحديث رابط تحميل التطبيق في قاعدة البيانات السحابية (Supabase)
+app.post('/api/admin/settings/app_download', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const { apk_url, version, version_code, update_notes, is_active } = req.body;
+        const updated = {
+            apk_url: (apk_url && typeof apk_url === 'string') ? apk_url.trim() : '',
+            version: (version && typeof version === 'string') ? version.trim() : '1.0.0',
+            version_code: parseInt(version_code) || 1,
+            update_notes: (update_notes && typeof update_notes === 'string') ? update_notes.trim() : '',
+            is_active: is_active !== undefined ? !!is_active : true,
+            updated_at: new Date().toISOString()
+        };
+
+        inMemoryAppDownloadSettings = updated;
+
+        try {
+            await supabase
+                .from('platform_settings')
+                .upsert({ key: 'app_download', value: updated });
+        } catch (dbErr) {
+            console.warn('[Storage] Could not save app_download to database, using memory fallback:', dbErr.message);
+        }
+
+        res.json({ success: true, settings: updated, message: 'تم حفظ إعدادات رابط تحميل التطبيق في قاعدة البيانات السحابية بنجاح' });
+    } catch (e) {
+        console.error('Error saving app download settings:', e);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// رابط تحميل التطبيق الأصلي (APK) ومسار PWA مع دعم التخزين السحابي المباشر
+app.get('/zoomdz.apk', async (req, res) => {
+    try {
+        // 1. التحقق من الرابط السحابي المخزن في قاعدة البيانات
+        const settings = await getAppDownloadSettings();
+        if (settings && settings.apk_url && (settings.apk_url.startsWith('http://') || settings.apk_url.startsWith('https://'))) {
+            return res.redirect(settings.apk_url);
+        }
+
+        // 2. التحقق من وجود الملف في المجلد المحلي كخيار بديل
+        const fs = require('fs');
+        const path = require('path');
+        const apkPath = path.join(__dirname, 'public', 'downloads', 'zoomdz.apk');
+        if (fs.existsSync(apkPath)) {
+            return res.download(apkPath, 'zoomdz.apk');
+        }
+
+        // 3. التوجيه إلى صفحة التحميل في حال لم يتم تعيين الرابط بعد
+        return res.redirect('/download-app');
+    } catch (err) {
+        res.redirect('/download-app');
+    }
+});
+
+app.get('/download-app', async (req, res) => {
+    let apkDownloadUrl = '/zoomdz.apk';
+    let appVersion = '1.0.0';
+    let updateNotes = 'تحسينات عامة على الأداء وسرعة البث المباشر وميزات التنبيهات والدروس المدمجة.';
+    
+    try {
+        const settings = await getAppDownloadSettings();
+        if (settings && settings.apk_url && settings.apk_url.startsWith('http')) {
+            apkDownloadUrl = settings.apk_url;
+        }
+        if (settings && settings.version) {
+            appVersion = settings.version;
+        }
+        if (settings && settings.update_notes) {
+            updateNotes = settings.update_notes;
+        }
+    } catch (e) {}
+
     res.send(`
         <!DOCTYPE html>
         <html lang="ar" dir="rtl">
@@ -4448,12 +4525,12 @@ app.get('/download-app', (req, res) => {
                         <div>
                             <div class="card-title" style="color: #10b981;">
                                 <i class="fab fa-android"></i>
-                                <span>تطبيق الأندرويد الأصلي (APK)</span>
+                                <span>تطبيق الأندرويد الأصلي (APK) - v${appVersion}</span>
                             </div>
-                            <p class="card-desc">تحميل وتثبيت التطبيق الأصلي الكامل (Native App) المصمم خصيصاً لهواتف الأندرويد بجودة ممتازة وسرعة بث فائقة وميزات التنبيهات والدروس والتمارين المدمجة.</p>
+                            <p class="card-desc">${updateNotes}</p>
                         </div>
-                        <a id="apkDownloadLink" href="/zoomdz.apk" class="btn btn-android">
-                            <i class="fas fa-download"></i> تحميل ملف الـ APK
+                        <a href="${apkDownloadUrl}" target="_blank" rel="noopener" class="btn btn-android">
+                            <i class="fas fa-download"></i> تحميل ملف الـ APK (مباشر)
                         </a>
                     </div>
                     
@@ -4509,18 +4586,6 @@ app.get('/download-app', (req, res) => {
                     <p>© 2026 ZoomDz. جميع الحقوق محفوظة لـ عثمانية محمد الصالح.</p>
                 </div>
             </div>
-            <script>
-                (async function() {
-                    try {
-                        const resp = await fetch('/api/app-download');
-                        const data = await resp.json();
-                        if (data && data.url) {
-                            const link = document.getElementById('apkDownloadLink');
-                            if (link) link.href = data.url;
-                        }
-                    } catch(e) {}
-                })();
-            </script>
         </body>
         </html>
     `);
