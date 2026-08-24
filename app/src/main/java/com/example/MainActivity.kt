@@ -74,7 +74,9 @@ class MainActivity : ComponentActivity() {
         val TRUSTED_DOMAINS = listOf(
             "zoomdz.com",
             "www.zoomdz.com",
-            "zooooooom-mown.vercel.app"
+            "zooooooom-mown.vercel.app",
+            "vercel.app",
+            "run.app"
         )
     }
 

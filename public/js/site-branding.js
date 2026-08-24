@@ -10,6 +10,34 @@
         el.dataset.proxied = '';
         el.setAttribute('data-original-url', url);
         el.setAttribute('referrerpolicy', 'no-referrer');
+        
+        // Auto-fallback handler for web & mobile app
+        el.onerror = function() {
+            var orig = el.getAttribute('data-original-url') || el.src;
+            if (!el.dataset.proxied && orig && (orig.startsWith('http://') || orig.startsWith('https://'))) {
+                el.dataset.proxied = 'true';
+                el.setAttribute('referrerpolicy', 'no-referrer');
+                el.src = '/api/proxy-image?url=' + encodeURIComponent(orig);
+                return;
+            }
+            // If proxy fails or local image missing, fallback safely
+            el.onerror = null;
+            if (el.id === 'heroMainImage') {
+                el.src = '/images/student_hero1.jpg';
+            } else if (el.id === 'landingCard1Img') {
+                el.src = '/images/student_lab1.jpg';
+            } else if (el.id === 'landingCard2Img') {
+                el.src = '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png';
+            } else if (el.classList.contains('site-app-logo') || el.classList.contains('navbar-app-logo') || el.classList.contains('brand-logo-img')) {
+                el.style.display = 'none';
+                if (el.nextElementSibling && el.nextElementSibling.classList.contains('fallback-icon')) {
+                    el.nextElementSibling.style.display = 'inline-block';
+                }
+            } else {
+                el.src = '/images/photo_5778184297368981379_x.jpg';
+            }
+        };
+
         el.src = url;
     }
 
