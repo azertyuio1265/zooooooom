@@ -4333,46 +4333,45 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // رابط تحميل التطبيق (PWA)
 // رابط تحميل التطبيق الأصلي (APK) ومسار PWA
+const SUPABASE_PROJECT_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+const SUPABASE_EDGE_APK_URL = SUPABASE_PROJECT_URL.replace(/\/$/, '') + '/functions/v1/serve-apk';
+
 app.get('/zoomdz.apk', (req, res) => {
     const fs = require('fs');
     const path = require('path');
     const apkPath = path.join(__dirname, 'public', 'downloads', 'zoomdz.apk');
     if (fs.existsSync(apkPath)) {
         res.download(apkPath, 'zoomdz.apk');
+    } else if (SUPABASE_PROJECT_URL) {
+        res.redirect(302, SUPABASE_EDGE_APK_URL);
     } else {
-        res.send(`
-            <!DOCTYPE html>
-            <html lang="ar" dir="rtl">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>تنبيه - ملف APK غير متوفر بعد</title>
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                <style>
-                    body { font-family: 'Cairo', sans-serif; text-align: center; padding: 40px 20px; background-color: #f8fafc; color: #0f172a; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-                    .container { max-width: 500px; background: white; padding: 40px 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-                    .icon { font-size: 64px; color: #f59e0b; margin-bottom: 20px; }
-                    h1 { margin-bottom: 15px; font-size: 22px; color: #1e293b; }
-                    p { font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 30px; text-align: right; }
-                    .btn { display: inline-block; padding: 12px 30px; background: #3b82f6; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; transition: background 0.3s; cursor: pointer; border: none; }
-                    .btn:hover { background: #1d4ed8; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <i class="fas fa-exclamation-triangle icon"></i>
-                    <h1>تنبيه للمطور والمستخدم</h1>
-                    <p>أهلاً بك! لقد قمنا ببرمجة وتجميع تطبيق الأندرويد الأصلي (ZoomDz) بنجاح داخل بيئة العمل.</p>
-                    <p><strong>خطوات التفعيل النهائية للمسؤول:</strong><br>
-                    1. قم بتحميل ملف الـ APK المجمع من خلال القائمة العلوية لإعدادات البناء في AI Studio (بصيغة APK).<br>
-                    2. قم برفع هذا الملف ووضعه في المجلد <code>public/downloads/</code> باسم <code>zoomdz.apk</code>.<br>
-                    3. بعد ذلك، سيصبح الزر فعالاً فوراً وقابلاً للتحميل المباشر لجميع زوار موقعك!</p>
-                    <button onclick="window.history.back()" class="btn">العودة للخلف</button>
-                </div>
-            </body>
-            </html>
-        `);
+        res.status(404).send('ملف التطبيق غير متوفر حالياً');
+    }
+});
+
+app.get('/api/app-download', async (req, res) => {
+    try {
+        const { data } = await supabase
+            .from('platform_settings')
+            .select('value')
+            .eq('key', 'app_download')
+            .single();
+
+        const settings = data?.value || { url: '', version: '1.0', active: false };
+        res.json({
+            success: true,
+            url: settings.active && settings.url ? settings.url : (SUPABASE_PROJECT_URL ? SUPABASE_EDGE_APK_URL : '/zoomdz.apk'),
+            version: settings.version || '1.0',
+            active: true,
+            note: settings.note || ''
+        });
+    } catch (error) {
+        res.json({
+            success: true,
+            url: SUPABASE_PROJECT_URL ? SUPABASE_EDGE_APK_URL : '/zoomdz.apk',
+            version: '1.0',
+            active: true
+        });
     }
 });
 
@@ -4453,7 +4452,7 @@ app.get('/download-app', (req, res) => {
                             </div>
                             <p class="card-desc">تحميل وتثبيت التطبيق الأصلي الكامل (Native App) المصمم خصيصاً لهواتف الأندرويد بجودة ممتازة وسرعة بث فائقة وميزات التنبيهات والدروس والتمارين المدمجة.</p>
                         </div>
-                        <a href="/zoomdz.apk" class="btn btn-android">
+                        <a id="apkDownloadLink" href="/zoomdz.apk" class="btn btn-android">
                             <i class="fas fa-download"></i> تحميل ملف الـ APK
                         </a>
                     </div>
@@ -4510,6 +4509,18 @@ app.get('/download-app', (req, res) => {
                     <p>© 2026 ZoomDz. جميع الحقوق محفوظة لـ عثمانية محمد الصالح.</p>
                 </div>
             </div>
+            <script>
+                (async function() {
+                    try {
+                        const resp = await fetch('/api/app-download');
+                        const data = await resp.json();
+                        if (data && data.url) {
+                            const link = document.getElementById('apkDownloadLink');
+                            if (link) link.href = data.url;
+                        }
+                    } catch(e) {}
+                })();
+            </script>
         </body>
         </html>
     `);
