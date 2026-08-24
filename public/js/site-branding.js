@@ -17,7 +17,8 @@
             if (!el.dataset.proxied && orig && (orig.startsWith('http://') || orig.startsWith('https://'))) {
                 el.dataset.proxied = 'true';
                 el.setAttribute('referrerpolicy', 'no-referrer');
-                el.src = '/api/proxy-image?url=' + encodeURIComponent(orig);
+                var proxyUrl = '/api/proxy-image?url=' + encodeURIComponent(orig) + '&site_asset=' + Date.now();
+                el.src = proxyUrl;
                 return;
             }
             // If proxy fails or local image missing, fallback safely
@@ -38,7 +39,9 @@
             }
         };
 
-        el.src = url;
+        // Prevent WebView/browser caches from serving an older admin upload.
+        var separator = url.indexOf('?') >= 0 ? '&' : '?';
+        el.src = url + separator + 'site_asset=' + Date.now();
     }
 
     function applyBranding(images) {

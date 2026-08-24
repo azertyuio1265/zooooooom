@@ -658,14 +658,15 @@ class MainActivity : ComponentActivity() {
                         useWideViewPort = true
                         mediaPlaybackRequiresUserGesture = false
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        cacheMode = WebSettings.LOAD_DEFAULT
+                        // Admin-managed branding and uploads must always be fetched fresh.
+                        cacheMode = WebSettings.LOAD_NO_CACHE
                         javaScriptCanOpenWindowsAutomatically = true
                         setSupportMultipleWindows(false)
                         setSupportZoom(true)
                         builtInZoomControls = true
                         displayZoomControls = false
                         textZoom = 100
-                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.3.0"
+                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.4.0"
                     }
 
                     // JavaScript Bridge to connect the Web App directly with Native Android features
@@ -674,7 +675,7 @@ class MainActivity : ComponentActivity() {
                         fun isNativeApp(): Boolean = true
 
                         @JavascriptInterface
-                        fun getAppVersion(): String = "1.3.0"
+                        fun getAppVersion(): String = "1.4.0"
 
                         @JavascriptInterface
                         fun shareText(title: String, text: String, url: String) {
@@ -715,7 +716,35 @@ class MainActivity : ComponentActivity() {
                         }
                     }, "ZoomDzNative")
 
-                    loadUrl(url)
+                    // Add a cache-busting query for the page and every admin-managed asset.
+                    val freshUrl = if (url.contains("?")) "$url&native_refresh=${System.currentTimeMillis()}" else "$url?native_refresh=${System.currentTimeMillis()}"
+                    loadUrl(freshUrl)
+
+                    // Pull admin-managed branding directly inside the native WebView.
+                    // This also works if a page is missing site-branding.js.
+                    evaluateJavascript("""
+                        (async function() {
+                            try {
+                                const response = await fetch('/api/settings/site_images?_native=' + Date.now(), { cache: 'no-store' });
+                                if (!response.ok) return;
+                                const images = await response.json();
+                                const logo = images.app_logo || images.site_logo;
+                                const setImage = (selector, value) => {
+                                    if (!value) return;
+                                    document.querySelectorAll(selector).forEach((image) => {
+                                        image.src = value + (value.includes('?') ? '&' : '?') + 'native_asset=' + Date.now();
+                                    });
+                                };
+                                setImage('img.site-app-logo, img.brand-logo-img, img.navbar-app-logo, img.app-brand-logo, #navbarAppLogoImg, #mobileDrawerLogoImg, #studentNavAppLogo, #teacherNavAppLogo, #appPageLogoImg, #preloaderAppLogoImg', logo);
+                                setImage('#heroMainImage', images.hero_image);
+                                setImage('#landingCard1Img', images.landing_card1_image);
+                                setImage('#landingCard2Img', images.landing_card2_image);
+                                setImage('.char-img-student', images.login_student_img);
+                                setImage('.char-img-teacher', images.login_teacher_img);
+                                setImage('.char-img-admin', images.login_admin_img);
+                            } catch (_) {}
+                        })();
+                    """.trimIndent(), null)
                 }
             },
             update = { view ->
@@ -764,6 +793,14 @@ class MainActivity : ComponentActivity() {
                 lastBackPressTime = currentTime
                 Toast.makeText(this, "اضغط مرة أخرى للخروج من تطبيق ZoomDz", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView?.apply {
+            clearCache(true)
+            reload()
         }
     }
 
