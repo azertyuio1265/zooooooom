@@ -501,7 +501,23 @@ class MainActivity : ComponentActivity() {
                             super.onPageFinished(view, finishedUrl)
                             onPageFinished()
                             view?.evaluateJavascript(
-                                "(function(){ if (window.ZoomDzBranding && typeof window.ZoomDzBranding.sync === 'function') { window.ZoomDzBranding.sync(); } })();",
+                                """
+                                (function(){
+                                    try {
+                                        if (window.ZoomDzBranding && typeof window.ZoomDzBranding.sync === 'function') {
+                                            window.ZoomDzBranding.sync();
+                                        }
+                                        fetch('/api/settings/site_images')
+                                            .then(function(r){ return r.json(); })
+                                            .then(function(data){
+                                                if (data && typeof data === 'object' && window.ZoomDzBranding) {
+                                                    try { localStorage.setItem('zoomdz_site_images', JSON.stringify(data)); } catch(e){}
+                                                    window.ZoomDzBranding.apply(data);
+                                                }
+                                            }).catch(function(){});
+                                    } catch(e){}
+                                })();
+                                """.trimIndent(),
                                 null
                             )
                         }
@@ -621,12 +637,22 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    CookieManager.getInstance().apply {
+                        setAcceptCookie(true)
+                        setAcceptThirdPartyCookies(this@apply, true)
+                    }
+
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
                         databaseEnabled = true
                         allowFileAccess = true
                         allowContentAccess = true
+                        loadsImagesAutomatically = true
+                        blockNetworkImage = false
+                        blockNetworkLoads = false
+                        allowFileAccessFromFileURLs = true
+                        allowUniversalAccessFromFileURLs = true
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mediaPlaybackRequiresUserGesture = false
@@ -638,7 +664,7 @@ class MainActivity : ComponentActivity() {
                         builtInZoomControls = true
                         displayZoomControls = false
                         textZoom = 100
-                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.2.0"
+                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.3.0"
                     }
 
                     // JavaScript Bridge to connect the Web App directly with Native Android features
@@ -647,7 +673,7 @@ class MainActivity : ComponentActivity() {
                         fun isNativeApp(): Boolean = true
 
                         @JavascriptInterface
-                        fun getAppVersion(): String = "1.2.0"
+                        fun getAppVersion(): String = "1.3.0"
 
                         @JavascriptInterface
                         fun shareText(title: String, text: String, url: String) {

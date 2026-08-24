@@ -219,7 +219,8 @@ app.use(helmet({
                 "https://*.supabase.co", "https://*.google.com", "https://*.gstatic.com", "https://*.google",
                 "https://*.adtrafficquality.google", "https://*.googleadservices.com",
                 "https://pagead2.googlesyndication.com", "https://*.doubleclick.net",
-                "https://*.googlesyndication.com"
+                "https://*.googlesyndication.com",
+                "https://*.imgur.com", "https://imgur.com", "https://i.imgur.com", "https://*.githubusercontent.com", "https:"
             ],
             mediaSrc: ["'self'", "blob:", "data:", "https://assets.mixkit.co", "https:"],
             connectSrc: [
@@ -4339,9 +4340,9 @@ const GITHUB_APK_RAW_URL = 'https://raw.githubusercontent.com/azertyuio1265/zooo
 
 const defaultAppDownloadSettings = {
     apk_url: GITHUB_APK_RELEASE_URL,
-    version: '1.2.0',
-    version_code: 3,
-    update_notes: 'النسخة الأصلية الجديدة والمحدثة (v1.2.0): مزامنة فورية للشعار والصور الجديدة، دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، وتنزيل الملخصات.',
+    version: '1.3.0',
+    version_code: 4,
+    update_notes: 'النسخة الأصلية الجديدة والمحدثة (v1.3.0): تحديث أيقونة التطبيق الرسمية، دعم المزامنة الفورية للشعار والصور الجديدة، دعم كامل لجميع خدمات منصة ZoomDz والبث المباشر ومكالمات الفيديو (WebRTC).',
     is_active: true
 };
 let inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings };
@@ -4896,12 +4897,12 @@ function normalizeImgurUrl(url) {
 const defaultSiteImages = {
     app_logo: '/images/zoomdz-logo.png',
     site_logo: '/images/zoomdz-logo.png',
-    hero_image: '/images/student_hero1.jpg',
-    landing_card1_image: '/images/student_lab1.jpg',
+    hero_image: '/images/student_hero.jpg',
+    landing_card1_image: '/images/student_lab.jpg',
     landing_card2_image: '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png',
-    login_student_img: '/images/student_character1.jpg',
-    login_teacher_img: '/images/teacher_character1.jpg',
-    login_admin_img: '/images/admin_character1.jpg'
+    login_student_img: '/images/student_character.jpg',
+    login_teacher_img: '/images/teacher_character.jpg',
+    login_admin_img: '/images/admin_character.jpg'
 };
 
 const siteImagesDataPath = path.join(__dirname, 'data', 'site_images.json');

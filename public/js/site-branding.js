@@ -23,9 +23,9 @@
             // If proxy fails or local image missing, fallback safely
             el.onerror = null;
             if (el.id === 'heroMainImage') {
-                el.src = '/images/student_hero1.jpg';
+                el.src = '/images/student_hero.jpg';
             } else if (el.id === 'landingCard1Img') {
-                el.src = '/images/student_lab1.jpg';
+                el.src = '/images/student_lab.jpg';
             } else if (el.id === 'landingCard2Img') {
                 el.src = '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png';
             } else if (el.classList.contains('site-app-logo') || el.classList.contains('navbar-app-logo') || el.classList.contains('brand-logo-img')) {

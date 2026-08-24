@@ -106,7 +106,18 @@ const targets = [
     { file: 'public/apple-touch-icon.png', size: 180 },
     { file: 'public/images/zoomdz.png', size: 192 },
     { file: 'public/images/zoomdz-logo.png', size: 512 },
-    { file: 'public/images/logo-icon.png', size: 512 }
+    { file: 'public/images/logo-icon.png', size: 512 },
+    { file: 'app/src/main/res/mipmap-mdpi/ic_launcher.png', size: 48 },
+    { file: 'app/src/main/res/mipmap-mdpi/ic_launcher_round.png', size: 48 },
+    { file: 'app/src/main/res/mipmap-hdpi/ic_launcher.png', size: 72 },
+    { file: 'app/src/main/res/mipmap-hdpi/ic_launcher_round.png', size: 72 },
+    { file: 'app/src/main/res/mipmap-xhdpi/ic_launcher.png', size: 96 },
+    { file: 'app/src/main/res/mipmap-xhdpi/ic_launcher_round.png', size: 96 },
+    { file: 'app/src/main/res/mipmap-xxhdpi/ic_launcher.png', size: 144 },
+    { file: 'app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png', size: 144 },
+    { file: 'app/src/main/res/mipmap-xxxhdpi/ic_launcher.png', size: 192 },
+    { file: 'app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png', size: 192 },
+    { file: 'app/src/main/res/drawable/ic_launcher_foreground_png.png', size: 108 }
 ];
 
 targets.forEach(target => {
