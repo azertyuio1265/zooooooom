@@ -58,3 +58,15 @@
       ],
       "isFromEnv": false
     }
+[2026-08-24 10:15:47.654] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
