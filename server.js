@@ -4339,9 +4339,9 @@ const GITHUB_APK_RAW_URL = 'https://raw.githubusercontent.com/azertyuio1265/zooo
 
 const defaultAppDownloadSettings = {
     apk_url: GITHUB_APK_RELEASE_URL,
-    version: '1.1.0',
-    version_code: 2,
-    update_notes: 'النسخة الأصلية الجديدة والمحدثة (v1.1.0): دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، تنزيل الملخصات، وتجربة سلسة وسريعة على الهاتف.',
+    version: '1.2.0',
+    version_code: 3,
+    update_notes: 'النسخة الأصلية الجديدة والمحدثة (v1.2.0): مزامنة فورية للشعار والصور الجديدة، دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، وتنزيل الملخصات.',
     is_active: true
 };
 let inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings };

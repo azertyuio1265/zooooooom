@@ -500,11 +500,20 @@ class MainActivity : ComponentActivity() {
                         override fun onPageFinished(view: WebView?, finishedUrl: String?) {
                             super.onPageFinished(view, finishedUrl)
                             onPageFinished()
+                            view?.evaluateJavascript(
+                                "(function(){ if (window.ZoomDzBranding && typeof window.ZoomDzBranding.sync === 'function') { window.ZoomDzBranding.sync(); } })();",
+                                null
+                            )
                         }
 
                         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                             super.onReceivedError(view, request, error)
                             if (request?.isForMainFrame == true) {
+                                val failingUrl = request.url.toString()
+                                if (failingUrl.contains("zoomdz.com")) {
+                                    view?.loadUrl(BACKUP_URL)
+                                    return
+                                }
                                 onErrorOccurred()
                             }
                         }
@@ -629,7 +638,7 @@ class MainActivity : ComponentActivity() {
                         builtInZoomControls = true
                         displayZoomControls = false
                         textZoom = 100
-                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.1"
+                        userAgentString = "$userAgentString ZoomDzNativeAndroid/1.2.0"
                     }
 
                     // JavaScript Bridge to connect the Web App directly with Native Android features
@@ -638,7 +647,7 @@ class MainActivity : ComponentActivity() {
                         fun isNativeApp(): Boolean = true
 
                         @JavascriptInterface
-                        fun getAppVersion(): String = "1.1"
+                        fun getAppVersion(): String = "1.2.0"
 
                         @JavascriptInterface
                         fun shareText(title: String, text: String, url: String) {

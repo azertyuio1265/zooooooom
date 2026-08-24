@@ -1,5 +1,5 @@
 // Service Worker for ZoomDz platform to handle background operations and native push notifications
-const CACHE_NAME = 'zoomdz-cache-v2';
+const CACHE_NAME = 'zoomdz-cache-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -30,21 +30,28 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event (Network first, fall back to cache)
+// Fetch Event (Network first, never cache /api/ endpoints)
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests and skip browser extensions or chrome-extension URLs
+  // Only handle GET requests and skip non-origin requests
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
     return;
+  }
+  
+  // NEVER cache API requests or dynamic proxy routes
+  if (event.request.url.includes('/api/')) {
+    return; // allow direct browser network fetch
   }
   
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache the fetched resource
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+        // Cache static resources only
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
         return response;
       })
       .catch(() => {
