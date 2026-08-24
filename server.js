@@ -4872,9 +4872,9 @@ app.post('/api/admin/settings/revenue_settings', authenticate, authorize(['admin
 
 // Helper to normalize Imgur and external image URLs
 function normalizeImgurUrl(url) {
-    if (!url || typeof url !== 'string') return url;
+    if (!url || typeof url !== 'string') return '';
     let clean = url.trim();
-    if (!clean) return clean;
+    if (!clean) return '';
     
     // Imgur URL normalization
     if (clean.includes('imgur.com')) {
@@ -4903,9 +4903,25 @@ const defaultSiteImages = {
     login_teacher_img: '/images/teacher_character1.jpg',
     login_admin_img: '/images/admin_character1.jpg'
 };
+
+const siteImagesDataPath = path.join(__dirname, 'data', 'site_images.json');
 let inMemorySiteImages = { ...defaultSiteImages };
 
-app.get('/api/settings/site_images', async (req, res) => {
+// Load initial site images from local file if present
+try {
+    if (fs.existsSync(siteImagesDataPath)) {
+        const raw = fs.readFileSync(siteImagesDataPath, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+            inMemorySiteImages = { ...defaultSiteImages, ...parsed };
+        }
+    }
+} catch(e) {
+    console.warn('[SiteImages] Error reading local site_images.json:', e.message);
+}
+
+// Function to get active site images with multi-source fallback
+async function getEffectiveSiteImages() {
     try {
         const { data, error } = await supabase
             .from('platform_settings')
@@ -4913,10 +4929,27 @@ app.get('/api/settings/site_images', async (req, res) => {
             .eq('key', 'site_images')
             .single();
             
-        if (error || !data || !data.value) {
-            return res.json(inMemorySiteImages);
+        if (!error && data && data.value) {
+            inMemorySiteImages = { ...defaultSiteImages, ...inMemorySiteImages, ...data.value };
+            // Keep local file synced
+            try {
+                if (!fs.existsSync(path.join(__dirname, 'data'))) {
+                    fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
+                }
+                fs.writeFileSync(siteImagesDataPath, JSON.stringify(inMemorySiteImages, null, 2));
+            } catch(writeErr) {}
+            return inMemorySiteImages;
         }
-        res.json({ ...defaultSiteImages, ...data.value });
+    } catch (e) {}
+
+    return inMemorySiteImages;
+}
+
+app.get('/api/settings/site_images', async (req, res) => {
+    try {
+        const images = await getEffectiveSiteImages();
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.json(images);
     } catch (e) {
         res.json(inMemorySiteImages);
     }
@@ -4924,16 +4957,9 @@ app.get('/api/settings/site_images', async (req, res) => {
 
 app.get('/api/admin/settings/site_images', authenticate, authorize(['admin']), async (req, res) => {
     try {
-        const { data, error } = await supabase
-            .from('platform_settings')
-            .select('value')
-            .eq('key', 'site_images')
-            .single();
-            
-        if (error || !data || !data.value) {
-            return res.json(inMemorySiteImages);
-        }
-        res.json({ ...defaultSiteImages, ...data.value });
+        const images = await getEffectiveSiteImages();
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.json(images);
     } catch (e) {
         res.json(inMemorySiteImages);
     }
@@ -4952,22 +4978,39 @@ app.post('/api/admin/settings/site_images', authenticate, authorize(['admin']), 
             login_admin_img
         } = req.body;
 
+        const effectiveLogo = normalizeImgurUrl(app_logo) || normalizeImgurUrl(site_logo) || inMemorySiteImages.app_logo || defaultSiteImages.app_logo;
+
         const updatedImages = {
-            app_logo: normalizeImgurUrl(app_logo) || normalizeImgurUrl(site_logo) || defaultSiteImages.app_logo,
-            site_logo: normalizeImgurUrl(site_logo) || normalizeImgurUrl(app_logo) || defaultSiteImages.site_logo,
-            hero_image: normalizeImgurUrl(hero_image) || defaultSiteImages.hero_image,
-            landing_card1_image: normalizeImgurUrl(landing_card1_image) || defaultSiteImages.landing_card1_image,
-            landing_card2_image: normalizeImgurUrl(landing_card2_image) || defaultSiteImages.landing_card2_image,
-            login_student_img: normalizeImgurUrl(login_student_img) || defaultSiteImages.login_student_img,
-            login_teacher_img: normalizeImgurUrl(login_teacher_img) || defaultSiteImages.login_teacher_img,
-            login_admin_img: normalizeImgurUrl(login_admin_img) || defaultSiteImages.login_admin_img
+            app_logo: effectiveLogo,
+            site_logo: effectiveLogo,
+            hero_image: normalizeImgurUrl(hero_image) || inMemorySiteImages.hero_image || defaultSiteImages.hero_image,
+            landing_card1_image: normalizeImgurUrl(landing_card1_image) || inMemorySiteImages.landing_card1_image || defaultSiteImages.landing_card1_image,
+            landing_card2_image: normalizeImgurUrl(landing_card2_image) || inMemorySiteImages.landing_card2_image || defaultSiteImages.landing_card2_image,
+            login_student_img: normalizeImgurUrl(login_student_img) || inMemorySiteImages.login_student_img || defaultSiteImages.login_student_img,
+            login_teacher_img: normalizeImgurUrl(login_teacher_img) || inMemorySiteImages.login_teacher_img || defaultSiteImages.login_teacher_img,
+            login_admin_img: normalizeImgurUrl(login_admin_img) || inMemorySiteImages.login_admin_img || defaultSiteImages.login_admin_img
         };
 
         inMemorySiteImages = updatedImages;
 
-        await supabase
-            .from('platform_settings')
-            .upsert({ key: 'site_images', value: updatedImages });
+        // Persist to local disk
+        try {
+            if (!fs.existsSync(path.join(__dirname, 'data'))) {
+                fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
+            }
+            fs.writeFileSync(siteImagesDataPath, JSON.stringify(updatedImages, null, 2));
+        } catch(fileErr) {
+            console.warn('[SiteImages] Could not write to site_images.json:', fileErr.message);
+        }
+
+        // Persist to Supabase
+        try {
+            await supabase
+                .from('platform_settings')
+                .upsert({ key: 'site_images', value: updatedImages });
+        } catch (dbErr) {
+            console.warn('[SiteImages] Supabase upsert error:', dbErr.message);
+        }
 
         res.json({ success: true, site_images: updatedImages });
     } catch (e) {

@@ -3442,6 +3442,11 @@
                 const data = await res.json();
                 if (data.success) {
                     showNotification('✅ تم حفظ إعدادات الشعار وصور المنصة بنجاح!', 'success');
+                    try {
+                        if (data.site_images) {
+                            localStorage.setItem('zoomdz_site_images', JSON.stringify(data.site_images));
+                        }
+                    } catch(e) {}
                     // Update current page previews
                     loadSiteImageSettingsAdmin();
                 } else {

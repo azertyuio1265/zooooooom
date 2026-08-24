@@ -4595,8 +4595,9 @@
     <nav class="navbar" role="navigation" aria-label="شريط التنقل الرئيسي" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 16px 32px; box-shadow: none;">
         <div class="nav-container" style="direction: rtl; max-width: 1300px; display: flex; justify-content: space-between; align-items: center;">
             <div class="logo" onclick="window.location.reload()" role="button" tabindex="0" aria-label="تحديث الصفحة الرئيسية" style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none;">
-                <div style="width: 42px; height: 42px; background: #3b82f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);">
-                    <i class="fas fa-graduation-cap"></i>
+                <div class="navbar-app-logo-wrap" style="width: 42px; height: 42px; background: #3b82f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); overflow: hidden; position: relative; padding: 2px;">
+                    <img id="navbarAppLogoImg" class="navbar-app-logo site-app-logo" src="/images/zoomdz-logo.png" alt="ZoomDz" referrerpolicy="no-referrer" onerror="this.style.display='none'; document.getElementById('navbarDefaultLogoIcon').style.display='flex';" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; display: block;">
+                    <div id="navbarDefaultLogoIcon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center;"><i class="fas fa-graduation-cap"></i></div>
                 </div>
                 <div style="display: flex; align-items: baseline; gap: 2px;">
                     <span style="font-size: 1.5rem; font-weight: 900; color: #0f172a;">Zoom</span>
@@ -5533,99 +5534,131 @@
         // ============================================================
         // DYNAMIC SITE & LOGO IMAGES (Imgur / Custom URLs)
         // ============================================================
+        function applySiteImagesDOM(images) {
+            if (!images || typeof images !== 'object') return;
+
+            var logoUrl = images.app_logo || images.site_logo;
+            if (logoUrl) {
+                // Update preloader logo
+                var preloaderLogo = document.getElementById('preloaderAppLogoImg');
+                if (preloaderLogo) {
+                    preloaderLogo.setAttribute('data-original-url', logoUrl);
+                    preloaderLogo.setAttribute('referrerpolicy', 'no-referrer');
+                    preloaderLogo.src = logoUrl;
+                    preloaderLogo.style.display = 'block';
+                    var defIcon = document.getElementById('preloaderDefaultIcon');
+                    if (defIcon) defIcon.style.display = 'none';
+                }
+
+                // Update navbar & mobile drawer app logos
+                document.querySelectorAll('.navbar-app-logo, .brand-logo-img, .site-app-logo, #navbarAppLogoImg, #mobileDrawerLogoImg').forEach(function(el) {
+                    el.setAttribute('data-original-url', logoUrl);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = logoUrl;
+                    el.style.display = 'block';
+                });
+
+                var navIcon = document.getElementById('navbarDefaultLogoIcon');
+                if (navIcon) navIcon.style.display = 'none';
+                var mobIcon = document.getElementById('mobileDrawerDefaultIcon');
+                if (mobIcon) mobIcon.style.display = 'none';
+
+                // Update dynamic favicon & apple touch icon
+                try {
+                    var favicons = document.querySelectorAll('link[rel="shortcut icon"], link[rel="icon"], link[rel="apple-touch-icon"]');
+                    favicons.forEach(function(f) { f.href = logoUrl; });
+                } catch(e) {}
+            }
+
+            if (images.hero_image) {
+                var el = document.getElementById('heroMainImage');
+                if (el) {
+                    el.setAttribute('data-original-url', images.hero_image);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.hero_image;
+                }
+            }
+            if (images.landing_card1_image) {
+                var el = document.getElementById('landingCard1Img');
+                if (el) {
+                    el.setAttribute('data-original-url', images.landing_card1_image);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.landing_card1_image;
+                }
+            }
+            if (images.landing_card2_image) {
+                var el = document.getElementById('landingCard2Img');
+                if (el) {
+                    el.setAttribute('data-original-url', images.landing_card2_image);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.landing_card2_image;
+                }
+            }
+            if (images.login_student_img) {
+                document.querySelectorAll('.char-img-student').forEach(function(el) {
+                    el.setAttribute('data-original-url', images.login_student_img);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.login_student_img;
+                });
+            }
+            if (images.login_teacher_img) {
+                document.querySelectorAll('.char-img-teacher').forEach(function(el) {
+                    el.setAttribute('data-original-url', images.login_teacher_img);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.login_teacher_img;
+                });
+            }
+            if (images.login_admin_img) {
+                document.querySelectorAll('.char-img-admin').forEach(function(el) {
+                    el.setAttribute('data-original-url', images.login_admin_img);
+                    el.setAttribute('referrerpolicy', 'no-referrer');
+                    el.src = images.login_admin_img;
+                });
+            }
+        }
+
+        // Apply immediately from local cache if present
+        try {
+            var cachedSiteImages = localStorage.getItem('zoomdz_site_images');
+            if (cachedSiteImages) {
+                applySiteImagesDOM(JSON.parse(cachedSiteImages));
+            }
+        } catch(e) {}
+
         async function loadAndApplySiteImages() {
             try {
-                var res = await fetch('/api/settings/site_images');
+                var res = await fetch('/api/settings/site_images?_t=' + Date.now());
                 if (!res.ok) return;
                 var images = await res.json();
                 if (!images) return;
 
-                var logoUrl = images.app_logo || images.site_logo;
-                if (logoUrl) {
-                    // Update preloader logo
-                    var preloaderLogo = document.getElementById('preloaderAppLogoImg');
-                    if (preloaderLogo) {
-                        preloaderLogo.setAttribute('data-original-url', logoUrl);
-                        preloaderLogo.setAttribute('referrerpolicy', 'no-referrer');
-                        preloaderLogo.src = logoUrl;
-                        preloaderLogo.style.display = 'block';
-                        var defIcon = document.getElementById('preloaderDefaultIcon');
-                        if (defIcon) defIcon.style.display = 'none';
-                    }
-
-                    // Update navbar & footer app logos
-                    document.querySelectorAll('.navbar-app-logo, .brand-logo-img, .site-app-logo').forEach(function(el) {
-                        el.setAttribute('data-original-url', logoUrl);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = logoUrl;
-                    });
-
-                    // Update dynamic favicon
-                    try {
-                        var favicon = document.querySelector('link[rel="shortcut icon"]') || document.querySelector('link[rel="icon"]');
-                        if (favicon) favicon.href = logoUrl;
-                        var appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-                        if (appleIcon) appleIcon.href = logoUrl;
-                    } catch(e) {}
-                }
-
-                if (images.hero_image) {
-                    var el = document.getElementById('heroMainImage');
-                    if (el) {
-                        el.setAttribute('data-original-url', images.hero_image);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.hero_image;
-                    }
-                }
-                if (images.landing_card1_image) {
-                    var el = document.getElementById('landingCard1Img');
-                    if (el) {
-                        el.setAttribute('data-original-url', images.landing_card1_image);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.landing_card1_image;
-                    }
-                }
-                if (images.landing_card2_image) {
-                    var el = document.getElementById('landingCard2Img');
-                    if (el) {
-                        el.setAttribute('data-original-url', images.landing_card2_image);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.landing_card2_image;
-                    }
-                }
-                if (images.login_student_img) {
-                    document.querySelectorAll('.char-img-student').forEach(function(el) {
-                        el.setAttribute('data-original-url', images.login_student_img);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.login_student_img;
-                    });
-                }
-                if (images.login_teacher_img) {
-                    document.querySelectorAll('.char-img-teacher').forEach(function(el) {
-                        el.setAttribute('data-original-url', images.login_teacher_img);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.login_teacher_img;
-                    });
-                }
-                if (images.login_admin_img) {
-                    document.querySelectorAll('.char-img-admin').forEach(function(el) {
-                        el.setAttribute('data-original-url', images.login_admin_img);
-                        el.setAttribute('referrerpolicy', 'no-referrer');
-                        el.src = images.login_admin_img;
-                    });
-                }
+                applySiteImagesDOM(images);
+                try {
+                    localStorage.setItem('zoomdz_site_images', JSON.stringify(images));
+                } catch(e) {}
             } catch (e) {
                 console.error('Error loading dynamic site images:', e);
             }
         }
+
+        // Trigger both immediately and on DOMContentLoaded
+        loadAndApplySiteImages();
         document.addEventListener('DOMContentLoaded', loadAndApplySiteImages);
 
         // ============================================================
-        // IMAGE MODAL
+        // IMAGE MODAL & ROBUST FALLBACK
         // ============================================================
         function handleImageFallback(img) {
             if (!img) return;
             var originalUrl = img.getAttribute('data-original-url') || img.src;
+
+            if (!img.dataset.proxied && originalUrl && originalUrl.startsWith('http')) {
+                img.dataset.proxied = 'true';
+                img.setAttribute('referrerpolicy', 'no-referrer');
+                img.src = '/api/proxy-image?url=' + encodeURIComponent(originalUrl);
+                return;
+            }
+        }
 
             if (!img.dataset.proxied && originalUrl && originalUrl.startsWith('http')) {
                 img.dataset.proxied = 'true';
@@ -8693,8 +8726,9 @@
         </div>
         <div class="mobile-drawer-body">
             <div class="mobile-drawer-user">
-                <div class="logo-icon-wrapper" style="width:40px; height:40px; font-size:1.1rem; background:white; color:var(--primary);">
-                    <i class="fas fa-graduation-cap"></i>
+                <div class="logo-icon-wrapper" style="width:40px; height:40px; font-size:1.1rem; background:white; color:var(--primary); border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 2px;">
+                    <img id="mobileDrawerLogoImg" class="navbar-app-logo site-app-logo" src="/images/zoomdz-logo.png" alt="ZoomDz" referrerpolicy="no-referrer" onerror="this.style.display='none'; document.getElementById('mobileDrawerDefaultIcon').style.display='flex';" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+                    <div id="mobileDrawerDefaultIcon" style="display: none;"><i class="fas fa-graduation-cap"></i></div>
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:800; font-size:1.05rem;">منصة ZoomDz</div>
