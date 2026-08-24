@@ -20279,56 +20279,110 @@ app.post("/api/subscribe", authenticate, async (req, res) => {
   }
 });
 var { errorHandler, notFoundHandler } = require_errorHandler();
-app.get("/zoomdz.apk", (req, res) => {
-  const fs2 = require("fs");
-  const path2 = require("path");
-  const apkPath = path2.join(__dirname, "public", "downloads", "zoomdz.apk");
-  if (fs2.existsSync(apkPath)) {
-    res.download(apkPath, "zoomdz.apk");
-  } else {
-    res.send(`
-            <!DOCTYPE html>
-            <html lang="ar" dir="rtl">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>\u062A\u0646\u0628\u064A\u0647 - \u0645\u0644\u0641 APK \u063A\u064A\u0631 \u0645\u062A\u0648\u0641\u0631 \u0628\u0639\u062F</title>
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                <style>
-                    body { font-family: 'Cairo', sans-serif; text-align: center; padding: 40px 20px; background-color: #f8fafc; color: #0f172a; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-                    .container { max-width: 500px; background: white; padding: 40px 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-                    .icon { font-size: 64px; color: #f59e0b; margin-bottom: 20px; }
-                    h1 { margin-bottom: 15px; font-size: 22px; color: #1e293b; }
-                    p { font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 30px; text-align: right; }
-                    .btn { display: inline-block; padding: 12px 30px; background: #3b82f6; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; transition: background 0.3s; cursor: pointer; border: none; }
-                    .btn:hover { background: #1d4ed8; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <i class="fas fa-exclamation-triangle icon"></i>
-                    <h1>\u062A\u0646\u0628\u064A\u0647 \u0644\u0644\u0645\u0637\u0648\u0631 \u0648\u0627\u0644\u0645\u0633\u062A\u062E\u062F\u0645</h1>
-                    <p>\u0623\u0647\u0644\u0627\u064B \u0628\u0643! \u0644\u0642\u062F \u0642\u0645\u0646\u0627 \u0628\u0628\u0631\u0645\u062C\u0629 \u0648\u062A\u062C\u0645\u064A\u0639 \u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0623\u0646\u062F\u0631\u0648\u064A\u062F \u0627\u0644\u0623\u0635\u0644\u064A (ZoomDz) \u0628\u0646\u062C\u0627\u062D \u062F\u0627\u062E\u0644 \u0628\u064A\u0626\u0629 \u0627\u0644\u0639\u0645\u0644.</p>
-                    <p><strong>\u062E\u0637\u0648\u0627\u062A \u0627\u0644\u062A\u0641\u0639\u064A\u0644 \u0627\u0644\u0646\u0647\u0627\u0626\u064A\u0629 \u0644\u0644\u0645\u0633\u0624\u0648\u0644:</strong><br>
-                    1. \u0642\u0645 \u0628\u062A\u062D\u0645\u064A\u0644 \u0645\u0644\u0641 \u0627\u0644\u0640 APK \u0627\u0644\u0645\u062C\u0645\u0639 \u0645\u0646 \u062E\u0644\u0627\u0644 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0639\u0644\u0648\u064A\u0629 \u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0628\u0646\u0627\u0621 \u0641\u064A AI Studio (\u0628\u0635\u064A\u063A\u0629 APK).<br>
-                    2. \u0642\u0645 \u0628\u0631\u0641\u0639 \u0647\u0630\u0627 \u0627\u0644\u0645\u0644\u0641 \u0648\u0648\u0636\u0639\u0647 \u0641\u064A \u0627\u0644\u0645\u062C\u0644\u062F <code>public/downloads/</code> \u0628\u0627\u0633\u0645 <code>zoomdz.apk</code>.<br>
-                    3. \u0628\u0639\u062F \u0630\u0644\u0643\u060C \u0633\u064A\u0635\u0628\u062D \u0627\u0644\u0632\u0631 \u0641\u0639\u0627\u0644\u0627\u064B \u0641\u0648\u0631\u0627\u064B \u0648\u0642\u0627\u0628\u0644\u0627\u064B \u0644\u0644\u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0628\u0627\u0634\u0631 \u0644\u062C\u0645\u064A\u0639 \u0632\u0648\u0627\u0631 \u0645\u0648\u0642\u0639\u0643!</p>
-                    <button onclick="window.history.back()" class="btn">\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0644\u062E\u0644\u0641</button>
-                </div>
-            </body>
-            </html>
-        `);
+var GITHUB_APK_RELEASE_URL = "https://github.com/azertyuio1265/zooooooom/releases/latest/download/zoomdz.apk";
+var GITHUB_APK_RAW_URL = "https://raw.githubusercontent.com/azertyuio1265/zooooooom/main/public/downloads/zoomdz.apk";
+var defaultAppDownloadSettings = {
+  apk_url: GITHUB_APK_RELEASE_URL,
+  version: "1.1.0",
+  version_code: 2,
+  update_notes: "\u0627\u0644\u0646\u0633\u062E\u0629 \u0627\u0644\u0623\u0635\u0644\u064A\u0629 \u0627\u0644\u062C\u062F\u064A\u062F\u0629 \u0648\u0627\u0644\u0645\u062D\u062F\u062B\u0629 (v1.1.0): \u062F\u0639\u0645 \u0643\u0627\u0645\u0644 \u0644\u062C\u0645\u064A\u0639 \u062E\u062F\u0645\u0627\u062A \u0645\u0646\u0635\u0629 ZoomDz\u060C \u0627\u0644\u0628\u062B \u0627\u0644\u0645\u0628\u0627\u0634\u0631 \u0648\u0645\u0643\u0627\u0644\u0645\u0627\u062A \u0627\u0644\u0641\u064A\u062F\u064A\u0648 (WebRTC)\u060C \u0631\u0641\u0639 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A \u0648\u0627\u0644\u0634\u0647\u0627\u062F\u0627\u062A\u060C \u062A\u0646\u0632\u064A\u0644 \u0627\u0644\u0645\u0644\u062E\u0635\u0627\u062A\u060C \u0648\u062A\u062C\u0631\u0628\u0629 \u0633\u0644\u0633\u0629 \u0648\u0633\u0631\u064A\u0639\u0629 \u0639\u0644\u0649 \u0627\u0644\u0647\u0627\u062A\u0641.",
+  is_active: true
+};
+var inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings };
+async function getAppDownloadSettings() {
+  try {
+    const { data, error } = await supabase.from("platform_settings").select("value").eq("key", "app_download").single();
+    if (data && data.value) {
+      inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings, ...data.value };
+      if (!inMemoryAppDownloadSettings.apk_url || inMemoryAppDownloadSettings.apk_url === "") {
+        inMemoryAppDownloadSettings.apk_url = GITHUB_APK_RELEASE_URL;
+      }
+      return inMemoryAppDownloadSettings;
+    }
+  } catch (e) {
+  }
+  return inMemoryAppDownloadSettings;
+}
+app.get("/api/settings/app_download", async (req, res) => {
+  try {
+    const settings = await getAppDownloadSettings();
+    res.json({ success: true, ...settings });
+  } catch (e) {
+    res.json({ success: true, ...inMemoryAppDownloadSettings });
   }
 });
-app.get("/download-app", (req, res) => {
+app.get("/api/admin/settings/app_download", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const settings = await getAppDownloadSettings();
+    res.json({ success: true, ...settings });
+  } catch (e) {
+    res.json({ success: true, ...inMemoryAppDownloadSettings });
+  }
+});
+app.post("/api/admin/settings/app_download", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const { apk_url, version, version_code, update_notes, is_active } = req.body;
+    const updated = {
+      apk_url: apk_url && typeof apk_url === "string" ? apk_url.trim() : GITHUB_APK_RELEASE_URL,
+      version: version && typeof version === "string" ? version.trim() : "1.1.0",
+      version_code: parseInt(version_code) || 2,
+      update_notes: update_notes && typeof update_notes === "string" ? update_notes.trim() : defaultAppDownloadSettings.update_notes,
+      is_active: is_active !== void 0 ? !!is_active : true,
+      updated_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    inMemoryAppDownloadSettings = updated;
+    try {
+      await supabase.from("platform_settings").upsert({ key: "app_download", value: updated });
+    } catch (dbErr) {
+      console.warn("[Storage] Could not save app_download to database, using memory fallback:", dbErr.message);
+    }
+    res.json({ success: true, settings: updated, message: "\u062A\u0645 \u062D\u0641\u0638 \u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0631\u0627\u0628\u0637 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642 \u0641\u064A \u0642\u0627\u0639\u062F\u0629 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0633\u062D\u0627\u0628\u064A\u0629 \u0628\u0646\u062C\u0627\u062D" });
+  } catch (e) {
+    console.error("Error saving app download settings:", e);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+app.get("/zoomdz.apk", async (req, res) => {
+  try {
+    const settings = await getAppDownloadSettings();
+    if (settings && settings.apk_url && (settings.apk_url.startsWith("http://") || settings.apk_url.startsWith("https://"))) {
+      return res.redirect(settings.apk_url);
+    }
+    const fs2 = require("fs");
+    const path2 = require("path");
+    const apkPath = path2.join(__dirname, "public", "downloads", "zoomdz.apk");
+    if (fs2.existsSync(apkPath) && fs2.statSync(apkPath).size > 1e3) {
+      return res.download(apkPath, "zoomdz.apk");
+    }
+    return res.redirect(GITHUB_APK_RELEASE_URL);
+  } catch (err) {
+    res.redirect(GITHUB_APK_RELEASE_URL);
+  }
+});
+app.get("/download-app", async (req, res) => {
+  let apkDownloadUrl = GITHUB_APK_RELEASE_URL;
+  let appVersion = "1.1.0";
+  let updateNotes = "\u0627\u0644\u0646\u0633\u062E\u0629 \u0627\u0644\u0623\u0635\u0644\u064A\u0629 \u0627\u0644\u062C\u062F\u064A\u062F\u0629 \u0627\u0644\u0631\u0633\u0645\u064A\u0629 (v1.1.0): \u0631\u0628\u0637 \u0643\u0627\u0645\u0644 \u0628\u0627\u0644\u0645\u0646\u0635\u0629\u060C \u062F\u0639\u0645 \u0645\u0643\u0627\u0644\u0645\u0627\u062A \u0627\u0644\u0641\u064A\u062F\u064A\u0648 \u0648\u0627\u0644\u0628\u062B \u0627\u0644\u0645\u0628\u0627\u0634\u0631 (WebRTC)\u060C \u062A\u062D\u0645\u064A\u0644 \u0648\u062D\u0641\u0638 \u0627\u0644\u062F\u0631\u0648\u0633\u060C \u0648\u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A \u0648\u0627\u0644\u0634\u0647\u0627\u062F\u0627\u062A.";
+  try {
+    const settings = await getAppDownloadSettings();
+    if (settings && settings.apk_url && settings.apk_url.startsWith("http")) {
+      apkDownloadUrl = settings.apk_url;
+    }
+    if (settings && settings.version) {
+      appVersion = settings.version;
+    }
+    if (settings && settings.update_notes) {
+      updateNotes = settings.update_notes;
+    }
+  } catch (e) {
+  }
   res.send(`
         <!DOCTYPE html>
         <html lang="ar" dir="rtl">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>\u062A\u062D\u0645\u064A\u0644 \u062A\u0637\u0628\u064A\u0642 ZoomDz \u0627\u0644\u0631\u0633\u0645\u064A \u0644\u0644\u0647\u0648\u0627\u062A\u0641</title>
+            <title>\u062A\u062D\u0645\u064A\u0644 \u062A\u0637\u0628\u064A\u0642 ZoomDz \u0627\u0644\u0631\u0633\u0645\u064A \u0627\u0644\u062C\u062F\u064A\u062F \u0644\u0644\u0647\u0648\u0627\u062A\u0641</title>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <style>
@@ -20349,10 +20403,15 @@ app.get("/download-app", (req, res) => {
                 .card-title i { font-size: 20px; }
                 .card-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
                 
+                /* Badges */
+                .badge-new { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #86efac; display: inline-block; margin-bottom: 8px; }
+
                 /* Buttons */
-                .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; text-align: center; }
-                .btn-android { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+                .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 30px; font-weight: bold; font-size: 15px; text-decoration: none; transition: all 0.2s; cursor: pointer; text-align: center; }
+                .btn-android { background: #10b981; color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25); }
                 .btn-android:hover { background: #059669; transform: translateY(-2px); }
+                .btn-secondary-dl { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; margin-top: 10px; font-size: 13px; padding: 10px 18px; }
+                .btn-secondary-dl:hover { background: #e2e8f0; color: #0f172a; }
                 .btn-ios { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; border: 1.5px solid #cbd5e1; }
                 .btn-pwa { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); margin-top: 15px; }
                 .btn-pwa:hover { background: #1d4ed8; }
@@ -20385,22 +20444,28 @@ app.get("/download-app", (req, res) => {
                     </div>
                 </a>
                 
-                <h1>\u062A\u062D\u0645\u064A\u0644 \u062A\u0637\u0628\u064A\u0642 ZoomDz \u0644\u0644\u0647\u0648\u0627\u062A\u0641 \u0627\u0644\u0630\u0643\u064A\u0629</h1>
-                <p class="subtitle">\u0627\u062D\u0635\u0644 \u0639\u0644\u0649 \u0623\u0641\u0636\u0644 \u062A\u062C\u0631\u0628\u0629 \u062A\u0639\u0644\u064A\u0645\u064A\u0629 \u0648\u062A\u0648\u0627\u0635\u0644 \u0645\u0631\u0626\u064A \u062A\u0641\u0627\u0639\u0644\u064A \u0648\u0633\u0644\u0633 \u0645\u0628\u0627\u0634\u0631\u0629 \u0645\u0646 \u0647\u0627\u062A\u0641\u0643 \u0627\u0644\u0630\u0643\u064A</p>
+                <h1>\u062A\u062D\u0645\u064A\u0644 \u062A\u0637\u0628\u064A\u0642 ZoomDz \u0627\u0644\u062C\u062F\u064A\u062F \u0644\u0644\u0647\u0648\u0627\u062A\u0641 \u0627\u0644\u0630\u0643\u064A\u0629</h1>
+                <p class="subtitle">\u0627\u062D\u0635\u0644 \u0639\u0644\u0649 \u0627\u0644\u0646\u0633\u062E\u0629 \u0627\u0644\u0645\u062D\u062F\u062B\u0629 \u0627\u0644\u0623\u0635\u0644\u064A\u0629 \u0644\u0645\u0646\u0635\u0629 ZoomDz \u0644\u0644\u0627\u0633\u062A\u0645\u062A\u0627\u0639 \u0628\u062F\u0631\u0648\u0633 \u0627\u0644\u0628\u062B \u0627\u0644\u0645\u0628\u0627\u0634\u0631 \u0648\u0627\u0644\u062A\u0648\u0627\u0635\u0644 \u0627\u0644\u062A\u0641\u0627\u0639\u0644\u064A</p>
                 
                 <div class="cards-grid">
                     <!-- Android Native Card -->
                     <div class="card">
                         <div>
+                            <span class="badge-new"><i class="fas fa-sparkles"></i> \u0627\u0644\u062A\u062D\u062F\u064A\u062B \u0627\u0644\u062C\u062F\u064A\u062F 2026</span>
                             <div class="card-title" style="color: #10b981;">
                                 <i class="fab fa-android"></i>
-                                <span>\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0623\u0646\u062F\u0631\u0648\u064A\u062F \u0627\u0644\u0623\u0635\u0644\u064A (APK)</span>
+                                <span>\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0623\u0646\u062F\u0631\u0648\u064A\u062F \u0627\u0644\u0623\u0635\u0644\u064A (APK) - v${appVersion}</span>
                             </div>
-                            <p class="card-desc">\u062A\u062D\u0645\u064A\u0644 \u0648\u062A\u062B\u0628\u064A\u062A \u0627\u0644\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0623\u0635\u0644\u064A \u0627\u0644\u0643\u0627\u0645\u0644 (Native App) \u0627\u0644\u0645\u0635\u0645\u0645 \u062E\u0635\u064A\u0635\u0627\u064B \u0644\u0647\u0648\u0627\u062A\u0641 \u0627\u0644\u0623\u0646\u062F\u0631\u0648\u064A\u062F \u0628\u062C\u0648\u062F\u0629 \u0645\u0645\u062A\u0627\u0632\u0629 \u0648\u0633\u0631\u0639\u0629 \u0628\u062B \u0641\u0627\u0626\u0642\u0629 \u0648\u0645\u064A\u0632\u0627\u062A \u0627\u0644\u062A\u0646\u0628\u064A\u0647\u0627\u062A \u0648\u0627\u0644\u062F\u0631\u0648\u0633 \u0648\u0627\u0644\u062A\u0645\u0627\u0631\u064A\u0646 \u0627\u0644\u0645\u062F\u0645\u062C\u0629.</p>
+                            <p class="card-desc">${updateNotes}</p>
                         </div>
-                        <a href="/zoomdz.apk" class="btn btn-android">
-                            <i class="fas fa-download"></i> \u062A\u062D\u0645\u064A\u0644 \u0645\u0644\u0641 \u0627\u0644\u0640 APK
-                        </a>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="${apkDownloadUrl}" target="_blank" rel="noopener" class="btn btn-android">
+                                <i class="fas fa-download"></i> \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u062C\u062F\u064A\u062F (\u0645\u0628\u0627\u0634\u0631)
+                            </a>
+                            <a href="${GITHUB_APK_RAW_URL}" target="_blank" rel="noopener" class="btn btn-secondary-dl">
+                                <i class="fas fa-link"></i> \u0631\u0627\u0628\u0637 \u062A\u062D\u0645\u064A\u0644 \u0625\u0636\u0627\u0641\u064A (\u0633\u064A\u0631\u0641\u0631 \u0628\u062F\u064A\u0644)
+                            </a>
+                        </div>
                     </div>
                     
                     <!-- iOS Card -->
@@ -20447,7 +20512,9 @@ app.get("/download-app", (req, res) => {
                     </div>
                     
                     <div style="text-align: center;">
-                        <a href="/" class="btn btn-pwa"><i class="fas fa-home"></i> \u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0646\u0635\u0629 \u0648\u062A\u062B\u0628\u064A\u062A\u0647\u0627 \u0627\u0644\u0622\u0646</a>
+                        <a href="/" class="btn btn-pwa">
+                            <i class="fas fa-external-link-alt"></i> \u0641\u062A\u062D \u0645\u0648\u0642\u0639 \u0627\u0644\u0645\u0646\u0635\u0629 \u0644\u0644\u062A\u062B\u0628\u064A\u062A
+                        </a>
                     </div>
                 </div>
                 

@@ -1201,6 +1201,69 @@
                     </button>
                 </div>
             </div>
+
+            <!-- إعدادات تطبيق الأندرويد ورابط التحميل المباشر (Cloud Database Storage) -->
+            <div style="background: #ffffff; border-radius: 16px; padding: 22px; margin-top: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #10b981;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ecfdf5;">
+                    <h3 style="color: #065f46; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+                        <i class="fab fa-android" style="color: #10b981;"></i> إعدادات ورابط تحميل تطبيق الأندرويد الرسمي (APK)
+                    </h3>
+                    <span style="background: #d1fae5; color: #047857; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
+                        <i class="fas fa-database"></i> مخزن في قاعدة البيانات السحابية (Supabase)
+                    </span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- رابط الـ APK -->
+                    <div>
+                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
+                            <i class="fas fa-link" style="color: #10b981;"></i> رابط تحميل ملف التطبيق (Direct APK URL أو Supabase Storage URL):
+                        </label>
+                        <input type="text" id="appApkUrlInput" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.9rem;" placeholder="https://your-supabase-project.supabase.co/storage/v1/object/public/apps/zoomdz.apk أو أي رابط تحميل مباشر">
+                        <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px; margin-bottom: 0;">
+                            ضع هنا رابط التخزين السحابي لملف الـ APK (سواء من Supabase Storage أو Google Drive أو أي خادم تخزين سحابي مباشر). عند ضغط أي مستخدم على زر "تحميل التطبيق"، سيتم توجيهه وتحميله مباشرة من هذا الرابط.
+                        </p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                        <!-- رقم الإصدار -->
+                        <div>
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
+                                <i class="fas fa-code-branch" style="color: #3b82f6;"></i> رقم الإصدار (Version Name):
+                            </label>
+                            <input type="text" id="appVersionInput" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="1.0.0">
+                        </div>
+
+                        <!-- كود الإصدار -->
+                        <div>
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
+                                <i class="fas fa-hashtag" style="color: #8b5cf6;"></i> كود الإصدار (Version Code):
+                            </label>
+                            <input type="number" id="appVersionCodeInput" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="1" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <!-- ملاحظات التحديث -->
+                    <div>
+                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
+                            <i class="fas fa-clipboard-list" style="color: #f59e0b;"></i> ملاحظات وتفاصيل التحديث (تظهر للزوار والطلاب في صفحة التحميل):
+                        </label>
+                        <textarea id="appUpdateNotesInput" rows="2" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="تحسينات عامة على الأداء وسرعة البث المباشر وميزات التنبيهات والدروس المدمجة"></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                        <button onclick="saveAppDownloadSettings()" class="btn-save" style="flex: 2; min-width: 200px; background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                            <i class="fas fa-save"></i> حفظ رابط ومعلومات التطبيق في قاعدة البيانات
+                        </button>
+                        <button onclick="setGitHubReleaseDefaultUrl()" style="flex: 1; min-width: 170px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 12px 14px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                            <i class="fab fa-github"></i> تعيين رابط GitHub الأحدث
+                        </button>
+                        <button onclick="testAppDownloadLink()" style="flex: 1; min-width: 140px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#ecfdf5'">
+                            <i class="fas fa-external-link-alt"></i> تجربة فتح الرابط
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="revenueTab" style="display: none;">
@@ -3051,9 +3114,100 @@
                     if (teacherSpeedEl) teacherSpeedEl.value = teachers.speed || 60;
                 }
                 await loadSiteImageSettingsAdmin();
+                await loadAppDownloadSettingsAdmin();
             } catch (error) {
                 console.error('Error loading settings:', error);
             }
+        }
+
+        // ============================================================
+        // APP DOWNLOAD & APK SETTINGS (Cloud Storage / Supabase)
+        // ============================================================
+        async function loadAppDownloadSettingsAdmin() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/admin/settings/app_download', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data) {
+                    const apkUrlInput = document.getElementById('appApkUrlInput');
+                    const versionInput = document.getElementById('appVersionInput');
+                    const versionCodeInput = document.getElementById('appVersionCodeInput');
+                    const notesInput = document.getElementById('appUpdateNotesInput');
+
+                    if (apkUrlInput) apkUrlInput.value = data.apk_url || '';
+                    if (versionInput) versionInput.value = data.version || '1.0.0';
+                    if (versionCodeInput) versionCodeInput.value = data.version_code || 1;
+                    if (notesInput) notesInput.value = data.update_notes || '';
+                }
+            } catch (e) {
+                console.error('Error loading app download settings:', e);
+            }
+        }
+
+        async function saveAppDownloadSettings() {
+            try {
+                const apk_url = document.getElementById('appApkUrlInput').value.trim();
+                const version = document.getElementById('appVersionInput').value.trim() || '1.0.0';
+                const version_code = parseInt(document.getElementById('appVersionCodeInput').value) || 1;
+                const update_notes = document.getElementById('appUpdateNotesInput').value.trim();
+
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/admin/settings/app_download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        apk_url,
+                        version,
+                        version_code,
+                        update_notes,
+                        is_active: true
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showNotification('✅ تم حفظ رابط ومعلومات تطبيق الأندرويد في قاعدة البيانات السحابية بنجاح!', 'success');
+                } else {
+                    showNotification('❌ فشل حفظ إعدادات التطبيق: ' + (data.message || 'خطأ غير معروف'), 'error');
+                }
+            } catch (e) {
+                console.error('Error saving app download settings:', e);
+                showNotification('❌ حدث خطأ في الاتصال بالخادم أثناء حفظ إعدادات التطبيق', 'error');
+            }
+        }
+
+        function setGitHubReleaseDefaultUrl() {
+            const defaultUrl = 'https://github.com/azertyuio1265/zooooooom/releases/latest/download/zoomdz.apk';
+            const apkUrlInput = document.getElementById('appApkUrlInput');
+            const versionInput = document.getElementById('appVersionInput');
+            const versionCodeInput = document.getElementById('appVersionCodeInput');
+            const notesInput = document.getElementById('appUpdateNotesInput');
+
+            if (apkUrlInput) apkUrlInput.value = defaultUrl;
+            if (versionInput) versionInput.value = '1.1.0';
+            if (versionCodeInput) versionCodeInput.value = 2;
+            if (notesInput) notesInput.value = 'النسخة الأصلية الجديدة والمحدثة (v1.1.0): دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، وتجربة أداء فائقة السرعة.';
+            
+            showNotification('تم تعيين رابط وإعدادات الإصدار الأحدث من GitHub Release بنجاح، اضغط على زر الحفظ لتثبيته في قاعدة البيانات.', 'info');
+        }
+
+        function testAppDownloadLink() {
+            const apk_url = document.getElementById('appApkUrlInput').value.trim();
+            if (!apk_url) {
+                showNotification('⚠️ يرجى إدخال رابط التحميل أولاً لتجربته', 'warning');
+                return;
+            }
+            if (!apk_url.startsWith('http://') && !apk_url.startsWith('https://')) {
+                showNotification('⚠️ يرجى التأكد من أن الرابط يبدأ بـ https:// أو http://', 'warning');
+                return;
+            }
+            window.open(apk_url, '_blank');
         }
 
         // ============================================================

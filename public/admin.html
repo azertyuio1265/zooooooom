@@ -1251,11 +1251,14 @@
                         <textarea id="appUpdateNotesInput" rows="2" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="تحسينات عامة على الأداء وسرعة البث المباشر وميزات التنبيهات والدروس المدمجة"></textarea>
                     </div>
 
-                    <div style="display: flex; gap: 12px; margin-top: 8px;">
-                        <button onclick="saveAppDownloadSettings()" class="btn-save" style="flex: 2; background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                    <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                        <button onclick="saveAppDownloadSettings()" class="btn-save" style="flex: 2; min-width: 200px; background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
                             <i class="fas fa-save"></i> حفظ رابط ومعلومات التطبيق في قاعدة البيانات
                         </button>
-                        <button onclick="testAppDownloadLink()" style="flex: 1; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#ecfdf5'">
+                        <button onclick="setGitHubReleaseDefaultUrl()" style="flex: 1; min-width: 170px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 12px 14px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                            <i class="fab fa-github"></i> تعيين رابط GitHub الأحدث
+                        </button>
+                        <button onclick="testAppDownloadLink()" style="flex: 1; min-width: 140px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;" onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#ecfdf5'">
                             <i class="fas fa-external-link-alt"></i> تجربة فتح الرابط
                         </button>
                     </div>
@@ -3177,6 +3180,21 @@
                 console.error('Error saving app download settings:', e);
                 showNotification('❌ حدث خطأ في الاتصال بالخادم أثناء حفظ إعدادات التطبيق', 'error');
             }
+        }
+
+        function setGitHubReleaseDefaultUrl() {
+            const defaultUrl = 'https://github.com/azertyuio1265/zooooooom/releases/latest/download/zoomdz.apk';
+            const apkUrlInput = document.getElementById('appApkUrlInput');
+            const versionInput = document.getElementById('appVersionInput');
+            const versionCodeInput = document.getElementById('appVersionCodeInput');
+            const notesInput = document.getElementById('appUpdateNotesInput');
+
+            if (apkUrlInput) apkUrlInput.value = defaultUrl;
+            if (versionInput) versionInput.value = '1.1.0';
+            if (versionCodeInput) versionCodeInput.value = 2;
+            if (notesInput) notesInput.value = 'النسخة الأصلية الجديدة والمحدثة (v1.1.0): دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، وتجربة أداء فائقة السرعة.';
+            
+            showNotification('تم تعيين رابط وإعدادات الإصدار الأحدث من GitHub Release بنجاح، اضغط على زر الحفظ لتثبيته في قاعدة البيانات.', 'info');
         }
 
         function testAppDownloadLink() {

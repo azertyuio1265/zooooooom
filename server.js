@@ -4334,11 +4334,14 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 // ============================================================
 // Platform Settings (App Download & APK Cloud Storage URL)
 // ============================================================
+const GITHUB_APK_RELEASE_URL = 'https://github.com/azertyuio1265/zooooooom/releases/latest/download/zoomdz.apk';
+const GITHUB_APK_RAW_URL = 'https://raw.githubusercontent.com/azertyuio1265/zooooooom/main/public/downloads/zoomdz.apk';
+
 const defaultAppDownloadSettings = {
-    apk_url: '',
-    version: '1.0.0',
-    version_code: 1,
-    update_notes: 'تحسينات عامة على الأداء وسرعة البث المباشر واستقرار المنصة',
+    apk_url: GITHUB_APK_RELEASE_URL,
+    version: '1.1.0',
+    version_code: 2,
+    update_notes: 'النسخة الأصلية الجديدة والمحدثة (v1.1.0): دعم كامل لجميع خدمات منصة ZoomDz، البث المباشر ومكالمات الفيديو (WebRTC)، رفع الواجبات والشهادات، تنزيل الملخصات، وتجربة سلسة وسريعة على الهاتف.',
     is_active: true
 };
 let inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings };
@@ -4353,6 +4356,9 @@ async function getAppDownloadSettings() {
 
         if (data && data.value) {
             inMemoryAppDownloadSettings = { ...defaultAppDownloadSettings, ...data.value };
+            if (!inMemoryAppDownloadSettings.apk_url || inMemoryAppDownloadSettings.apk_url === '') {
+                inMemoryAppDownloadSettings.apk_url = GITHUB_APK_RELEASE_URL;
+            }
             return inMemoryAppDownloadSettings;
         }
     } catch (e) {
@@ -4386,10 +4392,10 @@ app.post('/api/admin/settings/app_download', authenticate, authorize(['admin']),
     try {
         const { apk_url, version, version_code, update_notes, is_active } = req.body;
         const updated = {
-            apk_url: (apk_url && typeof apk_url === 'string') ? apk_url.trim() : '',
-            version: (version && typeof version === 'string') ? version.trim() : '1.0.0',
-            version_code: parseInt(version_code) || 1,
-            update_notes: (update_notes && typeof update_notes === 'string') ? update_notes.trim() : '',
+            apk_url: (apk_url && typeof apk_url === 'string') ? apk_url.trim() : GITHUB_APK_RELEASE_URL,
+            version: (version && typeof version === 'string') ? version.trim() : '1.1.0',
+            version_code: parseInt(version_code) || 2,
+            update_notes: (update_notes && typeof update_notes === 'string') ? update_notes.trim() : defaultAppDownloadSettings.update_notes,
             is_active: is_active !== undefined ? !!is_active : true,
             updated_at: new Date().toISOString()
         };
@@ -4424,21 +4430,21 @@ app.get('/zoomdz.apk', async (req, res) => {
         const fs = require('fs');
         const path = require('path');
         const apkPath = path.join(__dirname, 'public', 'downloads', 'zoomdz.apk');
-        if (fs.existsSync(apkPath)) {
+        if (fs.existsSync(apkPath) && fs.statSync(apkPath).size > 1000) {
             return res.download(apkPath, 'zoomdz.apk');
         }
 
-        // 3. التوجيه إلى صفحة التحميل في حال لم يتم تعيين الرابط بعد
-        return res.redirect('/download-app');
+        // 3. التوجيه إلى رابط التحميل السحابي من GitHub Releases كخيار أساسي
+        return res.redirect(GITHUB_APK_RELEASE_URL);
     } catch (err) {
-        res.redirect('/download-app');
+        res.redirect(GITHUB_APK_RELEASE_URL);
     }
 });
 
 app.get('/download-app', async (req, res) => {
-    let apkDownloadUrl = '/zoomdz.apk';
-    let appVersion = '1.0.0';
-    let updateNotes = 'تحسينات عامة على الأداء وسرعة البث المباشر وميزات التنبيهات والدروس المدمجة.';
+    let apkDownloadUrl = GITHUB_APK_RELEASE_URL;
+    let appVersion = '1.1.0';
+    let updateNotes = 'النسخة الأصلية الجديدة الرسمية (v1.1.0): ربط كامل بالمنصة، دعم مكالمات الفيديو والبث المباشر (WebRTC)، تحميل وحفظ الدروس، ورفع الملفات والشهادات.';
     
     try {
         const settings = await getAppDownloadSettings();
@@ -4459,7 +4465,7 @@ app.get('/download-app', async (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>تحميل تطبيق ZoomDz الرسمي للهواتف</title>
+            <title>تحميل تطبيق ZoomDz الرسمي الجديد للهواتف</title>
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <style>
@@ -4480,10 +4486,15 @@ app.get('/download-app', async (req, res) => {
                 .card-title i { font-size: 20px; }
                 .card-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
                 
+                /* Badges */
+                .badge-new { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #86efac; display: inline-block; margin-bottom: 8px; }
+
                 /* Buttons */
-                .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; text-align: center; }
-                .btn-android { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+                .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 30px; font-weight: bold; font-size: 15px; text-decoration: none; transition: all 0.2s; cursor: pointer; text-align: center; }
+                .btn-android { background: #10b981; color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25); }
                 .btn-android:hover { background: #059669; transform: translateY(-2px); }
+                .btn-secondary-dl { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; margin-top: 10px; font-size: 13px; padding: 10px 18px; }
+                .btn-secondary-dl:hover { background: #e2e8f0; color: #0f172a; }
                 .btn-ios { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; border: 1.5px solid #cbd5e1; }
                 .btn-pwa { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); margin-top: 15px; }
                 .btn-pwa:hover { background: #1d4ed8; }
@@ -4516,22 +4527,28 @@ app.get('/download-app', async (req, res) => {
                     </div>
                 </a>
                 
-                <h1>تحميل تطبيق ZoomDz للهواتف الذكية</h1>
-                <p class="subtitle">احصل على أفضل تجربة تعليمية وتواصل مرئي تفاعلي وسلس مباشرة من هاتفك الذكي</p>
+                <h1>تحميل تطبيق ZoomDz الجديد للهواتف الذكية</h1>
+                <p class="subtitle">احصل على النسخة المحدثة الأصلية لمنصة ZoomDz للاستمتاع بدروس البث المباشر والتواصل التفاعلي</p>
                 
                 <div class="cards-grid">
                     <!-- Android Native Card -->
                     <div class="card">
                         <div>
+                            <span class="badge-new"><i class="fas fa-sparkles"></i> التحديث الجديد 2026</span>
                             <div class="card-title" style="color: #10b981;">
                                 <i class="fab fa-android"></i>
                                 <span>تطبيق الأندرويد الأصلي (APK) - v${appVersion}</span>
                             </div>
                             <p class="card-desc">${updateNotes}</p>
                         </div>
-                        <a href="${apkDownloadUrl}" target="_blank" rel="noopener" class="btn btn-android">
-                            <i class="fas fa-download"></i> تحميل ملف الـ APK (مباشر)
-                        </a>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="${apkDownloadUrl}" target="_blank" rel="noopener" class="btn btn-android">
+                                <i class="fas fa-download"></i> تحميل التطبيق الجديد (مباشر)
+                            </a>
+                            <a href="${GITHUB_APK_RAW_URL}" target="_blank" rel="noopener" class="btn btn-secondary-dl">
+                                <i class="fas fa-link"></i> رابط تحميل إضافي (سيرفر بديل)
+                            </a>
+                        </div>
                     </div>
                     
                     <!-- iOS Card -->
@@ -4578,7 +4595,9 @@ app.get('/download-app', async (req, res) => {
                     </div>
                     
                     <div style="text-align: center;">
-                        <a href="/" class="btn btn-pwa"><i class="fas fa-home"></i> الذهاب إلى المنصة وتثبيتها الآن</a>
+                        <a href="/" class="btn btn-pwa">
+                            <i class="fas fa-external-link-alt"></i> فتح موقع المنصة للتثبيت
+                        </a>
                     </div>
                 </div>
                 
