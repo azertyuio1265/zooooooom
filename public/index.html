@@ -80,6 +80,7 @@
             }
         })();
     </script>
+    <script src="/js/site-branding.js"></script>
     <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9832680951042052"
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
@@ -4690,7 +4691,7 @@
                 <!-- Left Visual Hero -->
                 <div class="hero-responsive-visual" style="flex: 1; min-width: 280px; display: flex; align-items: center; justify-content: center; position: relative;">
                     <div style="position: relative; width: 400px; height: 400px; max-width: 100%; border-radius: 30px; overflow: hidden; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12); border: 4px solid white;">
-                        <img id="heroMainImage" src="/images/student_hero1.jpg" alt="الطلاب" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <img id="heroMainImage" src="/images/student_hero1.jpg" alt="الطلاب" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_hero1.jpg" style="width: 100%; height: 100%; object-fit: cover;" />
                     </div>
                 </div>
             </div>
@@ -5472,7 +5473,7 @@
                     <!-- Card 1 -->
                     <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: transform 0.3s ease;">
                         <div style="height: 240px; overflow: hidden;">
-                            <img id="landingCard1Img" src="/images/student_lab1.jpg" alt="تعاون الطلاب" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                            <img id="landingCard1Img" src="/images/student_lab1.jpg" alt="تعاون الطلاب" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/student_lab1.jpg" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
                         </div>
                         <div style="padding: 24px;">
                             <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
@@ -5485,7 +5486,7 @@
                     <!-- Card 2 -->
                     <div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: transform 0.3s ease;">
                         <div style="height: 240px; overflow: hidden;">
-                            <img id="landingCard2Img" src="/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png" alt="بث مباشر تفاعلي" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                            <img id="landingCard2Img" src="/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png" alt="بث مباشر تفاعلي" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" data-original-url="/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
                         </div>
                         <div style="padding: 24px;">
                             <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
@@ -5542,6 +5543,7 @@
                 // Update preloader logo
                 var preloaderLogo = document.getElementById('preloaderAppLogoImg');
                 if (preloaderLogo) {
+                    preloaderLogo.dataset.proxied = '';
                     preloaderLogo.setAttribute('data-original-url', logoUrl);
                     preloaderLogo.setAttribute('referrerpolicy', 'no-referrer');
                     preloaderLogo.src = logoUrl;
@@ -5552,6 +5554,7 @@
 
                 // Update navbar & mobile drawer app logos
                 document.querySelectorAll('.navbar-app-logo, .brand-logo-img, .site-app-logo, #navbarAppLogoImg, #mobileDrawerLogoImg').forEach(function(el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', logoUrl);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = logoUrl;
@@ -5573,6 +5576,7 @@
             if (images.hero_image) {
                 var el = document.getElementById('heroMainImage');
                 if (el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.hero_image);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.hero_image;
@@ -5581,6 +5585,7 @@
             if (images.landing_card1_image) {
                 var el = document.getElementById('landingCard1Img');
                 if (el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.landing_card1_image);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.landing_card1_image;
@@ -5589,6 +5594,7 @@
             if (images.landing_card2_image) {
                 var el = document.getElementById('landingCard2Img');
                 if (el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.landing_card2_image);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.landing_card2_image;
@@ -5596,6 +5602,7 @@
             }
             if (images.login_student_img) {
                 document.querySelectorAll('.char-img-student').forEach(function(el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.login_student_img);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.login_student_img;
@@ -5603,6 +5610,7 @@
             }
             if (images.login_teacher_img) {
                 document.querySelectorAll('.char-img-teacher').forEach(function(el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.login_teacher_img);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.login_teacher_img;
@@ -5610,6 +5618,7 @@
             }
             if (images.login_admin_img) {
                 document.querySelectorAll('.char-img-admin').forEach(function(el) {
+                    el.dataset.proxied = '';
                     el.setAttribute('data-original-url', images.login_admin_img);
                     el.setAttribute('referrerpolicy', 'no-referrer');
                     el.src = images.login_admin_img;
@@ -5658,14 +5667,6 @@
                 img.src = '/api/proxy-image?url=' + encodeURIComponent(originalUrl);
                 return;
             }
-        }
-
-            if (!img.dataset.proxied && originalUrl && originalUrl.startsWith('http')) {
-                img.dataset.proxied = 'true';
-                img.setAttribute('referrerpolicy', 'no-referrer');
-                img.src = '/api/proxy-image?url=' + encodeURIComponent(originalUrl);
-                return;
-            }
 
             var githubUser = img.getAttribute('data-github-user');
             if (!img.dataset.githubTried && githubUser) {
@@ -5681,6 +5682,22 @@
             if (!img.dataset.localTried && localFallback) {
                 img.dataset.localTried = 'true';
                 img.src = localFallback;
+                return;
+            }
+
+            if (img.id === 'heroMainImage') {
+                img.onerror = null;
+                img.src = '/images/student_hero1.jpg';
+                return;
+            }
+            if (img.id === 'landingCard1Img') {
+                img.onerror = null;
+                img.src = '/images/student_lab1.jpg';
+                return;
+            }
+            if (img.id === 'landingCard2Img') {
+                img.onerror = null;
+                img.src = '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png';
                 return;
             }
 

@@ -1,9 +1,17 @@
 /**
  * ZoomDz Platform Branding & Dynamic Image Sync Engine
- * Ensures custom logos, icons, and site images update instantly across web and app
+ * Ensures custom logos, icons, and site images update instantly across web, dashboards, and app
  */
 (function() {
     'use strict';
+
+    function setSafeImage(el, url) {
+        if (!el || !url) return;
+        el.dataset.proxied = '';
+        el.setAttribute('data-original-url', url);
+        el.setAttribute('referrerpolicy', 'no-referrer');
+        el.src = url;
+    }
 
     function applyBranding(images) {
         if (!images || typeof images !== 'object') return;
@@ -11,11 +19,9 @@
 
         if (logoUrl) {
             // Update all brand & app logo image tags
-            document.querySelectorAll('.site-app-logo, .brand-logo-img, .navbar-app-logo, .app-brand-logo, #navbarAppLogoImg, #mobileDrawerLogoImg, #studentNavAppLogo, #teacherNavAppLogo').forEach(function(img) {
+            document.querySelectorAll('.site-app-logo, .brand-logo-img, .navbar-app-logo, .app-brand-logo, #navbarAppLogoImg, #mobileDrawerLogoImg, #studentNavAppLogo, #teacherNavAppLogo, #appPageLogoImg').forEach(function(img) {
                 if (img.tagName === 'IMG') {
-                    img.setAttribute('data-original-url', logoUrl);
-                    img.setAttribute('referrerpolicy', 'no-referrer');
-                    img.src = logoUrl;
+                    setSafeImage(img, logoUrl);
                     img.style.display = 'block';
                     if (img.nextElementSibling && img.nextElementSibling.classList.contains('fallback-icon')) {
                         img.nextElementSibling.style.display = 'none';
@@ -26,9 +32,7 @@
             // Update preloader logo if present
             var preloaderLogo = document.getElementById('preloaderAppLogoImg');
             if (preloaderLogo) {
-                preloaderLogo.setAttribute('data-original-url', logoUrl);
-                preloaderLogo.setAttribute('referrerpolicy', 'no-referrer');
-                preloaderLogo.src = logoUrl;
+                setSafeImage(preloaderLogo, logoUrl);
                 preloaderLogo.style.display = 'block';
                 var defIcon = document.getElementById('preloaderDefaultIcon');
                 if (defIcon) defIcon.style.display = 'none';
@@ -41,6 +45,34 @@
                     el.href = logoUrl;
                 });
             } catch(e) {}
+        }
+
+        // Hero and landing cards
+        if (images.hero_image) {
+            setSafeImage(document.getElementById('heroMainImage'), images.hero_image);
+        }
+        if (images.landing_card1_image) {
+            setSafeImage(document.getElementById('landingCard1Img'), images.landing_card1_image);
+        }
+        if (images.landing_card2_image) {
+            setSafeImage(document.getElementById('landingCard2Img'), images.landing_card2_image);
+        }
+
+        // Login character avatars
+        if (images.login_student_img) {
+            document.querySelectorAll('.char-img-student').forEach(function(el) {
+                setSafeImage(el, images.login_student_img);
+            });
+        }
+        if (images.login_teacher_img) {
+            document.querySelectorAll('.char-img-teacher').forEach(function(el) {
+                setSafeImage(el, images.login_teacher_img);
+            });
+        }
+        if (images.login_admin_img) {
+            document.querySelectorAll('.char-img-admin').forEach(function(el) {
+                setSafeImage(el, images.login_admin_img);
+            });
         }
     }
 
@@ -78,3 +110,4 @@
         syncBranding();
     }
 })();
+
