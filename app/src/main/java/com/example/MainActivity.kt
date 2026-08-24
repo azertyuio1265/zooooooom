@@ -735,7 +735,8 @@ class MainActivity : ComponentActivity() {
                                         image.src = value + (value.includes('?') ? '&' : '?') + 'native_asset=' + Date.now();
                                     });
                                 };
-                                setImage('img.site-app-logo, img.brand-logo-img, img.navbar-app-logo, img.app-brand-logo, #navbarAppLogoImg, #mobileDrawerLogoImg, #studentNavAppLogo, #teacherNavAppLogo, #appPageLogoImg, #preloaderAppLogoImg', logo);
+                                const appImageUrl = (value) => value && (/^https?:\\/\\/(?:i\\.)?imgur\\.com/i.test(value) ? '/api/proxy-image?url=' + encodeURIComponent(value) : value);
+  setImage('img.site-app-logo, img.brand-logo-img, img.navbar-app-logo, img.app-brand-logo, #navbarAppLogoImg, #mobileDrawerLogoImg, #studentNavAppLogo, #teacherNavAppLogo, #appPageLogoImg, #preloaderAppLogoImg', appImageUrl(logo));
                                 setImage('#heroMainImage', images.hero_image);
                                 setImage('#landingCard1Img', images.landing_card1_image);
                                 setImage('#landingCard2Img', images.landing_card2_image);

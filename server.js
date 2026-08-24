@@ -1596,6 +1596,13 @@ app.get('/api/proxy-image', async (req, res) => {
 
         imageUrl = decodeURIComponent(imageUrl).trim();
 
+        // The Android WebView should never request Imgur directly. Normalize all
+        // Imgur variants to a direct asset URL before proxying them server-side.
+        if (imageUrl.includes('imgur.com') && !imageUrl.includes('i.imgur.com')) {
+            const match = imageUrl.match(/(?:imgur\.com|i\.imgur\.com)\/(?:a\/|gallery\/|r\/[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]+)/i);
+            if (match && match[1]) imageUrl = `https://i.imgur.com/${match[1]}.png`;
+        }
+
         // Convert Imgur album / post URL to direct i.imgur.com image URL
         if (imageUrl.includes('imgur.com') && !imageUrl.includes('i.imgur.com')) {
             const match = imageUrl.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9]+\/)?([a-zA-Z0-9]+)/);
@@ -1639,7 +1646,8 @@ app.get('/api/proxy-image', async (req, res) => {
 
         const contentType = response.headers.get('content-type') || 'image/jpeg';
         res.setHeader('Content-Type', contentType);
-        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
         const arrayBuffer = await response.arrayBuffer();
@@ -2518,7 +2526,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
                     userFriendlyAdvice = 'يرجى السماح بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
                 } else if (rawErrStr.includes('NotFoundError') || rawErrStr.includes('DevicesNotFoundError')) {
                     userFriendlyTitle = '🔌 لم يتم العثور على كاميرا أو ميكروفون';
-                    userFriendlyAdvice = 'تأكد من توصيل الكاميرا والميكروفون بجهازك بشكل صحيح.';
+                    userFriendlyAdvice = 'تأكد من توصيل الكاميرا وا��ميكروفون بجهازك بشكل صحيح.';
                 } else if (rawErrStr.includes('CANNOT_GET_GATEWAY') || rawErrStr.includes('DYNAMIC_KEY_TIMEOUT') || rawErrStr.includes('INVALID_VENDOR_KEY') || rawErrStr.includes('INVALID_TOKEN') || rawErrStr.includes('WS_ABORT')) {
                     userFriendlyTitle = '🔑 خطأ في الاتصال بالخادم أو مفاتيح البث المباشر (WS_ABORT)';
                     userFriendlyAdvice = 'تأكد من جودة الاتصال بالإنترنت وعدم وجود إضافة تعترض الاتصال (AdBlock/Firewall)، وتحقق من إعدادات المفاتيح بـ Vercel.';
@@ -2651,7 +2659,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
 
         async function switchCamera() {
             if (!localVideoTrack) {
-                alert('⚠️ الكاميرا مغلقة، يرجى تشغيل الكاميرا أولاً للتمكن من التبديل بين الكاميرا الأمامية والخلفية.');
+                alert('⚠️ الكاميرا مغلقة، يرجى تشغيل الكاميرا أولاً للتمكن من التبديل بين الكام��را الأمامية والخلفية.');
                 return;
             }
 
@@ -4894,6 +4902,15 @@ function normalizeImgurUrl(url) {
     return clean;
 }
 
+function toAppImageUrl(value) {
+    const normalized = normalizeImgurUrl(value);
+    if (!normalized) return '';
+    if (/^https?:\/\/((i\.)?imgur\.com|drive\.google\.com|lh3\.googleusercontent\.com)/i.test(normalized)) {
+        return `/api/proxy-image?url=${encodeURIComponent(normalized)}`;
+    }
+    return normalized;
+}
+
 const defaultSiteImages = {
     app_logo: '/images/zoomdz-logo.png',
     site_logo: '/images/zoomdz-logo.png',
@@ -4932,6 +4949,7 @@ async function getEffectiveSiteImages() {
             
         if (!error && data && data.value) {
             inMemorySiteImages = { ...defaultSiteImages, ...inMemorySiteImages, ...data.value };
+            inMemorySiteImages = Object.fromEntries(Object.entries(inMemorySiteImages).map(([key, value]) => [key, toAppImageUrl(value)]));
             // Keep local file synced
             try {
                 if (!fs.existsSync(path.join(__dirname, 'data'))) {
@@ -4982,14 +5000,14 @@ app.post('/api/admin/settings/site_images', authenticate, authorize(['admin']), 
         const effectiveLogo = normalizeImgurUrl(app_logo) || normalizeImgurUrl(site_logo) || inMemorySiteImages.app_logo || defaultSiteImages.app_logo;
 
         const updatedImages = {
-            app_logo: effectiveLogo,
-            site_logo: effectiveLogo,
-            hero_image: normalizeImgurUrl(hero_image) || inMemorySiteImages.hero_image || defaultSiteImages.hero_image,
-            landing_card1_image: normalizeImgurUrl(landing_card1_image) || inMemorySiteImages.landing_card1_image || defaultSiteImages.landing_card1_image,
-            landing_card2_image: normalizeImgurUrl(landing_card2_image) || inMemorySiteImages.landing_card2_image || defaultSiteImages.landing_card2_image,
-            login_student_img: normalizeImgurUrl(login_student_img) || inMemorySiteImages.login_student_img || defaultSiteImages.login_student_img,
-            login_teacher_img: normalizeImgurUrl(login_teacher_img) || inMemorySiteImages.login_teacher_img || defaultSiteImages.login_teacher_img,
-            login_admin_img: normalizeImgurUrl(login_admin_img) || inMemorySiteImages.login_admin_img || defaultSiteImages.login_admin_img
+            app_logo: toAppImageUrl(effectiveLogo),
+            site_logo: toAppImageUrl(effectiveLogo),
+            hero_image: toAppImageUrl(hero_image) || inMemorySiteImages.hero_image || defaultSiteImages.hero_image,
+            landing_card1_image: toAppImageUrl(landing_card1_image) || inMemorySiteImages.landing_card1_image || defaultSiteImages.landing_card1_image,
+            landing_card2_image: toAppImageUrl(landing_card2_image) || inMemorySiteImages.landing_card2_image || defaultSiteImages.landing_card2_image,
+            login_student_img: toAppImageUrl(login_student_img) || inMemorySiteImages.login_student_img || defaultSiteImages.login_student_img,
+            login_teacher_img: toAppImageUrl(login_teacher_img) || inMemorySiteImages.login_teacher_img || defaultSiteImages.login_teacher_img,
+            login_admin_img: toAppImageUrl(login_admin_img) || inMemorySiteImages.login_admin_img || defaultSiteImages.login_admin_img
         };
 
         inMemorySiteImages = updatedImages;
