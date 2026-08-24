@@ -1115,89 +1115,148 @@
                 </button>
             </div>
 
-            <!-- إدارة صور المنصة وتسجيل الدخول (روابط Imgur) -->
-            <div style="background: #ffffff; border-radius: 16px; padding: 22px; margin-top: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <h3 style="color: var(--gray-800); font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-images" style="color: #8b5cf6;"></i> إدارة صور الواجهة الرئيسية ونموذج تسجيل الدخول (روابط Imgur)
-                    </h3>
-                    <span style="background: #f3e8ff; color: #6b21a8; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;">روابط Imgur / صور خارجية</span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
-                    <!-- Hero Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-image" style="color: #2563eb;"></i> صورة الواجهة الرئيسية (Hero Image):
-                        </label>
-                        <input type="text" id="siteHeroImageInput" oninput="updateImagePreview('heroPreview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="heroPreview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
+            <!-- إدارة صور المنصة وشعار التطبيق وتسجيل الدخول (روابط Imgur) -->
+            <div style="background: #ffffff; border-radius: 16px; padding: 24px; margin-top: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 18px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h3 style="color: var(--gray-800); font-size: 1.2rem; display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                            <i class="fas fa-images" style="color: #8b5cf6;"></i> إدارة صور الواجهة الرئيسية، الشعار، ونموذج الدخول
+                        </h3>
+                        <p style="font-size: 0.82rem; color: #64748b; margin: 0;">
+                            دعم كامل لروابط <b style="color: #10b981;">Imgur</b> والروابط الخارجية المباشرة، مع تحويل تلقائي للروابط وحماية من حظر المتصفحات.
+                        </p>
                     </div>
-
-                    <!-- Landing Card 1 Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-users" style="color: #3b82f6;"></i> صورة كرت دروب النجاح الجماعي:
-                        </label>
-                        <input type="text" id="siteCard1ImageInput" oninput="updateImagePreview('card1Preview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="card1Preview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
-                    </div>
-
-                    <!-- Landing Card 2 Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-chalkboard-teacher" style="color: #10b981;"></i> صورة كرت البثوث الحية التفاعلية:
-                        </label>
-                        <input type="text" id="siteCard2ImageInput" oninput="updateImagePreview('card2Preview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="card2Preview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
-                    </div>
-
-                    <!-- Login Student Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-user-graduate" style="color: #2563eb;"></i> صورة شخصية الطالب (تسجيل الدخول):
-                        </label>
-                        <input type="text" id="loginStudentImgInput" oninput="updateImagePreview('loginStudentPreview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="loginStudentPreview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
-                    </div>
-
-                    <!-- Login Teacher Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-chalkboard-teacher" style="color: #059669;"></i> صورة شخصية الأستاذ (تسجيل الدخول):
-                        </label>
-                        <input type="text" id="loginTeacherImgInput" oninput="updateImagePreview('loginTeacherPreview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="loginTeacherPreview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
-                    </div>
-
-                    <!-- Login Admin Image -->
-                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">
-                            <i class="fas fa-user-shield" style="color: #dc2626;"></i> صورة شخصية المدير (تسجيل الدخول):
-                        </label>
-                        <input type="text" id="loginAdminImgInput" oninput="updateImagePreview('loginAdminPreview', this.value)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
-                        <div style="margin-top: 8px; height: 110px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <img id="loginAdminPreview" src="" alt="معاينة" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" onload="this.style.display='block'">
-                        </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="background: #f3e8ff; color: #6b21a8; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i> Imgur Direct & CDN
+                        </span>
+                        <button onclick="loadSiteImageSettingsAdmin()" style="background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 5px 12px; border-radius: 8px; font-family: 'Cairo'; font-size: 0.8rem; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-sync-alt"></i> تحديث
+                        </button>
                     </div>
                 </div>
 
-                <div style="margin-top: 20px; display: flex; gap: 12px;">
-                    <button onclick="saveSiteImageSettings()" class="btn-save" style="flex: 2; background: #8b5cf6; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#7c3aed'" onmouseout="this.style.background='#8b5cf6'">
-                        <i class="fas fa-save"></i> حفظ جميع صور المنصة
+                <!-- شريط تنبيه وتعليمات Imgur -->
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; font-size: 0.82rem; color: #166534; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-info-circle" style="font-size: 1.1rem; color: #15803d;"></i>
+                    <span><b>ميزة ذكية:</b> يمكنك نسخ أي رابط من Imgur (سواء كان رابط صفحة أو ألبوم أو صورة مباشرة) وسيتم تحويله وضبطه تلقائياً ليعمل في كافة المتصفحات دون انقطاع.</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+                    
+                    <!-- 1. الشعار الرسمي وأيقونة التطبيق (App Logo & Icon) -->
+                    <div style="background: #faf5ff; padding: 16px; border-radius: 12px; border: 1.5px solid #d8b4fe; grid-column: 1 / -1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="font-size: 0.95rem; font-weight: 800; color: #581c87; display: flex; align-items: center; gap: 8px; margin: 0;">
+                                <i class="fas fa-shield-halved" style="color: #9333ea; font-size: 1.1rem;"></i> شعار وأيقونة التطبيق الرسمية (App Logo & Icon):
+                            </label>
+                            <span id="appLogoStatus" style="font-size: 0.75rem; font-weight: 700; color: #7e22ce;"></span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #6b21a8; margin-top: 0; margin-bottom: 8px;">
+                            هذا الشعار سيظهر في شريط التنقل (Navbar)، فافيكون المتصفح (Favicon)، أنيميشن فتح التطبيق، وشاشات تسجيل الدخول.
+                        </p>
+                        <div style="display: flex; gap: 10px; align-items: stretch;">
+                            <input type="text" id="siteAppLogoInput" oninput="handleImageInput('siteAppLogoInput', 'appLogoPreview', 'appLogoStatus')" onblur="normalizeInputOnBlur(this, 'appLogoPreview', 'appLogoStatus')" style="flex: 1; padding: 10px 14px; border: 1px solid #c084fc; border-radius: 8px; font-family: 'Cairo'; font-size: 0.88rem; background: #ffffff;" placeholder="https://i.imgur.com/example_logo.png أو /images/zoomdz-logo.png">
+                            <button onclick="previewImageModal('siteAppLogoInput')" style="background: #9333ea; color: white; border: none; padding: 0 14px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-eye"></i> تكبير
+                            </button>
+                        </div>
+                        <div style="margin-top: 10px; height: 110px; border-radius: 8px; overflow: hidden; background: repeating-conic-gradient(#f1f5f9 0% 25%, #ffffff 0% 50%) 50% / 16px 16px; border: 1px dashed #c084fc; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="appLogoPreview" src="" alt="شعار التطبيق" referrerpolicy="no-referrer" style="max-height: 90px; max-width: 90%; object-fit: contain;" onerror="handlePreviewError(this, 'appLogoStatus')" onload="handlePreviewSuccess(this, 'appLogoStatus')">
+                        </div>
+                    </div>
+
+                    <!-- 2. Hero Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-image" style="color: #2563eb;"></i> صورة الواجهة الرئيسية (Hero Image):
+                            </label>
+                            <span id="heroStatus" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="siteHeroImageInput" oninput="handleImageInput('siteHeroImageInput', 'heroPreview', 'heroStatus')" onblur="normalizeInputOnBlur(this, 'heroPreview', 'heroStatus')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="heroPreview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'heroStatus')" onload="handlePreviewSuccess(this, 'heroStatus')">
+                        </div>
+                    </div>
+
+                    <!-- 3. Landing Card 1 Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-users" style="color: #3b82f6;"></i> صورة كرت دروب النجاح الجماعي:
+                            </label>
+                            <span id="card1Status" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="siteCard1ImageInput" oninput="handleImageInput('siteCard1ImageInput', 'card1Preview', 'card1Status')" onblur="normalizeInputOnBlur(this, 'card1Preview', 'card1Status')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="card1Preview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'card1Status')" onload="handlePreviewSuccess(this, 'card1Status')">
+                        </div>
+                    </div>
+
+                    <!-- 4. Landing Card 2 Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-chalkboard-teacher" style="color: #10b981;"></i> صورة كرت البثوث الحية التفاعلية:
+                            </label>
+                            <span id="card2Status" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="siteCard2ImageInput" oninput="handleImageInput('siteCard2ImageInput', 'card2Preview', 'card2Status')" onblur="normalizeInputOnBlur(this, 'card2Preview', 'card2Status')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="card2Preview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'card2Status')" onload="handlePreviewSuccess(this, 'card2Status')">
+                        </div>
+                    </div>
+
+                    <!-- 5. Login Student Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-user-graduate" style="color: #2563eb;"></i> صورة شخصية الطالب (تسجيل الدخول):
+                            </label>
+                            <span id="loginStudentStatus" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="loginStudentImgInput" oninput="handleImageInput('loginStudentImgInput', 'loginStudentPreview', 'loginStudentStatus')" onblur="normalizeInputOnBlur(this, 'loginStudentPreview', 'loginStudentStatus')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="loginStudentPreview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'loginStudentStatus')" onload="handlePreviewSuccess(this, 'loginStudentStatus')">
+                        </div>
+                    </div>
+
+                    <!-- 6. Login Teacher Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-chalkboard-teacher" style="color: #059669;"></i> صورة شخصية الأستاذ (تسجيل الدخول):
+                            </label>
+                            <span id="loginTeacherStatus" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="loginTeacherImgInput" oninput="handleImageInput('loginTeacherImgInput', 'loginTeacherPreview', 'loginTeacherStatus')" onblur="normalizeInputOnBlur(this, 'loginTeacherPreview', 'loginTeacherStatus')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="loginTeacherPreview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'loginTeacherStatus')" onload="handlePreviewSuccess(this, 'loginTeacherStatus')">
+                        </div>
+                    </div>
+
+                    <!-- 7. Login Admin Image -->
+                    <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                <i class="fas fa-user-shield" style="color: #dc2626;"></i> صورة شخصية المدير (تسجيل الدخول):
+                            </label>
+                            <span id="loginAdminStatus" style="font-size: 0.72rem; font-weight: 700;"></span>
+                        </div>
+                        <input type="text" id="loginAdminImgInput" oninput="handleImageInput('loginAdminImgInput', 'loginAdminPreview', 'loginAdminStatus')" onblur="normalizeInputOnBlur(this, 'loginAdminPreview', 'loginAdminStatus')" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo'; font-size: 0.85rem;" placeholder="https://i.imgur.com/example.jpg">
+                        <div style="margin-top: 8px; height: 120px; border-radius: 8px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img id="loginAdminPreview" src="" alt="معاينة" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover;" onerror="handlePreviewError(this, 'loginAdminStatus')" onload="handlePreviewSuccess(this, 'loginAdminStatus')">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button onclick="saveSiteImageSettings()" class="btn-save" style="flex: 2; min-width: 240px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 14px 22px; border-radius: 10px; font-family: 'Cairo'; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3); transition: 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <i class="fas fa-save"></i> حفظ جميع صور وشعار المنصة
                     </button>
-                    <button onclick="resetSiteImageSettings()" style="flex: 1; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
-                        <i class="fas fa-undo"></i> استعادة الصور الافتراضية
+                    <button onclick="resetSiteImageSettings()" style="flex: 1; min-width: 180px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 14px 16px; border-radius: 10px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                        <i class="fas fa-undo"></i> استعادة الصور والشعار الافتراضي
                     </button>
                 </div>
             </div>
@@ -3211,19 +3270,118 @@
         }
 
         // ============================================================
-        // SITE IMAGES SETTINGS (Imgur / External URLs)
+        // SITE & LOGO IMAGES SETTINGS (Imgur / External URLs)
         // ============================================================
-        function updateImagePreview(previewId, url) {
-            const img = document.getElementById(previewId);
-            if (img) {
-                if (url && url.trim()) {
-                    img.src = url.trim();
-                    img.style.display = 'block';
-                } else {
-                    img.src = '';
-                    img.style.display = 'none';
+        function normalizeImgurUrlClient(url) {
+            if (!url || typeof url !== 'string') return '';
+            let clean = url.trim();
+            if (!clean) return '';
+            
+            if (clean.includes('imgur.com')) {
+                const match = clean.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]{5,12})(?:\.[a-zA-Z0-9]+)?/i);
+                if (match && match[1]) {
+                    const id = match[1];
+                    if (!clean.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+                        return `https://i.imgur.com/${id}.png`;
+                    } else if (!clean.includes('i.imgur.com')) {
+                        const ext = clean.split('.').pop() || 'png';
+                        return `https://i.imgur.com/${id}.${ext}`;
+                    }
                 }
             }
+            return clean;
+        }
+
+        function handleImageInput(inputId, previewId, statusId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            let val = input.value.trim();
+            const normalized = normalizeImgurUrlClient(val);
+            
+            if (normalized !== val && normalized.includes('i.imgur.com')) {
+                input.value = normalized;
+                val = normalized;
+            }
+            
+            updateImagePreview(previewId, val, statusId);
+        }
+
+        function normalizeInputOnBlur(inputOrId, previewId, statusId) {
+            const input = typeof inputOrId === 'string' ? document.getElementById(inputOrId) : inputOrId;
+            if (!input) return;
+            let val = input.value.trim();
+            const normalized = normalizeImgurUrlClient(val);
+            if (normalized && normalized !== val) {
+                input.value = normalized;
+            }
+            updateImagePreview(previewId, input.value, statusId);
+        }
+
+        function handlePreviewSuccess(img, statusId) {
+            img.style.display = 'block';
+            if (statusId) {
+                const statusEl = document.getElementById(statusId);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span style="color: #10b981;"><i class="fas fa-check-circle"></i> تم التحميل بنجاح</span>';
+                }
+            }
+        }
+
+        function handlePreviewError(img, statusId) {
+            if (!img.src || img.src === window.location.href) {
+                img.style.display = 'none';
+                return;
+            }
+            
+            // Try proxy fallback once if direct request fails
+            if (!img.dataset.proxied && img.src.startsWith('http')) {
+                img.dataset.proxied = 'true';
+                img.setAttribute('referrerpolicy', 'no-referrer');
+                img.src = '/api/proxy-image?url=' + encodeURIComponent(img.getAttribute('data-raw-url') || img.src);
+                return;
+            }
+            
+            img.style.display = 'none';
+            if (statusId) {
+                const statusEl = document.getElementById(statusId);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span style="color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> تعذر تحميل الرابط</span>';
+                }
+            }
+        }
+
+        function updateImagePreview(previewId, url, statusId) {
+            const img = document.getElementById(previewId);
+            if (!img) return;
+            const statusEl = statusId ? document.getElementById(statusId) : null;
+            
+            if (url && url.trim()) {
+                const cleanUrl = normalizeImgurUrlClient(url.trim());
+                img.dataset.proxied = '';
+                img.setAttribute('data-raw-url', cleanUrl);
+                img.setAttribute('referrerpolicy', 'no-referrer');
+                img.src = cleanUrl;
+                img.style.display = 'block';
+                if (statusEl) {
+                    statusEl.innerHTML = '<span style="color: #3b82f6;"><i class="fas fa-spinner fa-spin"></i> جاري التحقق...</span>';
+                }
+            } else {
+                img.src = '';
+                img.style.display = 'none';
+                if (statusEl) {
+                    statusEl.innerHTML = '<span style="color: #94a3b8;">فارغ</span>';
+                }
+            }
+        }
+
+        function previewImageModal(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input || !input.value.trim()) {
+                showNotification('⚠️ يرجى إدخال رابط الصورة أولاً للمعاينة', 'warning');
+                return;
+            }
+            const url = normalizeImgurUrlClient(input.value.trim());
+            window.open(url, '_blank');
         }
 
         async function loadSiteImageSettingsAdmin() {
@@ -3235,6 +3393,8 @@
                 if (!res.ok) return;
                 const data = await res.json();
                 if (data) {
+                    const logoVal = data.app_logo || data.site_logo || '/images/zoomdz-logo.png';
+                    document.getElementById('siteAppLogoInput').value = logoVal;
                     document.getElementById('siteHeroImageInput').value = data.hero_image || '';
                     document.getElementById('siteCard1ImageInput').value = data.landing_card1_image || '';
                     document.getElementById('siteCard2ImageInput').value = data.landing_card2_image || '';
@@ -3242,12 +3402,13 @@
                     document.getElementById('loginTeacherImgInput').value = data.login_teacher_img || '';
                     document.getElementById('loginAdminImgInput').value = data.login_admin_img || '';
 
-                    updateImagePreview('heroPreview', data.hero_image);
-                    updateImagePreview('card1Preview', data.landing_card1_image);
-                    updateImagePreview('card2Preview', data.landing_card2_image);
-                    updateImagePreview('loginStudentPreview', data.login_student_img);
-                    updateImagePreview('loginTeacherPreview', data.login_teacher_img);
-                    updateImagePreview('loginAdminPreview', data.login_admin_img);
+                    updateImagePreview('appLogoPreview', logoVal, 'appLogoStatus');
+                    updateImagePreview('heroPreview', data.hero_image, 'heroStatus');
+                    updateImagePreview('card1Preview', data.landing_card1_image, 'card1Status');
+                    updateImagePreview('card2Preview', data.landing_card2_image, 'card2Status');
+                    updateImagePreview('loginStudentPreview', data.login_student_img, 'loginStudentStatus');
+                    updateImagePreview('loginTeacherPreview', data.login_teacher_img, 'loginTeacherStatus');
+                    updateImagePreview('loginAdminPreview', data.login_admin_img, 'loginAdminStatus');
                 }
             } catch(e) {
                 console.error('Error loading site image settings:', e);
@@ -3257,13 +3418,16 @@
         async function saveSiteImageSettings() {
             try {
                 const token = localStorage.getItem('token');
+                const appLogo = normalizeImgurUrlClient(document.getElementById('siteAppLogoInput').value.trim());
                 const payload = {
-                    hero_image: document.getElementById('siteHeroImageInput').value.trim(),
-                    landing_card1_image: document.getElementById('siteCard1ImageInput').value.trim(),
-                    landing_card2_image: document.getElementById('siteCard2ImageInput').value.trim(),
-                    login_student_img: document.getElementById('loginStudentImgInput').value.trim(),
-                    login_teacher_img: document.getElementById('loginTeacherImgInput').value.trim(),
-                    login_admin_img: document.getElementById('loginAdminImgInput').value.trim()
+                    app_logo: appLogo,
+                    site_logo: appLogo,
+                    hero_image: normalizeImgurUrlClient(document.getElementById('siteHeroImageInput').value.trim()),
+                    landing_card1_image: normalizeImgurUrlClient(document.getElementById('siteCard1ImageInput').value.trim()),
+                    landing_card2_image: normalizeImgurUrlClient(document.getElementById('siteCard2ImageInput').value.trim()),
+                    login_student_img: normalizeImgurUrlClient(document.getElementById('loginStudentImgInput').value.trim()),
+                    login_teacher_img: normalizeImgurUrlClient(document.getElementById('loginTeacherImgInput').value.trim()),
+                    login_admin_img: normalizeImgurUrlClient(document.getElementById('loginAdminImgInput').value.trim())
                 };
 
                 const res = await fetch('/api/admin/settings/site_images', {
@@ -3277,7 +3441,9 @@
 
                 const data = await res.json();
                 if (data.success) {
-                    showNotification('✅ تم حفظ إعدادات صور المنصة بنجاح!', 'success');
+                    showNotification('✅ تم حفظ إعدادات الشعار وصور المنصة بنجاح!', 'success');
+                    // Update current page previews
+                    loadSiteImageSettingsAdmin();
                 } else {
                     showNotification('❌ فشل حفظ الإعدادات: ' + (data.message || 'خطأ غير معروف'), 'error');
                 }
@@ -3287,6 +3453,8 @@
         }
 
         function resetSiteImageSettings() {
+            const defaultLogo = '/images/zoomdz-logo.png';
+            document.getElementById('siteAppLogoInput').value = defaultLogo;
             document.getElementById('siteHeroImageInput').value = '/images/student_hero1.jpg';
             document.getElementById('siteCard1ImageInput').value = '/images/student_lab1.jpg';
             document.getElementById('siteCard2ImageInput').value = '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png';
@@ -3294,12 +3462,13 @@
             document.getElementById('loginTeacherImgInput').value = '/images/teacher_character1.jpg';
             document.getElementById('loginAdminImgInput').value = '/images/admin_character1.jpg';
 
-            updateImagePreview('heroPreview', '/images/student_hero1.jpg');
-            updateImagePreview('card1Preview', '/images/student_lab1.jpg');
-            updateImagePreview('card2Preview', '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png');
-            updateImagePreview('loginStudentPreview', '/images/student_character1.jpg');
-            updateImagePreview('loginTeacherPreview', '/images/teacher_character1.jpg');
-            updateImagePreview('loginAdminPreview', '/images/admin_character1.jpg');
+            updateImagePreview('appLogoPreview', defaultLogo, 'appLogoStatus');
+            updateImagePreview('heroPreview', '/images/student_hero1.jpg', 'heroStatus');
+            updateImagePreview('card1Preview', '/images/student_lab1.jpg', 'card1Status');
+            updateImagePreview('card2Preview', '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png', 'card2Status');
+            updateImagePreview('loginStudentPreview', '/images/student_character1.jpg', 'loginStudentStatus');
+            updateImagePreview('loginTeacherPreview', '/images/teacher_character1.jpg', 'loginTeacherStatus');
+            updateImagePreview('loginAdminPreview', '/images/admin_character1.jpg', 'loginAdminStatus');
         }
 
         async function saveStudentNewsTicker() {

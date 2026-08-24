@@ -4870,7 +4870,32 @@ app.post('/api/admin/settings/revenue_settings', authenticate, authorize(['admin
 // Platform Settings (Site & Login Images)
 // ============================================================
 
+// Helper to normalize Imgur and external image URLs
+function normalizeImgurUrl(url) {
+    if (!url || typeof url !== 'string') return url;
+    let clean = url.trim();
+    if (!clean) return clean;
+    
+    // Imgur URL normalization
+    if (clean.includes('imgur.com')) {
+        // Match standard Imgur image / gallery / album URLs
+        const match = clean.match(/imgur\.com\/(?:a\/|gallery\/|r\/[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]{5,12})(?:\.[a-zA-Z0-9]+)?/i);
+        if (match && match[1]) {
+            const id = match[1];
+            if (!clean.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+                return `https://i.imgur.com/${id}.png`;
+            } else if (!clean.includes('i.imgur.com')) {
+                const ext = clean.split('.').pop() || 'png';
+                return `https://i.imgur.com/${id}.${ext}`;
+            }
+        }
+    }
+    return clean;
+}
+
 const defaultSiteImages = {
+    app_logo: '/images/zoomdz-logo.png',
+    site_logo: '/images/zoomdz-logo.png',
     hero_image: '/images/student_hero1.jpg',
     landing_card1_image: '/images/student_lab1.jpg',
     landing_card2_image: '/images/ChatGPT Image Aug 20, 2026, 10_43_09 AM.png',
@@ -4917,6 +4942,8 @@ app.get('/api/admin/settings/site_images', authenticate, authorize(['admin']), a
 app.post('/api/admin/settings/site_images', authenticate, authorize(['admin']), async (req, res) => {
     try {
         const {
+            app_logo,
+            site_logo,
             hero_image,
             landing_card1_image,
             landing_card2_image,
@@ -4926,12 +4953,14 @@ app.post('/api/admin/settings/site_images', authenticate, authorize(['admin']), 
         } = req.body;
 
         const updatedImages = {
-            hero_image: (hero_image && hero_image.trim()) || defaultSiteImages.hero_image,
-            landing_card1_image: (landing_card1_image && landing_card1_image.trim()) || defaultSiteImages.landing_card1_image,
-            landing_card2_image: (landing_card2_image && landing_card2_image.trim()) || defaultSiteImages.landing_card2_image,
-            login_student_img: (login_student_img && login_student_img.trim()) || defaultSiteImages.login_student_img,
-            login_teacher_img: (login_teacher_img && login_teacher_img.trim()) || defaultSiteImages.login_teacher_img,
-            login_admin_img: (login_admin_img && login_admin_img.trim()) || defaultSiteImages.login_admin_img
+            app_logo: normalizeImgurUrl(app_logo) || normalizeImgurUrl(site_logo) || defaultSiteImages.app_logo,
+            site_logo: normalizeImgurUrl(site_logo) || normalizeImgurUrl(app_logo) || defaultSiteImages.site_logo,
+            hero_image: normalizeImgurUrl(hero_image) || defaultSiteImages.hero_image,
+            landing_card1_image: normalizeImgurUrl(landing_card1_image) || defaultSiteImages.landing_card1_image,
+            landing_card2_image: normalizeImgurUrl(landing_card2_image) || defaultSiteImages.landing_card2_image,
+            login_student_img: normalizeImgurUrl(login_student_img) || defaultSiteImages.login_student_img,
+            login_teacher_img: normalizeImgurUrl(login_teacher_img) || defaultSiteImages.login_teacher_img,
+            login_admin_img: normalizeImgurUrl(login_admin_img) || defaultSiteImages.login_admin_img
         };
 
         inMemorySiteImages = updatedImages;
