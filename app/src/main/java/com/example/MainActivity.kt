@@ -637,9 +637,10 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    val currentWebView = this
                     CookieManager.getInstance().apply {
                         setAcceptCookie(true)
-                        setAcceptThirdPartyCookies(this@apply, true)
+                        setAcceptThirdPartyCookies(currentWebView, true)
                     }
 
                     settings.apply {

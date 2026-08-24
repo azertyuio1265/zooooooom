@@ -60,8 +60,8 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/main')
         with:
           tag_name: latest
-          name: "ZoomDz Android App - Latest Release v1.3.0"
-          body: "النسخة الأصلية الرسمية لتطبيق ZoomDz للهواتف الذكية (Android Native APK v1.3.0). تحديث أيقونة التطبيق الرسمية، وتفعيل المزامنة التلقائية للشعار والصور وروابط Imgur، ودعم البث المباشر وغرف الدروس والتفاعل الصوتي والمرئي."
+          name: "ZoomDz Android App - Latest Release v1.4.0"
+          body: "النسخة الأصلية الرسمية لتطبيق ZoomDz للهواتف الذكية (Android Native APK v1.4.0). تحديثات WebView وتحسين التوافق مع البناء التلقائي عبر GitHub Actions، مع دعم البث المباشر وغرف الدروس والتفاعل الصوتي والمرئي."
           draft: false
           prerelease: false
           files: public/downloads/zoomdz.apk
