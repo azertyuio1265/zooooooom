@@ -174,3 +174,21 @@
       "url": "/images/student_hero1.jpg",
       "ip": "10.128.110.148"
     }
+[2026-08-24 09:36:13.754] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.131.167"
+    }
+[2026-08-24 09:36:14.039] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.131.167"
+    }
+[2026-08-24 09:36:14.207] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.131.167"
+    }
