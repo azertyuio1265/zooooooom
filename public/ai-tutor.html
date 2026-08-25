@@ -13,6 +13,11 @@
     <!-- Markdown Parser CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
     
+    <!-- KaTeX CSS & JS for Math Equation Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+    
     <!-- Custom Style using Tailwind CSS CDN (V4 standard mapping equivalent utilities) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -137,6 +142,28 @@
             border-radius: 4px;
             color: #dc2626;
             font-size: 0.9em;
+        }
+
+        /* KaTeX Math Equation Styling in Arabic RTL Layout */
+        .katex {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            font-size: 1.12em !important;
+            color: #1e3a8a !important;
+        }
+        .katex-display {
+            direction: ltr !important;
+            text-align: center !important;
+            margin: 1.25rem 0 !important;
+            padding: 0.75rem 1.25rem !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        .katex-display > .katex {
+            font-size: 1.25em !important;
         }
     </style>
 </head>
@@ -538,8 +565,11 @@
                 const finalFlush = decoder.decode();
                 if (finalFlush) {
                     accumulatedText += finalFlush;
-                    outputContent.innerHTML = marked.parse(accumulatedText);
                 }
+                outputContent.innerHTML = marked.parse(accumulatedText);
+                
+                // Render KaTeX mathematical formulas & equations ($...$ and $$...$$)
+                renderMath(outputContent);
 
             } catch (error) {
                 console.error("Error:", error);
@@ -611,6 +641,27 @@
                 speakBtn.classList.remove('bg-slate-100', 'hover:bg-slate-200', 'text-slate-700');
                 speakBtn.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200');
                 speakText.innerText = "إيقاف القراءة";
+            }
+        }
+
+        // تحويل وصياغة المعادلات والرموز الرياضية والفيزيائية آلياً بتقنية KaTeX
+        function renderMath(element) {
+            if (!element) return;
+            if (window.renderMathInElement) {
+                try {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            { left: '$$', right: '$$', display: true },
+                            { left: '$', right: '$', display: false },
+                            { left: '\\(', right: '\\)', display: false },
+                            { left: '\\[', right: '\\]', display: true }
+                        ],
+                        throwOnError: false,
+                        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+                    });
+                } catch (e) {
+                    console.debug("KaTeX rendering note:", e);
+                }
             }
         }
     </script>
