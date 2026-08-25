@@ -1,0 +1,258 @@
+[2026-08-23 20:25:02.986] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-23 20:25:03.156] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 06:12:21.411] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 06:12:21.555] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 09:34:00.452] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 09:34:00.536] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 09:34:01.399] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-24 09:34:01.910] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-24 09:34:02.422] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-24 09:34:03.052] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-24 09:34:03.587] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-24 09:35:03.251] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.141.81"
+    }
+[2026-08-24 09:35:03.796] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.192.1"
+    }
+[2026-08-24 09:35:04.360] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.123.9"
+    }
+[2026-08-24 09:35:04.372] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.194.109"
+    }
+[2026-08-24 09:35:04.376] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.95.130"
+    }
+[2026-08-24 09:35:05.472] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.578] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://zoom-platform.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-24 09:35:05.578] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://zoom-platform.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-24 09:35:05.592] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.100.147"
+    }
+[2026-08-24 09:35:05.606] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.249.37"
+    }
+[2026-08-24 09:35:05.803] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.804] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.874] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.875] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.882] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.155.225"
+    }
+[2026-08-24 09:35:05.951] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://zoom-platform.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-24 09:35:05.951] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://zoom-platform.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-24 09:35:05.984] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.126.149"
+    }
+[2026-08-24 09:35:06.834] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.110.148"
+    }
+[2026-08-24 09:36:13.754] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.131.167"
+    }
+[2026-08-24 09:36:14.039] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.131.167"
+    }
+[2026-08-24 09:36:14.207] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.131.167"
+    }
+[2026-08-24 09:46:01.562] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 09:46:01.652] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 10:00:15.302] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 10:00:15.390] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 18:11:26.811] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 18:11:26.985] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-24 18:12:18.207] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-24 18:12:18.399] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 05:35:41.280] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 05:35:41.473] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:19:40.901] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:19:41.104] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:21:27.071] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:21:27.292] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:30:07.194] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:30:07.410] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:30:21.236] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:30:21.431] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:34:32.582] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:34:32.762] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 08:34:42.364] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 08:34:42.568] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 09:08:18.225] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 09:08:18.448] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 09:08:28.975] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 09:08:29.188] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 09:22:14.148] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 09:22:14.455] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 09:22:24.744] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 09:22:24.952] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 09:26:38.692] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 09:26:38.912] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:07:03.269] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:07:03.467] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:08:53.513] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:08:53.707] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:23:30.576] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:23:30.779] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:39:27.178] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:39:27.356] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:51:50.346] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:51:50.568] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:52:15.527] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:52:15.710] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:52:19.722] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:52:19.907] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:24:35.366] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:24:35.566] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:30:35.289] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:30:35.508] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:36:39.620] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:36:39.821] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:36:53.480] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:36:53.656] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:42:14.725] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:42:14.904] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:57:31.963] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:57:32.137] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 16:03:16.286] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 16:03:16.489] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 16:10:44.295] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 16:10:44.513] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 16:20:28.837] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 16:20:29.025] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
