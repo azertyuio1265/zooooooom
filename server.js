@@ -4171,7 +4171,7 @@ $$E(x) = ax^2 + bx + c$$
 
 /**
  * @route   POST /api/ai/solve-image
- * @desc    تحليل صورة تمرين دراسي بالذكاء الاصطناعي (أو عبر الكاميرا والملف) والتحقق منها وحلها خطوة بخطوة
+ * @desc    تحليل صورة تمرين دراسي بالذكاء الاصطناعي والتحقق منها وحلها خطوة بخطوة مع رفض فوري للصور غير الدراسية
  * @access  Public / Students
  */
 app.post('/api/ai/solve-image', async (req, res) => {
@@ -4194,106 +4194,151 @@ app.post('/api/ai/solve-image', async (req, res) => {
             cleanBase64 = parts[1];
         }
 
+        // Fast validation on minimal payload
+        if (!cleanBase64 || cleanBase64.length < 200) {
+            return res.json({
+                success: false,
+                noExercise: true,
+                message: 'الصورة غير واضحة أو تالفة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
+            });
+        }
+
         const levelText = (education_level && education_level !== 'غير محدد') ? education_level : 'الطور الدراسي العام';
 
-        // 1) إذا كان مفتاح GEMINI_API_KEY متوفراً، نستخدم نموذج gemini-3.7-flash المعتمد للرؤية المتعددة
         if (process.env.GEMINI_API_KEY) {
             try {
                 const { GoogleGenAI } = require('@google/genai');
                 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-                const prompt = `أنت أستاذ ومصحح أكاديمي خبير في المنهاج الدراسي الجزائري والعربي لجميع الأطوار (${levelText}).
-مهمتك تحليل هذه الصورة بدقة بالغة:
-1. أولاً: افحص محتوى الصورة جيداً وتأكد: هل تحتوي الصورة فعلاً على تمرين دراسي أو مسألة علمية/رياضية أو نص أكاديمي أو واجب/امتحان مدرسي؟
-2. إذا كانت الصورة لا تحتوي على أي دراسة أو تمارين إطلاقاً (مثل: صورة شخصية، سيارة، طعام، حيوان، منظر طبيعي، صورة عشوائية، أو شيء لا علاقة له بالدراسة):
-يجب أن تجيب بهذه الجملة فقط دون أي حل:
-NO_EXERCISE_DETECTED: لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى رفع أو التقاط صورة واضحة لنص تمرين أو مسألة مدرسية.
+                const prompt = `أنت مصحح ومحلل أكاديمي فائق الدقة لمنصة ZoomDz التعليمية للطور (${levelText}).
+مهمتك الصارمة الأولى هي فحص وتصنيف الصورة المرفقة قبل أي شيء:
 
-3. إذا كانت الصورة تحتوي على تمرين دراسي:
-قم بتقديم ما يلي بتنسيق Markdown منظم وجميل جداً:
-- 📌 **تحديد المادة والموضوع:** اذكر اسم المادة والموضوع المستنتج من الصورة.
-- 📝 **نص التمرين المستخرج:** اكتب نص الأسئلة أو المسألة المستخرجة من الصورة بوضوح.
-- 🔑 **الحل النموذجي المفصل:** اشرح خطوات الحل بالتفصيل مع وضع المعادلات الرياضية والفيزيائية بين علامات $ للمعادلات السطرية و $$ للمعادلات البارزة.
-- 💡 **نصائح لتجنب الأخطاء:** ملاحظات توجيهية هامة للطالب حول هذا النوع من الأسئلة.
-${notes ? `ملاحظات إضافية من الطالب: ${notes}` : ''}`;
+1. تصنيف محتوى الصورة:
+- إذا كانت الصورة عبارة عن: صورة شخصية (سيلفي، وجه إنسان، شخص، مجموعة أشخاص)، أو صورة منظر طبيعي، حيوان، طعام، سيارة، أثاث، خلفية فارغة، صورة عشوائية، أو أي شيء لا يمثل نص مسألة، تمرين دراسي، امتحان، أو واجب أكاديمي:
+  يجب فوراً وحتماً تعيين is_exercise = false وكتابة سبب الرفض في rejection_reason (مثال: "الصورة المرفقة صورة شخصية/غير أكاديمية ولا تحتوي على أي نص لتمرين أو مسألة دراسية").
 
-                const response = await ai.models.generateContent({
-                    model: 'gemini-3.7-flash',
-                    contents: [
-                        {
-                            role: 'user',
-                            parts: [
-                                {
-                                    inlineData: {
-                                        mimeType: detectedMime,
-                                        data: cleanBase64
+2. إذا كانت الصورة تحتوي فعلاً على تمرين أو مسألة أو واجب دراسي:
+  - عيّن is_exercise = true.
+  - استخرج نص المسألة أو الأسئلة بوضوح.
+  - حدد المادة والموضوع.
+  - اكتب حلاً نموذجياً شاملاً ومفصلاً خطوة بخطوة بالمنهجية المعتمدة، مع استخدام $ للمعادلات الرياضية.
+  - صغ الحل في solution_markdown.
+  ${notes ? `- ملاحظات إضافية من الطالب: ${notes}` : ''}
+
+يجب أن تكون الإجابة حصراً بصيغة JSON وفق الهيكل التالي:
+{
+  "is_exercise": true | false,
+  "rejection_reason": "سبب الرفض باللغة العربية إن لم تكن تمريناً",
+  "subject": "اسم المادة إن كانت تمريناً",
+  "topic": "الموضوع المستنتج",
+  "exercise_text": "نص المسألة المستخرجة",
+  "solution_markdown": "الحل الكامل المنسق بصيغة Markdown الغنية فقط إذا كانت is_exercise=true وإلا اتركها فارغة"
+}`;
+
+                // Try gemini-3.6-flash first, fallback to gemini-3.7-flash
+                let response;
+                try {
+                    response = await ai.models.generateContent({
+                        model: 'gemini-3.6-flash',
+                        contents: [
+                            {
+                                role: 'user',
+                                parts: [
+                                    {
+                                        inlineData: {
+                                            mimeType: detectedMime,
+                                            data: cleanBase64
+                                        }
+                                    },
+                                    {
+                                        text: prompt
                                     }
-                                },
-                                {
-                                    text: prompt
-                                }
-                            ]
+                                ]
+                            }
+                        ],
+                        config: {
+                            responseMimeType: 'application/json'
                         }
-                    ]
-                });
+                    });
+                } catch (modelErr) {
+                    console.warn('Fallback to gemini-3.7-flash for vision:', modelErr.message);
+                    response = await ai.models.generateContent({
+                        model: 'gemini-3.7-flash',
+                        contents: [
+                            {
+                                role: 'user',
+                                parts: [
+                                    {
+                                        inlineData: {
+                                            mimeType: detectedMime,
+                                            data: cleanBase64
+                                        }
+                                    },
+                                    {
+                                        text: prompt
+                                    }
+                                ]
+                            }
+                        ],
+                        config: {
+                            responseMimeType: 'application/json'
+                        }
+                    });
+                }
 
-                const textOutput = response.text || '';
+                const rawText = response.text || '{}';
+                let parsedResult;
+                try {
+                    parsedResult = JSON.parse(rawText);
+                } catch (jsonErr) {
+                    // In case of markdown-wrapped JSON
+                    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        parsedResult = JSON.parse(jsonMatch[0]);
+                    } else {
+                        parsedResult = { is_exercise: false, rejection_reason: 'تعذر التحقق من محتوى الصورة' };
+                    }
+                }
 
-                if (textOutput.includes('NO_EXERCISE_DETECTED')) {
+                if (!parsedResult.is_exercise) {
+                    const message = parsedResult.rejection_reason || 'الصورة المرفقة لا تحتوي على نص مسألة أو تمرين دراسي (مثال: صورة شخصية أو غير أكاديمية). يرجى رفع أو التقاط صورة واضحة لنص تمرين مدرسي.';
                     return res.json({
                         success: false,
                         noExercise: true,
-                        message: 'لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
+                        message: message
                     });
+                }
+
+                let finalMarkdown = parsedResult.solution_markdown || '';
+                if (!finalMarkdown && parsedResult.exercise_text) {
+                    finalMarkdown = `### 📌 نص المسألة المستخرجة (${parsedResult.subject || 'مادة دراسية'})\n\n${parsedResult.exercise_text}`;
                 }
 
                 return res.json({
                     success: true,
-                    solutionMarkdown: textOutput
+                    subject: parsedResult.subject || 'تمرين دراسي',
+                    topic: parsedResult.topic || '',
+                    solutionMarkdown: finalMarkdown
                 });
 
             } catch (geminiError) {
-                console.error('Gemini vision API attempt note:', geminiError.message);
-                // Fallback to local image processor below
+                console.error('❌ خطأ في فحص وحل صورة التمرين عبر الذكاء الاصطناعي:', geminiError.message);
+                return res.status(422).json({
+                    success: false,
+                    noExercise: true,
+                    message: 'تعذر التحقق من وجود تمرين دراسي في الصورة المرفقة. يرجى التأكد من تصوير مسألة أو تمرين مدرسي بإضاءة وزاوية واضحة.'
+                });
             }
         }
 
-        // 2) معالج ذكي احتياطي في حال عدم توفر المفتاح الخارجي
-        // فحص حجم وجودة الصورة
-        if (cleanBase64.length < 500) {
-            return res.json({
-                success: false,
-                noExercise: true,
-                message: 'لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
-            });
-        }
-
-        const fallbackSolution = `### 📌 نتيجة تحليل تمرين الصورة (${levelText})
-
-#### 📝 نص التمرين المستخرج من المسألة:
-استناداً إلى الصورة المرفقة، تم التعرف على تمرين دراسي تطبيقي يركز على التطبيقات المنهجية وحساب العلاقات الرياضية والفيزيائية.
-
-#### 🔑 الحل والتحليل النموذجي خطوة بخطوة:
-1. **تحديد المعطيات والشروط الابتدائية:**
-   * قراءة دقيقة للشروط والمعطيات المسجلة في نص المسألة.
-   * صياغة العلاقات الرياضية الأساسية المنطبقة على هذا المحور.
-2. **التطبيق العددي والبرهان:**
-   * كتابة القوانين المعتمدة في المنهاج الدراسي.
-   * التعويض الدقيق مع مراعاة الوحدات الدولية ($SI$).
-3. **النتيجة والتفسير الفيزيائي / الرياضي:**
-   * تقديم النتيجة النهائية مؤطرة بوضوح تام لتثبيت العلامة الكاملة.
-
-#### 💡 نصائح الأستاذ للتفوق:
-* تأكد دائماً من مطابقة الوحدات وكتابة القوانين الحاكمة قبل التعويض المباشر.
-* كتابة المنهجية خطوة بخطوة تضمن لك الحصول على النقاط الجزئية حتى لو حدث خطأ حسابي بسيط.`;
-
-        return res.json({
-            success: true,
-            solutionMarkdown: fallbackSolution
+        // في حال عدم توفر الذكاء الاصطناعي، نطلب من الطالب تقديم صورة صريحة
+        return res.status(503).json({
+            success: false,
+            error: 'خدمة الرؤية الحاسوبية غير متوفرة حالياً، يرجى المحاولة لاحقاً.'
         });
 
     } catch (error) {
-        console.error('❌ خطأ في معالجة صورة التمرين:', error);
+        console.error('❌ خطأ غير متوقع في معالجة صورة التمرين:', error);
         res.status(500).json({
             success: false,
             error: error.message || 'حدث خطأ أثناء معالجة الصورة'

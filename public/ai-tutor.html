@@ -560,18 +560,38 @@
                 </div>
 
                 <!-- Non-Exercise Error State Card -->
-                <div id="noExerciseAlert" class="hidden glass-card p-6 sm:p-8 text-center border-amber-300 bg-amber-50/50">
-                    <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-lg mx-auto mb-3 border border-amber-200">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+                <div id="noExerciseAlert" class="hidden glass-card p-6 sm:p-8 text-center border-rose-300 bg-rose-50/60 shadow-sm">
+                    <div class="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3 border border-rose-200 shadow-inner">
+                        <i class="fa-solid fa-ban"></i>
                     </div>
-                    <h3 class="text-sm sm:text-base font-bold text-amber-900 mb-1.5">لم يتم اكتشاف أي تمرين دراسي</h3>
-                    <p id="noExerciseMessage" class="text-amber-800 text-xs sm:text-sm max-w-md mx-auto leading-relaxed mb-4">
-                        الصورة المرفقة لا تحتوي على نص مسألة، تمرين، أو محتوى أكاديمي. يرجى التقاط أو رفع صورة واضحة لنص تمرين مدرسي.
+                    <span class="inline-block px-2.5 py-0.5 bg-rose-100 text-rose-800 text-[11px] font-extrabold rounded-full mb-2">تنبيه فحص الصورة</span>
+                    <h3 class="text-base sm:text-lg font-bold text-rose-900 mb-1.5">الصورة لا تمثل تمريناً دراسياً</h3>
+                    <p id="noExerciseMessage" class="text-rose-800 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed mb-4 font-semibold">
+                        لم يتم اكتشاف أي نص مسألة أو تمرين دراسي في الصورة المرفقة (مثل الصور الشخصية أو الصور غير الأكاديمية).
                     </p>
-                    <button onclick="switchMode('photo')" class="px-4 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>رفع صورة تمرين أخرى</span>
-                    </button>
+                    
+                    <!-- Guidance tips -->
+                    <div class="bg-white/80 border border-rose-200 rounded-xl p-3.5 max-w-md mx-auto mb-4 text-right">
+                        <p class="text-xs font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-blue-600"></i> نصائح لتصوير التمارين:
+                        </p>
+                        <ul class="text-[11px] text-slate-600 space-y-1 pr-4 list-disc">
+                            <li>وجّه الكاميرا مباشرة نحو نص التمرين في الكتاب، الكراس، أو ورقة الامتحان.</li>
+                            <li>تأكد من وضوح الكلمات والمعادلات وإضاءة الغرفة الجيدة.</li>
+                            <li>تجنب التقاط صور شخصية أو وجوه أو مشاهد خارج نطاق المادة الدراسية.</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-2 flex-wrap">
+                        <button onclick="switchMode('photo'); openCameraModal();" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>إعادة الالتقاط بالكاميرا</span>
+                        </button>
+                        <button onclick="switchMode('photo'); document.getElementById('photoFileInput').click();" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>اختيار صورة أخرى</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Loading State -->
@@ -901,17 +921,19 @@
             closeCameraModal();
         }
 
-        function startLoadingCarousel(customTitle) {
+        function startLoadingCarousel(customTitle, customTipsArray) {
             let index = 0;
+            const tipsList = (customTipsArray && customTipsArray.length) ? customTipsArray : loadingTips;
             const loadingTitle = document.getElementById('loadingTitle');
             const loadingTip = document.getElementById('loadingTip');
             if (customTitle) loadingTitle.innerText = customTitle;
-            loadingTip.innerText = loadingTips[0];
+            loadingTip.innerText = tipsList[0];
             
+            if (tipInterval) clearInterval(tipInterval);
             tipInterval = setInterval(() => {
-                index = (index + 1) % loadingTips.length;
-                loadingTip.innerText = loadingTips[index];
-            }, 2400);
+                index = (index + 1) % tipsList.length;
+                loadingTip.innerText = tipsList[index];
+            }, 2000);
         }
 
         function stopLoadingCarousel() {
@@ -1030,7 +1052,12 @@
             document.getElementById('outputContainer').classList.add('hidden');
             document.getElementById('noExerciseAlert').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
-            startLoadingCarousel('جاري قراءة وفحص صورة التمرين بالذكاء الاصطناعي...');
+            startLoadingCarousel('جاري فحص وتصنيف صورة التمرين بالذكاء الاصطناعي...', [
+                "فحص محتوى الصورة والتأكد من أنها تمرين أو مسألة دراسية...",
+                "التحقق من عدم وجود صور شخصية أو غير أكاديمية...",
+                "استخراج نصوص المسألة والمعادلات الرياضية والعلمية...",
+                "صياغة الحل النموذجي المفصل مع إخفاء الحل لتجربته أولاً..."
+            ]);
 
             try {
                 const response = await fetch('/api/ai/solve-image', {
