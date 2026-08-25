@@ -181,6 +181,19 @@
             </div>
         </div>
 
+        <!-- Student Auto-detected Education Level Badge -->
+        <div id="studentLevelBadgeContainer" class="hidden mb-8">
+            <div class="inline-flex flex-wrap items-center gap-3 px-5 py-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-950 text-sm font-bold shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <span class="text-slate-500 font-medium">مرحباً بك! لقد تم التعرف تلقائياً على مستواك الدراسي:</span>
+                    <span id="detectedStudentLevel" class="text-indigo-700 font-extrabold underline decoration-wavy decoration-indigo-400">تحميل المستوى...</span>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- Left Panel: Input Form (lg:col-span-4) -->
@@ -368,9 +381,55 @@
             }
         }
 
+        const levelMap = {
+            'primary_all': 'جميع مستويات الابتدائي',
+            'primary_1': 'السنة الأولى ابتدائي',
+            'primary_2': 'السنة الثانية ابتدائي',
+            'primary_3': 'السنة الثالثة ابتدائي',
+            'primary_4': 'السنة الرابعة ابتدائي',
+            'primary_5': 'السنة الخامسة ابتدائي',
+            '5eme_pri': 'خامسة ابتدائي',
+            'middle_all': 'جميع مستويات المتوسط',
+            '1ere_am': 'أولى متوسط',
+            '2eme_am': 'ثانية متوسط',
+            '3eme_am': 'ثالثة متوسط',
+            '4eme_am': 'رابعة متوسط (BEM)',
+            'bem': 'رابعة متوسط (BEM)',
+            'secondary_all': 'جميع مستويات الثانوي',
+            '1ere_as': 'أولى ثانوي',
+            '2eme_as': 'ثانية ثانوي',
+            '3eme_as': 'ثالثة ثانوي (BAC)',
+            'bac': 'ثالثة ثانوي (BAC)',
+            'university': 'جميع المستويات الجامعية',
+            '1ere_uni': 'أولى جامعي (L1)',
+            '2eme_uni': 'ثانية جامعي (L2)',
+            '3eme_uni': 'ثالثة جامعي (L3)',
+            'master_1': 'ماستر 1',
+            'master_2': 'ماستر 2',
+            'doctorate': 'دكتوراه',
+            'other': 'مستوى آخر'
+        };
+
+        let detectedLevel = '';
+        let detectedLevelText = '';
+
         // Initialize suggestions on load
         window.onload = () => {
             updateLessonSuggestions();
+            
+            // Auto detect student level from localStorage
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                if (userData && userData.education_level) {
+                    detectedLevel = userData.education_level;
+                    detectedLevelText = levelMap[detectedLevel] || detectedLevel;
+                    
+                    document.getElementById('detectedStudentLevel').innerText = detectedLevelText;
+                    document.getElementById('studentLevelBadgeContainer').classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Error reading student profile:", err);
+            }
         };
 
         function startLoadingCarousel() {
@@ -417,7 +476,11 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ subject, lesson })
+                    body: JSON.stringify({ 
+                        subject, 
+                        lesson,
+                        education_level: detectedLevelText || 'غير محدد'
+                    })
                 });
 
                 const data = await response.json();
