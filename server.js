@@ -634,7 +634,7 @@ app.post('/api/mystery-box/verify-telegram', async (req, res) => {
                 } else if (desc.includes('user_id must be integer')) {
                     return res.status(400).json({
                         success: false,
-                        error: `يرجى إدخال معرف التلغرام الرقمي الخاص بك (أرقام فقط مثال: 123456789) عبر البوت @userinfobot`
+                        error: `يرجى إدخال معرف التلغرام الرقمي الخاص بك (أرقام فقط م��ال: 123456789) عبر البوت @userinfobot`
                     });
                 } else {
                     return res.status(400).json({
@@ -2374,7 +2374,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
 
         // بدء الموقت فقط بعد إضافة الطلبة (هنا يبدأ في حالة التوقف مؤقتاً بانتظار إضافة الطلاب)
         if (streamRemainingSeconds <= 0) {
-            alert('🎉 تهانينا تم اكتمال البث وحصلت على عوائدك');
+            alert('🎉 تهان��نا تم اكتمال البث وحصلت على عوائدك');
             window.location.href = '/teacher-dashboard.html';
         } else {
             isTimerPaused = true;
@@ -2523,7 +2523,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
                 let userFriendlyAdvice = '';
 
                 if (rawErrStr.includes('PERMISSION_DENIED') || rawErrStr.includes('NotAllowedError') || rawErrStr.includes('Permission denied')) {
-                    userFriendlyTitle = '📷🎤 الإذن بالوصول للميكروفون أو الكاميرا مرفوض';
+                    userFriendlyTitle = '📷���� الإذن بالوصول للميكروفون أو الكاميرا مرفوض';
                     userFriendlyAdvice = 'يرجى السماح بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
                 } else if (rawErrStr.includes('NotFoundError') || rawErrStr.includes('DevicesNotFoundError')) {
                     userFriendlyTitle = '🔌 لم يتم العثور على كاميرا أو ميكروفون';
@@ -2946,7 +2946,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
             window.location.href = '/teacher-dashboard.html';
         }
 
-        // حفظ وإيق��ف الموقت تلقائياً عند إغلاق التبويب أو مغادرة الصفحة دون إنهاء البث
+        // حفظ وإيق����ف الموقت تلقائياً عند إغلاق التبويب أو مغادرة الصفحة دون إنهاء البث
         window.addEventListener('pagehide', function() {
             if (isLeaving) return;
             isTimerPaused = true;
@@ -3392,7 +3392,7 @@ function generateStudentZoomPage(offer, student) {
 
                 if (rawErrStr.includes('PERMISSION_DENIED') || rawErrStr.includes('NotAllowedError') || rawErrStr.includes('Permission denied')) {
                     userFriendlyTitle = '📷🎤 الإذن بالوصول للميكروفون أو الكاميرا مرفوض';
-                    userFriendlyAdvice = 'يرجى السماح بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
+                    userFriendlyAdvice = 'يرجى السما�� بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
                 } else if (rawErrStr.includes('NotFoundError') || rawErrStr.includes('DevicesNotFoundError')) {
                     userFriendlyTitle = '🔌 لم يتم العثور على كاميرا أو ميكروفون';
                     userFriendlyAdvice = 'تأكد من توصيل الكاميرا والميكروفون بجهازك بشكل صحيح.';
@@ -3960,7 +3960,7 @@ app.post('/api/ai/summarize', async (req, res) => {
                 });
             } catch (modelErr) {
                 response = await ai.models.generateContent({
-                    model: 'gemini-2.5-pro',
+                    model: 'gemini-3.1-pro-preview',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     config: { tools: [{ googleSearch: {} }] }
                 });
@@ -4040,7 +4040,7 @@ var
   inputVal: String;
   resultMsg: String;
 begin
-  // 1. قراءة المعطيات من واجهة المستخدم
+  // 1. قراءة المعطيات من ��اجهة المستخدم
   inputVal := EditInput.Text;
   
   // 2. معالجة البيانات وتطبيق المنطق البرمجي لـ ${cleanLesson}
@@ -4227,7 +4227,7 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
                 });
             } catch (modelErr) {
                 response = await ai.models.generateContent({
-                    model: 'gemini-2.5-pro',
+                    model: 'gemini-3.1-pro-preview',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     config: { responseMimeType: 'application/json' }
                 });
@@ -4333,7 +4333,7 @@ app.post('/api/ai/solve-image', async (req, res) => {
   "solution_markdown": "الحل الكامل المنسق بصيغة Markdown الغنية فقط إذا كانت is_exercise=true وإلا اتركها فارغة"
 }`;
 
-                // Try gemini-2.5-flash first, fallback to gemini-2.5-pro
+                // Try gemini-2.5-flash first, fallback to gemini-3.1-pro-preview
                 let response;
                 try {
                     response = await ai.models.generateContent({
@@ -4359,9 +4359,9 @@ app.post('/api/ai/solve-image', async (req, res) => {
                         }
                     });
                 } catch (modelErr) {
-                    console.warn('Fallback to gemini-2.5-pro for vision:', modelErr.message);
+                    console.warn('Fallback to gemini-3.1-pro-preview for vision:', modelErr.message);
                     response = await ai.models.generateContent({
-                        model: 'gemini-2.5-pro',
+                        model: 'gemini-3.1-pro-preview',
                         contents: [
                             {
                                 role: 'user',
@@ -4490,7 +4490,7 @@ app.post('/api/ai/exercise-variation', async (req, res) => {
             });
         } catch (modelErr) {
             response = await ai.models.generateContent({
-                model: 'gemini-2.5-pro',
+                model: 'gemini-3.1-pro-preview',
                 contents: [{ role: 'user', parts: [{ text: prompt }] }]
             });
         }
