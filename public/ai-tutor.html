@@ -1554,6 +1554,16 @@
                 summaryText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-blue-600"></i> جاري بحث الذكاء الاصطناعي عن المنهاج الجزائري الرسمي المعتمد (${detectedLevelText})...`;
             }
 
+            const subjectSelect = document.getElementById('subjectSelect');
+            if (subjectSelect) {
+                subjectSelect.innerHTML = `<option value="">⏳ جاري جلب مواد المنهاج الجزائري بواسطة الذكاء الاصطناعي...</option>`;
+            }
+
+            const container = document.getElementById('suggestionsContainer');
+            if (container) {
+                container.innerHTML = `<div class="text-xs text-slate-500 py-2"><i class="fa-solid fa-spinner fa-spin ml-1 text-blue-600"></i> يتم استخراج الوحدات والدروس الرسمية...</div>`;
+            }
+
             try {
                 const res = await fetch('/api/ai/discover-curriculum', {
                     method: 'POST',
@@ -1576,12 +1586,14 @@
                         summaryText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> تم اكتشاف واستعراض مواد المنهاج الجزائري الرسمي بنجاح عبر الذكاء الاصطناعي (${data.curriculumName || detectedLevelText}).`;
                     }
                 } else {
+                    syncCurriculumSelection();
                     if (summaryText) {
                         summaryText.innerHTML = `تم تفعيل مقررات: ${detectedLevelText} وفق آخر تحيين لوزارة التربية الوطنية والتكوين والتعليم المهني في الجزائر.`;
                     }
                 }
             } catch (err) {
                 console.error('Error discovering curriculum:', err);
+                syncCurriculumSelection();
                 if (summaryText) {
                     summaryText.innerHTML = `تم تفعيل مقررات: ${detectedLevelText} (الوضع المحلي).`;
                 }
