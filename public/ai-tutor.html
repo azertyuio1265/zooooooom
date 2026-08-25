@@ -369,7 +369,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="/" class="flex items-center gap-2">
-                    <img src="/images/zoomdz-logo.png" alt="ZoomDz" class="h-7 sm:h-8 w-auto object-contain" referrerpolicy="no-referrer" onerror="this.src='/images/zoomdz.png'">
                     <span class="text-lg sm:text-xl font-bold text-slate-900 font-cairo tracking-tight">Zoom<span class="zoom-dz-tag font-extrabold">Dz</span></span>
                 </a>
                 <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-200">
@@ -393,109 +392,18 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
         
         <!-- Clean Compact Hero Bar (ZoomDz Elegant Brand Gradient) -->
-        <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-sm mb-4 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-sm mb-5 border border-slate-800">
             <div>
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-emerald-400 text-xs font-bold mb-1.5">
                     <i class="fa-solid fa-brain"></i>
-                    <span>الذكاء الاصطناعي الأكاديمي لمنصة ZoomDz</span>
+                    <span>المعلم الذكي والباحث الأكاديمي الشامل</span>
                 </div>
                 <h1 class="text-base sm:text-xl font-bold font-cairo text-white">
-                    المعلم الافتراضي والمساعد الدراسي وحلال التمارين
+                    المعلم الافتراضي والمساعد الدراسي وحلال التمارين المتطور
                 </h1>
                 <p class="text-slate-300 text-xs sm:text-sm mt-0.5">
-                    اختر درساً للمراجعة الشاملة أو التقط صورة لأي تمرين لحله خطوة بخطوة وفق المنهاج الجزائري الرسمي المعتمد.
+                    أدخل المادة والتخصص الدراسي وعنوان الدرس يدوياً للحصول على محاضرة أكاديمية تفصيلية وحل شامل للتمارين خطوة بخطوة.
                 </p>
-            </div>
-            
-            <!-- Detected / Selected Student Level Badge & Quick Edit Button -->
-            <div id="studentLevelBadgeContainer" class="flex-shrink-0 flex items-center gap-2">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-900/50 border border-blue-400/40 text-xs text-white">
-                    <i class="fa-solid fa-graduation-cap text-amber-400 text-sm"></i>
-                    <div>
-                        <div class="text-[10px] text-blue-200">المستوى والتخصص الدراسي:</div>
-                        <span id="detectedStudentLevel" class="text-white font-bold">السنة الثالثة ثانوي (BAC) - علوم تجريبية</span>
-                    </div>
-                </div>
-                <button type="button" onclick="toggleLevelSelectorCard()" class="px-2.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-emerald-300 hover:text-white transition flex items-center gap-1" title="تعديل المستوى والشعبة">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <span class="hidden sm:inline">تغيير المستوى</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Dynamic Algerian Curriculum Level & Stream Selection Card -->
-        <div id="levelSelectionCard" class="glass-card p-4 sm:p-5 mb-5 border-2 border-blue-500/40 bg-gradient-to-br from-blue-50/70 via-white to-slate-50 relative">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3.5 border-b border-blue-100">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm shadow-sm">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2">
-                            <span>تحديد مستواك وشعبتك بدقة (المنهاج الجزائري الرسمي)</span>
-                            <span class="text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold border border-emerald-300">
-                                🇩🇿 التحيين الوزاري الأخير
-                            </span>
-                        </h2>
-                        <p class="text-xs text-slate-600">
-                            يتم تخصيص قائمة المواد الدراسية، الدروس، ونماذج التمارين فوراً وفق تخصصك وسنتك الدراسية.
-                        </p>
-                    </div>
-                </div>
-                <button type="button" onclick="toggleLevelSelectorCard()" class="text-slate-400 hover:text-slate-700 text-xs px-2 py-1 rounded">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            </div>
-
-            <!-- Interlinked Selectors Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <!-- 1. الطور التعليمي -->
-                <div>
-                    <label for="stageSelector" class="block text-xs font-bold text-slate-700 mb-1">1. الطور التعليمي:</label>
-                    <select id="stageSelector" onchange="onStageChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
-                        <option value="secondary">الطور الثانوي (Secondary)</option>
-                        <option value="middle">الطور المتوسط (Middle School)</option>
-                        <option value="primary">الطور الابتدائي (Primary)</option>
-                        <option value="vocational">التكوين المهني والمعاهد (INSFP / تقني سامي)</option>
-                        <option value="university">التعليم الجامعي (University / LMD)</option>
-                    </select>
-                </div>
-
-                <!-- 2. السنة الدراسية -->
-                <div>
-                    <label for="gradeSelector" class="block text-xs font-bold text-slate-700 mb-1">2. السنة الدراسية:</label>
-                    <select id="gradeSelector" onchange="onGradeChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
-                        <!-- Populated dynamically -->
-                    </select>
-                </div>
-
-                <!-- 3. الشعبة -->
-                <div id="branchSelectorWrapper">
-                    <label for="branchSelector" class="block text-xs font-bold text-slate-700 mb-1">3. الشعبة:</label>
-                    <select id="branchSelector" onchange="onBranchChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
-                        <!-- Populated dynamically -->
-                    </select>
-                </div>
-
-                <!-- 4. التخصص الدقيق -->
-                <div id="specialtySelectorWrapper">
-                    <label for="specialtySelector" class="block text-xs font-bold text-slate-700 mb-1">4. التخصص الدقيق:</label>
-                    <select id="specialtySelector" onchange="onSpecialtyChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
-                        <!-- Populated dynamically -->
-                    </select>
-                </div>
-            </div>
-
-            <!-- Confirmation & Status Notification -->
-            <div class="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2 text-xs text-blue-800 font-medium">
-                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                    <span id="activeLevelSummaryText">المواد المعروضة متوافقة 100% مع كتب وبرامج وزارة التربية الوطنية الجزائرية.</span>
-                </div>
-                <button type="button" onclick="applyAndCloseLevelSelector()" class="px-4 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-check"></i>
-                    <span>تأكيد واستعراض المواد والدروس</span>
-                </button>
             </div>
         </div>
 
