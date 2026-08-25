@@ -450,6 +450,20 @@
             }
         }
 
+        const subjectImageMap = {
+            'الرياضيات': 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80',
+            'الفيزياء': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80',
+            'العلوم الطبيعية': 'https://images.unsplash.com/photo-1532187643603-ba119ca4109e?auto=format&fit=crop&w=800&q=80',
+            'الأدب العربي': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80',
+            'الفلسفة': 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80',
+            'العلوم الإسلامية': 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=800&q=80',
+            'اللغة الإنجليزية': 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80',
+            'اللغة الفرنسية': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
+            'تكنولوجيا وهندسة': 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+            'التسيير والاقتصاد': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+        };
+        const defaultImage = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80';
+
         async function generateAISummary() {
             const subject = document.getElementById('subjectSelect').value;
             const lesson = document.getElementById('lessonInput').value.trim();
@@ -483,30 +497,49 @@
                     })
                 });
 
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.error || 'فشل التوليد الذكي');
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || 'فشل الاتصال بالمعلم الافتراضي');
                 }
 
-                // Render Content
-                document.getElementById('outputBadge').innerText = data.subject;
-                document.getElementById('outputLesson').innerText = data.lesson;
+                // Render Cover Image and Details Instantly!
+                document.getElementById('outputBadge').innerText = subject;
+                document.getElementById('outputLesson').innerText = lesson;
                 
-                // Parse markdown to HTML
-                document.getElementById('outputContent').innerHTML = marked.parse(data.explanation);
-                
-                // Render Image
-                if (data.imageUrl) {
-                    document.getElementById('outputImage').src = data.imageUrl;
-                    document.getElementById('imageWrapper').classList.remove('hidden');
-                } else {
-                    document.getElementById('imageWrapper').classList.add('hidden');
-                }
+                const coverImgUrl = subjectImageMap[subject] || defaultImage;
+                document.getElementById('outputImage').src = coverImgUrl;
+                document.getElementById('imageWrapper').classList.remove('hidden');
 
-                // Show Output UI
+                // Switch UI to active output so reader sees streaming text in real time!
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('outputContainer').classList.remove('hidden');
+
+                // Clean the output content area and insert initial loader
+                const outputContent = document.getElementById('outputContent');
+                outputContent.innerHTML = '<span class="text-indigo-600 animate-pulse font-bold flex items-center gap-2"><i class="fa-solid fa-spinner animate-spin"></i> يبدأ المعلم الذكي الآن ببث تلخيص وشرح الدرس كأنك تكتبه معه...</span>';
+
+                // Stream the body chunks
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let accumulatedText = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    accumulatedText += chunk;
+
+                    // Parse on the fly using marked.parse
+                    outputContent.innerHTML = marked.parse(accumulatedText);
+                }
+
+                // Final decode flush
+                const finalFlush = decoder.decode();
+                if (finalFlush) {
+                    accumulatedText += finalFlush;
+                    outputContent.innerHTML = marked.parse(accumulatedText);
+                }
 
             } catch (error) {
                 console.error("Error:", error);

@@ -3934,56 +3934,36 @@ app.post('/api/ai/summarize', async (req, res) => {
 5. نصائح قيمة وخارطة طريق للتحضير للامتحانات والامتحانات الرسمية المتعلقة بهذا الدرس في هذا المستوى الدراسي.
 استخدم تنسيق Markdown بشكل أنيق جداً (استخدم الخط العريض، القوائم النقطية، والجداول لتوضيح المقارنات إن أمكن).`;
 
-        // 1. إنشاء الملخص والشرح باستخدام نموذج gemini-3.7-flash
-        const textResponse = await ai.models.generateContent({
+        // تهيئة ترويسات البث النصي عالي الكفاءة (Chunked Streaming)
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Transfer-Encoding', 'chunked');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+
+        // 1. توليد الملخص وبثه لحظياً للمتصفح باستخدام نموذج gemini-3.7-flash الفائق السرعة
+        const textStream = await ai.models.generateContentStream({
             model: 'gemini-3.7-flash',
             contents: promptContent
         });
 
-        const explanation = textResponse.text;
-
-        // 2. إنشاء صورة توضيحية للدرس باستخدام نموذج gemini-3.1-flash-lite-image
-        let imageUrl = null;
-        try {
-            const imagePrompt = `An educational, clean, high-quality, and modern conceptual diagram or illustration representing the science/academic topic: "${lesson}" in the subject "${subject}". Clear lines, bright informative colors, suitable for students, minimalist and professional educational design, 16:9 aspect ratio, 3D vector illustration style.`;
-            
-            const imgResponse = await ai.models.generateContent({
-                model: 'gemini-3.1-flash-lite-image',
-                contents: imagePrompt,
-                config: {
-                    imageConfig: {
-                        aspectRatio: '16:9'
-                    }
-                }
-            });
-
-            if (imgResponse.candidates && imgResponse.candidates[0].content.parts) {
-                for (const part of imgResponse.candidates[0].content.parts) {
-                    if (part.inlineData) {
-                        imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-                        break;
-                    }
-                }
+        for await (const chunk of textStream) {
+            if (chunk.text) {
+                res.write(chunk.text);
             }
-        } catch (imgError) {
-            console.error("Error generating educational image:", imgError);
-            imageUrl = `https://picsum.photos/seed/${encodeURIComponent(lesson)}/800/450`;
         }
-
-        return res.json({
-            success: true,
-            subject,
-            lesson,
-            explanation,
-            imageUrl
-        });
+        res.end();
 
     } catch (error) {
         console.error('❌ خطأ في المعالجة بالذكاء الاصطناعي:', error);
-        return res.status(500).json({
-            success: false,
-            error: error.message || 'حدث خطأ غير متوقع أثناء توليد الملخص الذكي'
-        });
+        if (res.headersSent) {
+            res.write(`\n\n[ERROR: ${error.message || 'حدث خطأ غير متوقع أثناء توليد الملخص الذكي'}]`);
+            res.end();
+        } else {
+            return res.status(500).json({
+                success: false,
+                error: error.message || 'حدث خطأ غير متوقع أثناء توليد الملخص الذكي'
+            });
+        }
     }
 });
 
