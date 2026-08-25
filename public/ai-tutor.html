@@ -456,6 +456,8 @@
                         <option value="secondary">الطور الثانوي (Secondary)</option>
                         <option value="middle">الطور المتوسط (Middle School)</option>
                         <option value="primary">الطور الابتدائي (Primary)</option>
+                        <option value="vocational">التكوين المهني والمعاهد (INSFP / تقني سامي)</option>
+                        <option value="university">التعليم الجامعي (University / LMD)</option>
                     </select>
                 </div>
 
@@ -1157,6 +1159,47 @@
                     { name: 'التاريخ والجغرافيا', icon: '🌍' },
                     { name: 'العلوم الإسلامية', icon: '🕌' }
                 ]
+            },
+
+            // ================= 4. التكوين المهني والمعاهد (تقني سامي) =================
+            'insfp': {
+                stage: 'vocational',
+                name: 'المعاهد الوطنية المتخصصة (INSFP - تقني سامي)',
+                shortName: 'تقني سامي (INSFP)',
+                subjects: [
+                    { name: 'الرياضيات التطبيقية', icon: '📐' },
+                    { name: 'العلوم التقنية الهندسية', icon: '⚙️' },
+                    { name: 'الإعلام الآلي والشبكات', icon: '💻' },
+                    { name: 'التسيير واقتصاد المؤسسة', icon: '📊' },
+                    { name: 'اللغة الفرنسية التقنية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية التقنية', icon: '🇬🇧' },
+                    { name: 'التشريع والقانون المهني', icon: '⚖️' }
+                ]
+            },
+            'bts': {
+                stage: 'vocational',
+                name: 'شهادة التقني السامي (BTS)',
+                shortName: 'تقني سامي (BTS)',
+                subjects: [
+                    { name: 'الرياضيات التطبيقية', icon: '📐' },
+                    { name: 'التكنولوجيا المتخصصة', icon: '⚙️' },
+                    { name: 'إدارة المشاريع والصيانة', icon: '📊' },
+                    { name: 'اللغات الأجنبية التقنية', icon: '🌐' }
+                ]
+            },
+
+            // ================= 5. التعليم الجامعي =================
+            'university': {
+                stage: 'university',
+                name: 'التعليم الجامعي (ليسانس / ماستر / LMD)',
+                shortName: 'جامعي (LMD)',
+                subjects: [
+                    { name: 'الرياضيات المتقدمة والإحصاء', icon: '📐' },
+                    { name: 'الفيزياء المتقدمة', icon: '⚡' },
+                    { name: 'الإعلام الآلي والبرمجة', icon: '💻' },
+                    { name: 'المنهجية وإعداد البحوث', icon: '📚' },
+                    { name: 'اللغات الأجنبية', icon: '🌐' }
+                ]
             }
         };
 
@@ -1385,6 +1428,19 @@
                     <option value="mid_4" selected>السنة الرابعة متوسط (شهادة BEM)</option>
                 `;
                 currentCurriculumKey = gradeSelect.value;
+            } else if (stage === 'vocational') {
+                streamWrapper.classList.add('hidden');
+                gradeSelect.innerHTML = `
+                    <option value="insfp" selected>المعاهد الوطنية المتخصصة (INSFP - تقني سامي)</option>
+                    <option value="bts">شهادة التقني السامي (BTS)</option>
+                `;
+                currentCurriculumKey = gradeSelect.value;
+            } else if (stage === 'university') {
+                streamWrapper.classList.add('hidden');
+                gradeSelect.innerHTML = `
+                    <option value="university" selected>التعليم الجامعي (ليسانس / ماستر / LMD)</option>
+                `;
+                currentCurriculumKey = gradeSelect.value;
             } else {
                 // Secondary
                 streamWrapper.classList.remove('hidden');
@@ -1511,6 +1567,12 @@
             
             if (ALGERIAN_CURRICULUM[l]) return l;
             
+            if (l.includes('insfp') || l.includes('تقني سامي') || l.includes('bts') || l.includes('تكوين مهني') || l.includes('مهني')) return 'insfp';
+            if (l.includes('cap') || l.includes('كفاءة مهنية')) return 'insfp';
+            if (l.includes('cmp') || l.includes('تحكم مهني')) return 'insfp';
+            if (l.includes('bt') || l.includes('تقني')) return 'insfp';
+            if (l.includes('uni') || l.includes('master') || l.includes('doctorat') || l.includes('جامعي') || l.includes('ماستر') || l.includes('ليسانس') || l.includes('lmd')) return 'university';
+
             if (l.includes('pri_1') || l.includes('1_pri') || l.includes('الأولى ابتدائي')) return 'pri_1';
             if (l.includes('pri_2') || l.includes('2_pri') || l.includes('الثانية ابتدائي')) return 'pri_2';
             if (l.includes('pri_3') || l.includes('3_pri') || l.includes('الثالثة ابتدائي')) return 'pri_3';
@@ -1619,7 +1681,7 @@
                 
                 onStageChanged();
                 
-                if (curInfo.stage === 'primary' || curInfo.stage === 'middle') {
+                if (curInfo.stage === 'primary' || curInfo.stage === 'middle' || curInfo.stage === 'vocational' || curInfo.stage === 'university') {
                     document.getElementById('gradeSelector').value = initialKey;
                 } else if (curInfo.stage === 'secondary') {
                     if (curInfo.grade) document.getElementById('gradeSelector').value = curInfo.grade;
