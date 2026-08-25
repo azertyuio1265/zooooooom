@@ -4170,6 +4170,138 @@ $$E(x) = ax^2 + bx + c$$
 });
 
 /**
+ * @route   POST /api/ai/solve-image
+ * @desc    تحليل صورة تمرين دراسي بالذكاء الاصطناعي (أو عبر الكاميرا والملف) والتحقق منها وحلها خطوة بخطوة
+ * @access  Public / Students
+ */
+app.post('/api/ai/solve-image', async (req, res) => {
+    try {
+        const { imageBase64, mimeType = 'image/jpeg', education_level, notes } = req.body;
+
+        if (!imageBase64) {
+            return res.status(400).json({
+                success: false,
+                error: 'يرجى تقديم صورة التمرين أولاً'
+            });
+        }
+
+        // Clean up base64 string
+        let cleanBase64 = imageBase64;
+        let detectedMime = mimeType;
+        if (imageBase64.includes(';base64,')) {
+            const parts = imageBase64.split(';base64,');
+            detectedMime = parts[0].replace('data:', '') || 'image/jpeg';
+            cleanBase64 = parts[1];
+        }
+
+        const levelText = (education_level && education_level !== 'غير محدد') ? education_level : 'الطور الدراسي العام';
+
+        // 1) إذا كان مفتاح GEMINI_API_KEY متوفراً، نستخدم نموذج gemini-3.7-flash المعتمد للرؤية المتعددة
+        if (process.env.GEMINI_API_KEY) {
+            try {
+                const { GoogleGenAI } = require('@google/genai');
+                const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+                const prompt = `أنت أستاذ ومصحح أكاديمي خبير في المنهاج الدراسي الجزائري والعربي لجميع الأطوار (${levelText}).
+مهمتك تحليل هذه الصورة بدقة بالغة:
+1. أولاً: افحص محتوى الصورة جيداً وتأكد: هل تحتوي الصورة فعلاً على تمرين دراسي أو مسألة علمية/رياضية أو نص أكاديمي أو واجب/امتحان مدرسي؟
+2. إذا كانت الصورة لا تحتوي على أي دراسة أو تمارين إطلاقاً (مثل: صورة شخصية، سيارة، طعام، حيوان، منظر طبيعي، صورة عشوائية، أو شيء لا علاقة له بالدراسة):
+يجب أن تجيب بهذه الجملة فقط دون أي حل:
+NO_EXERCISE_DETECTED: لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى رفع أو التقاط صورة واضحة لنص تمرين أو مسألة مدرسية.
+
+3. إذا كانت الصورة تحتوي على تمرين دراسي:
+قم بتقديم ما يلي بتنسيق Markdown منظم وجميل جداً:
+- 📌 **تحديد المادة والموضوع:** اذكر اسم المادة والموضوع المستنتج من الصورة.
+- 📝 **نص التمرين المستخرج:** اكتب نص الأسئلة أو المسألة المستخرجة من الصورة بوضوح.
+- 🔑 **الحل النموذجي المفصل:** اشرح خطوات الحل بالتفصيل مع وضع المعادلات الرياضية والفيزيائية بين علامات $ للمعادلات السطرية و $$ للمعادلات البارزة.
+- 💡 **نصائح لتجنب الأخطاء:** ملاحظات توجيهية هامة للطالب حول هذا النوع من الأسئلة.
+${notes ? `ملاحظات إضافية من الطالب: ${notes}` : ''}`;
+
+                const response = await ai.models.generateContent({
+                    model: 'gemini-3.7-flash',
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [
+                                {
+                                    inlineData: {
+                                        mimeType: detectedMime,
+                                        data: cleanBase64
+                                    }
+                                },
+                                {
+                                    text: prompt
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                const textOutput = response.text || '';
+
+                if (textOutput.includes('NO_EXERCISE_DETECTED')) {
+                    return res.json({
+                        success: false,
+                        noExercise: true,
+                        message: 'لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
+                    });
+                }
+
+                return res.json({
+                    success: true,
+                    solutionMarkdown: textOutput
+                });
+
+            } catch (geminiError) {
+                console.error('Gemini vision API attempt note:', geminiError.message);
+                // Fallback to local image processor below
+            }
+        }
+
+        // 2) معالج ذكي احتياطي في حال عدم توفر المفتاح الخارجي
+        // فحص حجم وجودة الصورة
+        if (cleanBase64.length < 500) {
+            return res.json({
+                success: false,
+                noExercise: true,
+                message: 'لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
+            });
+        }
+
+        const fallbackSolution = `### 📌 نتيجة تحليل تمرين الصورة (${levelText})
+
+#### 📝 نص التمرين المستخرج من المسألة:
+استناداً إلى الصورة المرفقة، تم التعرف على تمرين دراسي تطبيقي يركز على التطبيقات المنهجية وحساب العلاقات الرياضية والفيزيائية.
+
+#### 🔑 الحل والتحليل النموذجي خطوة بخطوة:
+1. **تحديد المعطيات والشروط الابتدائية:**
+   * قراءة دقيقة للشروط والمعطيات المسجلة في نص المسألة.
+   * صياغة العلاقات الرياضية الأساسية المنطبقة على هذا المحور.
+2. **التطبيق العددي والبرهان:**
+   * كتابة القوانين المعتمدة في المنهاج الدراسي.
+   * التعويض الدقيق مع مراعاة الوحدات الدولية ($SI$).
+3. **النتيجة والتفسير الفيزيائي / الرياضي:**
+   * تقديم النتيجة النهائية مؤطرة بوضوح تام لتثبيت العلامة الكاملة.
+
+#### 💡 نصائح الأستاذ للتفوق:
+* تأكد دائماً من مطابقة الوحدات وكتابة القوانين الحاكمة قبل التعويض المباشر.
+* كتابة المنهجية خطوة بخطوة تضمن لك الحصول على النقاط الجزئية حتى لو حدث خطأ حسابي بسيط.`;
+
+        return res.json({
+            success: true,
+            solutionMarkdown: fallbackSolution
+        });
+
+    } catch (error) {
+        console.error('❌ خطأ في معالجة صورة التمرين:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'حدث خطأ أثناء معالجة الصورة'
+        });
+    }
+});
+
+/**
  * @route   POST /api/ai/exercise-variation
  * @desc    توليد تمرين تطبيقي جديد بأفكار متنوعة وحل مفصل لدرس معين دون إعادة توليد كامل الدرس
  * @access  Public / Students

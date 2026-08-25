@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZoomDz | المعلم الافتراضي الذكي والمراجع السريع</title>
+    <title>ZoomDz | المعلم الذكي وحلال التمارين بالصور</title>
     <link rel="icon" type="image/png" href="/images/zoomdz-logo.png">
     
     <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Markdown Parser CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -30,12 +32,13 @@
                     },
                     colors: {
                         brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
                             500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
                             900: '#0f1e38',
                             dark: '#081224',
                         },
@@ -65,7 +68,7 @@
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #f8fafc;
-            color: #1e293b;
+            color: #0f172a;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -87,11 +90,12 @@
             background: #94a3b8;
         }
         
-        /* ZoomDz Style Brand Headers & Cards */
-        .zoom-brand-gradient {
-            background: linear-gradient(135deg, #0e1e38 0%, #081224 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px rgba(8, 18, 36, 0.12);
+        /* Modern Glass Card */
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            border-radius: 16px;
         }
 
         .zoom-dz-tag {
@@ -109,41 +113,41 @@
         .markdown-body h1, .markdown-body h2 {
             font-weight: 800;
             color: #0e1e38;
-            margin-top: 1.6rem;
+            margin-top: 1.5rem;
             margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.4rem;
+            border-bottom: 1.5px solid #e2e8f0;
         }
-        .markdown-body h1 { font-size: 1.5rem; }
-        .markdown-body h2 { font-size: 1.25rem; }
+        .markdown-body h1 { font-size: 1.45rem; }
+        .markdown-body h2 { font-size: 1.22rem; }
         .markdown-body h3 {
-            font-size: 1.1rem;
+            font-size: 1.08rem;
             font-weight: 800;
             color: #1d4ed8;
-            margin-top: 1.4rem;
+            margin-top: 1.3rem;
             margin-bottom: 0.6rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #f8fafc;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 10px;
             border-right: 4px solid #1d4ed8;
         }
         .markdown-body h4 {
-            font-size: 1rem;
+            font-size: 0.98rem;
             font-weight: 700;
             color: #0f172a;
-            margin-top: 1rem;
+            margin-top: 0.9rem;
             margin-bottom: 0.4rem;
         }
         .markdown-body p {
             line-height: 1.8;
             color: #334155;
-            margin-bottom: 1rem;
+            margin-bottom: 0.9rem;
         }
         .markdown-body ul, .markdown-body ol {
             padding-right: 1.4rem;
@@ -194,7 +198,7 @@
         .markdown-body hr {
             border: none;
             border-top: 1px dashed #cbd5e1;
-            margin: 1.5rem 0;
+            margin: 1.4rem 0;
         }
         .markdown-body code {
             font-family: monospace;
@@ -211,22 +215,22 @@
         .katex {
             direction: ltr !important;
             unicode-bidi: isolate !important;
-            font-size: 1.1em !important;
+            font-size: 1.08em !important;
             color: #1e40af !important;
         }
         .katex-display {
             direction: ltr !important;
             text-align: center !important;
-            margin: 1rem 0 !important;
-            padding: 0.85rem 1rem !important;
+            margin: 0.9rem 0 !important;
+            padding: 0.8rem 1rem !important;
             background: #f8fafc !important;
             border: 1px solid #e2e8f0 !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             overflow-x: auto !important;
             overflow-y: hidden !important;
         }
         .katex-display > .katex {
-            font-size: 1.2em !important;
+            font-size: 1.15em !important;
         }
 
         /* Dynamic Exercise Section Header with Change Button */
@@ -236,41 +240,39 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 8px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #86efac;
-            border-right: 5px solid #10b981;
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-right: 4px solid #10b981;
+            padding: 9px 13px;
+            border-radius: 10px;
+            margin-top: 1.4rem;
+            margin-bottom: 0.9rem;
         }
         .exercise-section-title {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 800;
             color: #065f46;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
         }
         .exercise-refresh-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: #10b981;
             color: #ffffff;
             font-size: 0.78rem;
             font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 20px;
+            padding: 5px 11px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
         }
         .exercise-refresh-btn:hover {
             background: #059669;
             transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
         }
         .exercise-refresh-btn:disabled {
             opacity: 0.6;
@@ -283,6 +285,66 @@
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+
+        /* Solution Collapsible Box */
+        .solution-toggle-wrapper {
+            margin-top: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .solution-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
+        }
+        .solution-toggle-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(37, 99, 235, 0.3);
+        }
+        .solution-toggle-btn.revealed {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            box-shadow: none;
+        }
+        .solution-content-container {
+            display: none;
+            margin-top: 0.9rem;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            animation: fadeIn 0.25s ease-out;
+        }
+        .solution-content-container.show {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Drag & Drop Zone */
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            background-color: #f8fafc;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #2563eb;
+            background-color: #eff6ff;
         }
 
         @media (max-width: 640px) {
@@ -302,25 +364,25 @@
 </head>
 <body>
 
-    <!-- Header Navigation (Consistent with ZoomDz Theme) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Header Navigation (Crisp & Proportional Logo) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="/" class="flex items-center gap-2">
-                    <img src="/images/zoomdz-logo.png" alt="ZoomDz" class="h-9 w-auto rounded-lg object-contain" referrerpolicy="no-referrer" onerror="this.src='/images/zoomdz.png'">
-                    <span class="text-xl font-black text-slate-900 font-cairo">Zoom<span class="zoom-dz-tag">Dz</span></span>
+                    <img src="/images/zoomdz-logo.png" alt="ZoomDz" class="h-7 sm:h-8 w-auto object-contain" referrerpolicy="no-referrer" onerror="this.src='/images/zoomdz.png'">
+                    <span class="text-lg sm:text-xl font-bold text-slate-900 font-cairo tracking-tight">Zoom<span class="zoom-dz-tag font-extrabold">Dz</span></span>
                 </a>
-                <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-bold text-emerald-800 bg-emerald-100 rounded-full border border-emerald-200">
-                    <i class="fa-solid fa-sparkles text-emerald-600"></i> المعلم الذكي المجاني
+                <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-200">
+                    <i class="fa-solid fa-sparkles text-emerald-600 text-[10px]"></i> المعلم الذكي
                 </span>
             </div>
             <div class="flex items-center gap-2 sm:gap-3">
-                <a href="/teacher-dashboard.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
-                    <i class="fa-solid fa-chalkboard-user text-blue-600"></i>
+                <a href="/teacher-dashboard.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+                    <i class="fa-solid fa-chalkboard-user text-blue-600 text-xs"></i>
                     <span>لوحة الأستاذ</span>
                 </a>
-                <a href="/student-dashboard.html" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs sm:text-sm font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl shadow-sm transition">
-                    <i class="fa-solid fa-arrow-right"></i>
+                <a href="/student-dashboard.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition shadow-sm">
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
                     <span>لوحة التحكم</span>
                 </a>
             </div>
@@ -328,165 +390,238 @@
     </header>
 
     <!-- Main Workspace -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
         
-        <!-- Welcome Hero Alert in ZoomDz Dark Navy & Emerald -->
-        <div class="zoom-brand-gradient rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-white shadow-xl mb-6 relative overflow-hidden">
-            <div class="absolute -right-8 -bottom-8 opacity-10 text-8xl sm:text-9xl pointer-events-none">
-                <i class="fa-solid fa-brain"></i>
-            </div>
-            <div class="relative z-10 max-w-3xl">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-white text-xs font-bold mb-3 backdrop-blur-sm">
-                    <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
-                    <span>متاح مجاناً 100% لجميع طلاب منصة ZoomDz</span>
+        <!-- Clean Compact Hero Bar (ZoomDz Elegant Brand Gradient) -->
+        <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-sm mb-5 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-emerald-400 text-xs font-bold mb-1.5">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>الذكاء الاصطناعي الأكاديمي لمنصة ZoomDz</span>
                 </div>
-                <h1 class="text-xl sm:text-3xl font-black mb-2 leading-tight font-cairo">
-                    المعلم الافتراضي والمراجع السريع للدروس
+                <h1 class="text-base sm:text-xl font-bold font-cairo text-white">
+                    المعلم الافتراضي والمساعد الدراسي وحلال التمارين
                 </h1>
-                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                    اختر المادة والدرس، وسيقوم الذكاء الاصطناعي ببناء تلخيص منهجي شامل، شروحات مفصلة، قوانين مركزة، وتمارين تطبيقية بنماذج وأفكار جديدة قابلة للتغيير الفوري.
+                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">
+                    اختر درساً للمراجعة الشاملة أو التقط صورة لأي تمرين لحله خطوة بخطوة مع إخفاء الحل لاختبار نفسك.
                 </p>
             </div>
-        </div>
-
-        <!-- Student Auto-detected Education Level Badge -->
-        <div id="studentLevelBadgeContainer" class="hidden mb-5">
-            <div class="flex items-center justify-between flex-wrap gap-2 px-4 py-2.5 rounded-xl bg-blue-50/80 border border-blue-100 text-blue-950 text-xs sm:text-sm font-bold">
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <span>المستوى الدراسي المكتشف:</span>
-                    <span id="detectedStudentLevel" class="text-blue-700 font-extrabold bg-white px-2 py-0.5 rounded border border-blue-200">تحميل...</span>
+            
+            <!-- Detected Student Level Badge -->
+            <div id="studentLevelBadgeContainer" class="hidden flex-shrink-0">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-900/40 border border-blue-500/30 text-xs">
+                    <i class="fa-solid fa-graduation-cap text-blue-400"></i>
+                    <span class="text-slate-300">مستواك:</span>
+                    <span id="detectedStudentLevel" class="text-blue-300 font-bold">تحميل...</span>
                 </div>
-                <span class="text-xs text-slate-500 font-medium">يتم تخصيص الشرح تلقائياً لمنهاجك</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Mode Selector Tabs (Lesson Review vs Scan Exercise Photo) -->
+        <div class="flex items-center gap-2 mb-5 p-1 bg-slate-100/90 rounded-xl border border-slate-200/80 max-w-md">
+            <button id="tabLessonBtn" onclick="switchMode('lesson')" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200">
+                <i class="fa-solid fa-book-open"></i>
+                <span>تلخيص وشرح الدروس</span>
+            </button>
+            <button id="tabPhotoBtn" onclick="switchMode('photo')" class="flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-blue-700">
+                <i class="fa-solid fa-camera"></i>
+                <span>حل تمرين بصورة / كاميرا</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             
-            <!-- Left Panel: Input Form (lg:col-span-4) -->
-            <section class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm">
-                <h2 class="text-base font-extrabold text-slate-800 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-blue-600"></i>
-                    <span>إعدادات وتخصيص الدرس</span>
-                </h2>
+            <!-- Left Panel: Input & Controls (lg:col-span-4) -->
+            <section class="lg:col-span-4">
                 
-                <!-- Subject Selector -->
-                <div class="mb-4">
-                    <label for="subjectSelect" class="block text-xs font-bold text-slate-700 mb-1.5">اختر المادة الدراسية:</label>
-                    <select id="subjectSelect" onchange="updateLessonSuggestions()" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-cairo text-xs sm:text-sm text-slate-800 font-semibold">
-                        <option value="الرياضيات">📐 الرياضيات (Mathematics)</option>
-                        <option value="الفيزياء">⚡ الفيزياء (Physics)</option>
-                        <option value="العلوم الطبيعية">🧬 العلوم الطبيعية (Natural Sciences)</option>
-                        <option value="الأدب العربي">📖 الأدب العربي (Arabic Literature)</option>
-                        <option value="الفلسفة">💡 الفلسفة (Philosophy)</option>
-                        <option value="العلوم الإسلامية">🕌 العلوم الإسلامية (Islamic Sciences)</option>
-                        <option value="اللغة الإنجليزية">🇬🇧 اللغة الإنجليزية (English Language)</option>
-                        <option value="اللغة الفرنسية">🇫🇷 اللغة الفرنسية (French Language)</option>
-                        <option value="تكنولوجيا وهندسة">⚙️ تكنولوجيا وهندسة (Technology & Eng.)</option>
-                        <option value="التسيير والاقتصاد">📊 التسيير والاقتصاد (Economics)</option>
-                    </select>
-                </div>
-
-                <!-- Lesson Input -->
-                <div class="mb-4">
-                    <label for="lessonInput" class="block text-xs font-bold text-slate-700 mb-1.5">اسم الدرس أو الوحدة التعليمية:</label>
-                    <div class="relative">
-                        <input type="text" id="lessonInput" placeholder="مثال: الدوال الأسية، حركة القذيفة..." class="w-full pl-9 pr-3.5 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-cairo text-xs sm:text-sm text-slate-800">
-                        <i class="fa-solid fa-pen text-slate-400 absolute left-3 top-3 text-xs pointer-events-none"></i>
+                <!-- MODE 1: LESSON INPUT PANEL -->
+                <div id="panelLesson" class="glass-card p-4 sm:p-5">
+                    <h2 class="text-sm font-bold text-slate-800 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-blue-600 text-xs"></i>
+                        <span>تخصيص الدرس والمادة</span>
+                    </h2>
+                    
+                    <!-- Subject Selector -->
+                    <div class="mb-3.5">
+                        <label for="subjectSelect" class="block text-xs font-bold text-slate-700 mb-1">المادة الدراسية:</label>
+                        <div class="relative">
+                            <select id="subjectSelect" onchange="updateLessonSuggestions()" class="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition">
+                                <option value="الرياضيات">📐 الرياضيات (Mathematics)</option>
+                                <option value="الفيزياء">⚡ الفيزياء (Physics)</option>
+                                <option value="العلوم الطبيعية">🧬 العلوم الطبيعية (Sciences)</option>
+                                <option value="الأدب العربي">📖 الأدب العربي (Arabic Literature)</option>
+                                <option value="الفلسفة">💡 الفلسفة (Philosophy)</option>
+                                <option value="العلوم الإسلامية">🕌 العلوم الإسلامية (Islamic Sciences)</option>
+                                <option value="اللغة الإنجليزية">🇬🇧 اللغة الإنجليزية (English)</option>
+                                <option value="اللغة الفرنسية">🇫🇷 اللغة الفرنسية (French)</option>
+                                <option value="تكنولوجيا وهندسة">⚙️ تكنولوجيا وهندسة (Engineering)</option>
+                                <option value="التسيير والاقتصاد">📊 التسيير والاقتصاد (Economics)</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Popular Suggestions -->
-                <div class="mb-5">
-                    <span class="block text-xs font-bold text-slate-500 mb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-lightbulb text-amber-500"></i> مقترحات شائعة لهذا اليوم:
-                    </span>
-                    <div id="suggestionsContainer" class="flex flex-wrap gap-1.5">
-                        <!-- suggestions dynamically injected -->
+                    <!-- Lesson Input -->
+                    <div class="mb-3.5">
+                        <label for="lessonInput" class="block text-xs font-bold text-slate-700 mb-1">اسم الدرس أو الوحدة التعليمية:</label>
+                        <div class="relative">
+                            <input type="text" id="lessonInput" placeholder="مثال: الدوال الأسية، حركة القذيفة..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 font-cairo text-xs sm:text-sm text-slate-800 transition">
+                            <i class="fa-solid fa-pen text-slate-400 absolute left-2.5 top-2.5 text-xs pointer-events-none"></i>
+                        </div>
                     </div>
+
+                    <!-- Popular Suggestions -->
+                    <div class="mb-4">
+                        <span class="block text-xs font-semibold text-slate-500 mb-1.5 flex items-center gap-1">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-xs"></i> مقترحات سريعة:
+                        </span>
+                        <div id="suggestionsContainer" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button id="generateBtn" onclick="generateAISummary()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        <span>توليد الملخص والتمارين المحلولة</span>
+                    </button>
                 </div>
 
-                <!-- Action Button -->
-                <button id="generateBtn" onclick="generateAISummary()" class="w-full bg-gradient-to-r from-blue-700 to-indigo-800 hover:from-blue-800 hover:to-indigo-900 text-white font-extrabold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center gap-2 text-sm">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
-                    <span>توليد الملخص والشرح والتمارين</span>
-                </button>
+                <!-- MODE 2: PHOTO / CAMERA SCAN PANEL -->
+                <div id="panelPhoto" class="hidden glass-card p-4 sm:p-5">
+                    <h2 class="text-sm font-bold text-slate-800 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-camera text-blue-600 text-xs"></i>
+                        <span>التقاط أو رفع صورة تمرين</span>
+                    </h2>
+
+                    <!-- Drag & Drop Zone -->
+                    <div id="dropZone" class="drop-zone p-4 text-center cursor-pointer mb-3" onclick="document.getElementById('photoFileInput').click()">
+                        <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                        
+                        <!-- Empty Image State -->
+                        <div id="uploadEmptyState">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 text-sm border border-blue-100">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-700 mb-0.5">انقر لاختيار صورة التمرين أو اسحبها هنا</p>
+                            <p class="text-[11px] text-slate-400">يدعم PNG, JPG, JPEG, WebP</p>
+                        </div>
+
+                        <!-- Image Preview State -->
+                        <div id="uploadPreviewState" class="hidden">
+                            <div class="relative inline-block max-w-full">
+                                <img id="previewImg" src="" alt="تمرين" class="max-h-48 rounded-lg border border-slate-300 object-contain mx-auto shadow-sm">
+                                <button type="button" onclick="event.stopPropagation(); clearUploadedImage();" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow hover:bg-red-700">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-emerald-700 font-bold mt-2">✓ تم تحميل الصورة بنجاح</p>
+                        </div>
+                    </div>
+
+                    <!-- Camera Trigger Button -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <button type="button" onclick="openCameraModal()" class="flex-1 py-2 px-3 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-camera text-blue-600"></i>
+                            <span>التقاط بالكاميرا مباشرة</span>
+                        </button>
+                    </div>
+
+                    <!-- Optional Note / Question Input -->
+                    <div class="mb-4">
+                        <label for="photoNotesInput" class="block text-xs font-bold text-slate-700 mb-1">ملاحظة أو سؤال محدد (اختياري):</label>
+                        <input type="text" id="photoNotesInput" placeholder="مثال: ركز على حل السؤال رقم 3 بالتفصيل..." class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 text-xs font-cairo text-slate-800">
+                    </div>
+
+                    <!-- Solve Image Action Button -->
+                    <button id="solvePhotoBtn" onclick="solveExerciseImage()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>تحليل وحل التمرين بالذكاء الاصطناعي</span>
+                    </button>
+                </div>
+
             </section>
 
             <!-- Right Panel: Output & Explanation (lg:col-span-8) -->
             <section class="lg:col-span-8">
                 
-                <!-- Empty Placeholder State -->
-                <div id="emptyState" class="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 text-center shadow-sm flex flex-col items-center justify-center min-h-[380px]">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-4 border border-blue-100 shadow-inner">
+                <!-- Empty State -->
+                <div id="emptyState" class="glass-card p-8 text-center flex flex-col items-center justify-center min-h-[340px]">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg mb-3 border border-blue-100">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 mb-2">معلمك الافتراضي في انتظار اختيارك</h3>
-                    <p class="text-slate-500 max-w-md text-xs sm:text-sm leading-relaxed mb-4">
-                        اختر المادة واكتب اسم الدرس في النموذج المقابل، ثم اضغط على زر التوليد لبدء مراجعة احترافية شاملة.
+                    <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-1">مرحباً بك في المعلم الذكي</h3>
+                    <p class="text-slate-500 max-w-sm text-xs leading-relaxed mb-3">
+                        اختر درساً للتلخيص الفوري، أو ارفع صورة تمرين مدرسي لحله خطوة بخطوة وفق المنهاج المعتمد.
                     </p>
-                    <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>شروحات دقيقة وفق المنهاج الوزاري الجزائري</span>
+                    <div class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                        <i class="fa-solid fa-circle-check text-[11px]"></i>
+                        <span>يتم إخفاء الحل تلقائياً لتتمكن من تجربة حله أولاً</span>
                     </div>
                 </div>
 
+                <!-- Non-Exercise Error State Card -->
+                <div id="noExerciseAlert" class="hidden glass-card p-6 sm:p-8 text-center border-amber-300 bg-amber-50/50">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-lg mx-auto mb-3 border border-amber-200">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-sm sm:text-base font-bold text-amber-900 mb-1.5">لم يتم اكتشاف أي تمرين دراسي</h3>
+                    <p id="noExerciseMessage" class="text-amber-800 text-xs sm:text-sm max-w-md mx-auto leading-relaxed mb-4">
+                        الصورة المرفقة لا تحتوي على نص مسألة، تمرين، أو محتوى أكاديمي. يرجى التقاط أو رفع صورة واضحة لنص تمرين مدرسي.
+                    </p>
+                    <button onclick="switchMode('photo')" class="px-4 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>رفع صورة تمرين أخرى</span>
+                    </button>
+                </div>
+
                 <!-- Loading State -->
-                <div id="loadingState" class="hidden bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 text-center shadow-sm flex flex-col items-center justify-center min-h-[380px]">
-                    <div class="relative w-20 h-20 mb-5">
-                        <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-                        <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
-                        <div class="absolute inset-0 flex items-center justify-center text-xl text-blue-700">
+                <div id="loadingState" class="hidden glass-card p-8 text-center flex flex-col items-center justify-center min-h-[340px]">
+                    <div class="relative w-14 h-14 mb-3">
+                        <div class="absolute inset-0 rounded-full border-2 border-slate-100"></div>
+                        <div class="absolute inset-0 rounded-full border-2 border-blue-600 border-t-transparent animate-spin"></div>
+                        <div class="absolute inset-0 flex items-center justify-center text-blue-700 text-sm">
                             <i class="fa-solid fa-brain"></i>
                         </div>
                     </div>
-                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 mb-2">جاري استحضار وصياغة الدرس...</h3>
-                    <p id="loadingTip" class="text-blue-700 max-w-md text-xs sm:text-sm font-bold animate-pulse leading-relaxed">
-                        نكتب لك شرحاً تفصيلياً وفق المنهاج المعتمد...
+                    <h3 id="loadingTitle" class="text-sm sm:text-base font-bold text-slate-800 mb-1">جاري استحضار وصياغة الدرس...</h3>
+                    <p id="loadingTip" class="text-blue-700 max-w-md text-xs font-semibold animate-pulse leading-relaxed">
+                        نكتب لك شرحاً تفصيلياً مع إخفاء الحل لتختبر نفسك...
                     </p>
                 </div>
 
                 <!-- Output Display Container -->
-                <div id="outputContainer" class="hidden flex flex-col gap-4">
+                <div id="outputContainer" class="hidden flex flex-col gap-3.5">
                     
-                    <!-- Result Actions Bar (Print and Copy only, TTS removed) -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+                    <!-- Result Actions Bar -->
+                    <div class="glass-card p-3 flex flex-wrap items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
-                            <span id="outputBadge" class="px-2.5 py-1 text-xs font-extrabold text-blue-800 bg-blue-50 rounded-lg border border-blue-200"></span>
-                            <span id="outputLesson" class="text-xs sm:text-sm font-extrabold text-slate-800"></span>
+                            <span id="outputBadge" class="px-2 py-0.5 text-xs font-bold text-blue-800 bg-blue-50 rounded border border-blue-200"></span>
+                            <span id="outputLesson" class="text-xs sm:text-sm font-bold text-slate-800"></span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <!-- Print button -->
-                            <button onclick="printSummary()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-1.5 text-xs font-bold">
-                                <i class="fa-solid fa-print text-slate-600"></i>
+                            <button onclick="printSummary()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1 text-xs font-bold">
+                                <i class="fa-solid fa-print text-slate-500"></i>
                                 <span>طباعة / PDF</span>
                             </button>
-                            <!-- Copy button -->
-                            <button onclick="copySummary()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-1.5 text-xs font-bold">
-                                <i class="fa-solid fa-copy text-slate-600"></i>
-                                <span>نسخ الملخص</span>
+                            <button onclick="copySummary()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1 text-xs font-bold">
+                                <i class="fa-solid fa-copy text-slate-500"></i>
+                                <span>نسخ</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Main Article Card -->
-                    <article class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <!-- Main Content Card -->
+                    <article class="glass-card overflow-hidden">
                         
-                        <!-- AI Generated Image -->
-                        <div id="imageWrapper" class="relative w-full bg-slate-900 border-b border-slate-100">
-                            <img id="outputImage" src="" alt="شرح توضيحي" class="w-full max-h-[300px] sm:max-h-[360px] object-cover mx-auto" referrerpolicy="no-referrer">
-                            <div class="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md text-white text-[11px] px-3 py-1 rounded-full flex items-center gap-1.5 font-bold">
-                                <i class="fa-solid fa-image text-emerald-400"></i>
-                                <span>رسم توضيحي للمفهوم الأكاديمي</span>
-                            </div>
+                        <!-- AI Header Cover Image -->
+                        <div id="imageWrapper" class="relative w-full bg-slate-900 border-b border-slate-100 max-h-48 overflow-hidden">
+                            <img id="outputImage" src="" alt="شرح توضيحي" class="w-full h-44 object-cover mx-auto" referrerpolicy="no-referrer">
                         </div>
 
-                        <!-- Markdown Explanation Content -->
-                        <div class="p-4 sm:p-7">
+                        <!-- Markdown Content -->
+                        <div class="p-4 sm:p-6">
                             <div id="outputContent" class="markdown-body">
-                                <!-- generated summary HTML goes here -->
+                                <!-- HTML content is injected here -->
                             </div>
                         </div>
                     </article>
@@ -499,10 +634,42 @@
 
     </main>
 
+    <!-- Camera Modal (Live Video Snap) -->
+    <div id="cameraModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-3 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+            <div class="p-3.5 bg-slate-900 text-white flex items-center justify-between">
+                <span class="text-xs sm:text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-camera text-blue-400"></i>
+                    <span>التقاط صورة التمرين مباشرة</span>
+                </span>
+                <button type="button" onclick="closeCameraModal()" class="text-slate-400 hover:text-white text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-3 bg-slate-950 flex flex-col items-center">
+                <div class="relative w-full aspect-[4/3] bg-black rounded-lg overflow-hidden flex items-center justify-center">
+                    <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+                    <canvas id="cameraCanvas" class="hidden"></canvas>
+                </div>
+            </div>
+
+            <div class="p-3.5 bg-white flex items-center justify-between gap-2">
+                <button type="button" onclick="closeCameraModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">
+                    إلغاء
+                </button>
+                <button type="button" onclick="snapPhotoFromCamera()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>التقاط وحفظ الصورة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-5 mt-auto">
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 font-cairo">
-            &copy; 2026 ZoomDz. جميع الحقوق محفوظة. تم تطوير المعلم الذكي لمساعدة أبنائنا الطلبة في النجاح والتميز.
+            &copy; 2026 ZoomDz. المعلم الذكي الافتراضي - مصمم لمساعدة الطلاب على التفوق والنجاح الأكاديمي.
         </div>
     </footer>
 
@@ -514,7 +681,7 @@
             'العلوم الطبيعية': ['التركيب الضوئي وآلياته', 'تأثير الإنزيمات في التفاعلات', 'الاتصال العصبي والمشبك', 'المناعة والدفاع العضوي', 'التنفس والتخمر'],
             'الأدب العربي': ['شعر المهجر ومدرسته الرومانسية', 'النثر العلمي المتأدب', 'البلاغة: المجاز المرسل والتشبيه', 'القواعد: إعراب الجمل الحالية والنعتية', 'ظاهرة الحزن والألم في الشعر المعاصر'],
             'الفلسفة': ['السؤال العلمي والسؤال الفلسفي', 'المشكلة والاشكالية', 'الحقيقة والنسبية', 'فلسفة الرياضيات والمطلقية', 'الشعور واللاشعور'],
-            'العلوم الإسلامية': ['العقل ومكانته في القرآن الكرم', 'الربا وأنواعه وأحكامه', 'القيم في القرآن الكريم', 'الصحة النفسية والجسمية في الإسلام', 'مقاصد الشريعة الإسلامية'],
+            'العلوم الإسلامية': ['العقل ومكانته في القرآن الكريم', 'الربا وأنواعه وأحكامه', 'القيم في القرآن الكريم', 'الصحة النفسية والجسمية في الإسلام', 'مقاصد الشريعة الإسلامية'],
             'اللغة الإنجليزية': ['Ancient Civilizations (الحضارات القديمة)', 'Business Ethics (أخلاقيات العمل)', 'Education Systems (المنظومات التعليمية)', 'Passive and Active Voice', 'Conditional Sentences'],
             'اللغة الفرنسية': ['Le texte historique (النص التاريخي)', 'Appel à l\'action (الدعوة إلى الفعل)', 'Le débat d\'idées (جدال الأفكار)', 'Les rapports logiques', 'Le discours rapporté'],
             'تكنولوجيا وهندسة': ['الأنظمة المنطقية والتحكم الرقمي', 'الترانزستور كمفتاح ومضخم', 'الهندسة المعمارية ورسم الأبعاد', 'أنظمة التبريد والتكييف'],
@@ -525,7 +692,7 @@
             "جاري التفكير وصياغة الشرح الأكاديمي وفق المناهج التعليمية المعتمدة...",
             "نقوم بصياغة تمرين تطبيقي فريد لمساعدتك على تثبيت المفاهيم...",
             "المعلم الافتراضي يحلل أسئلة الامتحانات السابقة وصياغة نصائح النجاح...",
-            "جاري تنسيق القوانين والمعادلات الرياضية بدقة واحترافية...",
+            "جاري تنسيق القوانين والمعادلات الرياضية وإخفاء الحل لتختبر نفسك...",
             "تقريباً جاهز! ننسق الخطوط والأقسام ليكون الملخص سهلاً للمطالعة والطباعة..."
         ];
 
@@ -533,6 +700,34 @@
         let currentSubject = '';
         let currentLesson = '';
         let exerciseVariationIndex = 0;
+        let selectedImageBase64 = null;
+        let selectedMimeType = 'image/jpeg';
+        let mediaStream = null;
+
+        // Switch between Lesson Mode and Photo Mode
+        function switchMode(mode) {
+            const panelLesson = document.getElementById('panelLesson');
+            const panelPhoto = document.getElementById('panelPhoto');
+            const tabLessonBtn = document.getElementById('tabLessonBtn');
+            const tabPhotoBtn = document.getElementById('tabPhotoBtn');
+            const noExerciseAlert = document.getElementById('noExerciseAlert');
+
+            noExerciseAlert.classList.add('hidden');
+
+            if (mode === 'lesson') {
+                panelLesson.classList.remove('hidden');
+                panelPhoto.classList.add('hidden');
+
+                tabLessonBtn.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200";
+                tabPhotoBtn.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-blue-700";
+            } else {
+                panelLesson.classList.add('hidden');
+                panelPhoto.classList.remove('hidden');
+
+                tabPhotoBtn.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200";
+                tabLessonBtn.className = "flex-1 py-2 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-blue-700";
+            }
+        }
 
         function updateLessonSuggestions() {
             const subject = document.getElementById('subjectSelect').value;
@@ -546,7 +741,7 @@
                     btn.onclick = () => {
                         document.getElementById('lessonInput').value = sug;
                     };
-                    btn.className = "px-2.5 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-transparent rounded-lg transition-all";
+                    btn.className = "px-2 py-0.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200/80 rounded transition";
                     btn.innerText = sug;
                     container.appendChild(btn);
                 });
@@ -572,20 +767,12 @@
             '2eme_as': 'ثانية ثانوي',
             '3eme_as': 'ثالثة ثانوي (BAC)',
             'bac': 'ثالثة ثانوي (BAC)',
-            'university': 'جميع المستويات الجامعية',
-            '1ere_uni': 'أولى جامعي (L1)',
-            '2eme_uni': 'ثانية جامعي (L2)',
-            '3eme_uni': 'ثالثة جامعي (L3)',
-            'master_1': 'ماستر 1',
-            'master_2': 'ماستر 2',
-            'doctorate': 'دكتوراه',
-            'other': 'مستوى آخر'
+            'university': 'المستوى الجامعي'
         };
 
         let detectedLevel = '';
         let detectedLevelText = '';
 
-        // Initialize suggestions on load
         window.onload = () => {
             updateLessonSuggestions();
             
@@ -602,17 +789,129 @@
             } catch (err) {
                 console.error("Error reading student profile:", err);
             }
+
+            // Drag & Drop event handlers
+            const dropZone = document.getElementById('dropZone');
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    processImageFile(files[0]);
+                }
+            });
         };
 
-        function startLoadingCarousel() {
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processImageFile(file);
+            }
+        }
+
+        function processImageFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('يرجى اختيار ملف صورة صالح (JPG, PNG, WebP)!');
+                return;
+            }
+            selectedMimeType = file.type;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedImageBase64 = e.target.result;
+                document.getElementById('previewImg').src = selectedImageBase64;
+                document.getElementById('uploadEmptyState').classList.add('hidden');
+                document.getElementById('uploadPreviewState').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearUploadedImage() {
+            selectedImageBase64 = null;
+            document.getElementById('photoFileInput').value = '';
+            document.getElementById('previewImg').src = '';
+            document.getElementById('uploadPreviewState').classList.add('hidden');
+            document.getElementById('uploadEmptyState').classList.remove('hidden');
+        }
+
+        // Camera capture logic
+        async function openCameraModal() {
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('cameraVideo');
+            modal.classList.remove('hidden');
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                video.srcObject = mediaStream;
+            } catch (err) {
+                console.error("Camera access error:", err);
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = mediaStream;
+                } catch (fallbackErr) {
+                    alert('تعذر فتح الكاميرا، يرجى التأكد من منح الإذن للمتصفح أو رفع صورة مباشرة.');
+                    closeCameraModal();
+                }
+            }
+        }
+
+        function closeCameraModal() {
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('cameraVideo');
+            modal.classList.add('hidden');
+
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            if (video) {
+                video.srcObject = null;
+            }
+        }
+
+        function snapPhotoFromCamera() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            if (!video || !canvas) return;
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.9);
+            selectedMimeType = 'image/jpeg';
+
+            document.getElementById('previewImg').src = selectedImageBase64;
+            document.getElementById('uploadEmptyState').classList.add('hidden');
+            document.getElementById('uploadPreviewState').classList.remove('hidden');
+
+            closeCameraModal();
+        }
+
+        function startLoadingCarousel(customTitle) {
             let index = 0;
+            const loadingTitle = document.getElementById('loadingTitle');
             const loadingTip = document.getElementById('loadingTip');
+            if (customTitle) loadingTitle.innerText = customTitle;
             loadingTip.innerText = loadingTips[0];
             
             tipInterval = setInterval(() => {
                 index = (index + 1) % loadingTips.length;
                 loadingTip.innerText = loadingTips[index];
-            }, 2500);
+            }, 2400);
         }
 
         function stopLoadingCarousel() {
@@ -636,6 +935,7 @@
         };
         const defaultImage = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80';
 
+        // 1) GENERATE SUMMARY FROM LESSON NAME
         async function generateAISummary() {
             const subject = document.getElementById('subjectSelect').value;
             const lesson = document.getElementById('lessonInput').value.trim();
@@ -649,18 +949,16 @@
             currentLesson = lesson;
             exerciseVariationIndex = 0;
 
-            // Show Loading UI
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('outputContainer').classList.add('hidden');
+            document.getElementById('noExerciseAlert').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
-            startLoadingCarousel();
+            startLoadingCarousel('جاري استحضار وصياغة الدرس...');
 
             try {
                 const response = await fetch('/api/ai/summarize', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         subject, 
                         lesson,
@@ -673,7 +971,6 @@
                     throw new Error(errData.error || 'فشل الاتصال بالمعلم الافتراضي');
                 }
 
-                // Render Cover Image and Details
                 document.getElementById('outputBadge').innerText = subject;
                 document.getElementById('outputLesson').innerText = lesson;
                 
@@ -681,14 +978,12 @@
                 document.getElementById('outputImage').src = coverImgUrl;
                 document.getElementById('imageWrapper').classList.remove('hidden');
 
-                // Switch UI to active output
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('outputContainer').classList.remove('hidden');
 
                 const outputContent = document.getElementById('outputContent');
-                outputContent.innerHTML = '<span class="text-blue-700 animate-pulse font-bold flex items-center gap-2"><i class="fa-solid fa-spinner animate-spin"></i> يبدأ المعلم الذكي الآن ببث تلخيص وشرح الدرس كأنك تكتبه معه...</span>';
+                outputContent.innerHTML = '<span class="text-blue-700 animate-pulse font-bold flex items-center gap-2"><i class="fa-solid fa-spinner animate-spin"></i> يبدأ المعلم الذكي الآن ببث تلخيص وشرح الدرس...</span>';
 
-                // Stream the body chunks
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
                 let accumulatedText = "";
@@ -699,27 +994,22 @@
 
                     const chunk = decoder.decode(value, { stream: true });
                     accumulatedText += chunk;
-
                     outputContent.innerHTML = marked.parse(accumulatedText);
                 }
 
-                // Final decode flush
                 const finalFlush = decoder.decode();
                 if (finalFlush) {
                     accumulatedText += finalFlush;
                 }
                 outputContent.innerHTML = marked.parse(accumulatedText);
                 
-                // Enhance Exercise Section with a Refresh/Variation Button
-                enhanceExerciseSection();
-
-                // Render KaTeX mathematical formulas & equations ($...$ and $$...$$)
+                // Hide Solution & Add Toggle Button + Variation Button
+                enhanceExerciseAndHideSolution();
                 renderMath(outputContent);
 
             } catch (error) {
                 console.error("Error:", error);
                 alert(`عذراً، حدث خطأ: ${error.message}`);
-                
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } finally {
@@ -727,16 +1017,83 @@
             }
         }
 
-        // تحسين قسم التمرين التطبيقي بإضافة زر تغيير تمرين بأفكار جديدة
-        function enhanceExerciseSection() {
+        // 2) SOLVE EXERCISE FROM UPLOADED / SNAPPED PHOTO
+        async function solveExerciseImage() {
+            if (!selectedImageBase64) {
+                alert('يرجى التقاط صورة بالكاميرا أو اختيار صورة للتمرين أولاً!');
+                return;
+            }
+
+            const notes = document.getElementById('photoNotesInput').value.trim();
+
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('outputContainer').classList.add('hidden');
+            document.getElementById('noExerciseAlert').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            startLoadingCarousel('جاري قراءة وفحص صورة التمرين بالذكاء الاصطناعي...');
+
+            try {
+                const response = await fetch('/api/ai/solve-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        imageBase64: selectedImageBase64,
+                        mimeType: selectedMimeType,
+                        education_level: detectedLevelText || 'غير محدد',
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    // Check if non-exercise image was detected
+                    if (data.noExercise || (data.message && data.message.includes('لم يتم اكتشاف'))) {
+                        document.getElementById('loadingState').classList.add('hidden');
+                        document.getElementById('noExerciseMessage').innerText = data.message || 'لم يتم اكتشاف أي تمرين دراسي في الصورة المرفقة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.';
+                        document.getElementById('noExerciseAlert').classList.remove('hidden');
+                        return;
+                    }
+                    throw new Error(data.error || 'فشلت معالجة صورة التمرين');
+                }
+
+                // Render result
+                document.getElementById('outputBadge').innerText = 'حل صورة تمرين 📸';
+                document.getElementById('outputLesson').innerText = notes ? notes.substring(0, 30) : 'مسألة مستخرجة من الصورة';
+                
+                document.getElementById('outputImage').src = selectedImageBase64;
+                document.getElementById('imageWrapper').classList.remove('hidden');
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('outputContainer').classList.remove('hidden');
+
+                const outputContent = document.getElementById('outputContent');
+                outputContent.innerHTML = marked.parse(data.solutionMarkdown);
+
+                // Enhance and hide solution
+                enhanceExerciseAndHideSolution();
+                renderMath(outputContent);
+
+            } catch (error) {
+                console.error("Photo Solve Error:", error);
+                alert(`عذراً، حدث خطأ: ${error.message}`);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
+                stopLoadingCarousel();
+            }
+        }
+
+        // إخفاء الحل بشكل افتراضي وإضافة زر تفاعلي لعرض حل التمرين
+        function enhanceExerciseAndHideSolution() {
             const outputContent = document.getElementById('outputContent');
             if (!outputContent) return;
 
-            const headings = outputContent.querySelectorAll('h3');
-            headings.forEach((h3) => {
+            // 1) Handle Exercise Header
+            const headings3 = outputContent.querySelectorAll('h3');
+            headings3.forEach((h3) => {
                 const text = h3.innerText || '';
                 if (text.includes('تمرين تطبيقي') || text.includes('تطبيق نموذجي') || text.includes('وضعية') || text.includes('4️⃣')) {
-                    // Create wrapper
                     const headerWrapper = document.createElement('div');
                     headerWrapper.className = 'exercise-section-header';
                     headerWrapper.id = 'exerciseSectionHeader';
@@ -749,30 +1106,67 @@
                     changeBtn.type = 'button';
                     changeBtn.className = 'exercise-refresh-btn';
                     changeBtn.id = 'changeExerciseBtn';
-                    changeBtn.title = 'انقر لجلب تمرين جديد بأفكار نموذجية جديدة في هذا القسم فقط';
+                    changeBtn.title = 'تغيير فكرة التمرين لجلب فكرة جديدة';
                     changeBtn.onclick = () => refreshExerciseVariation();
                     changeBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate" id="refreshIcon"></i> <span>تغيير التمرين (فكرة جديدة)</span>';
 
                     headerWrapper.appendChild(titleSpan);
                     headerWrapper.appendChild(changeBtn);
 
-                    // Create container for the exercise content that follows
-                    const exerciseContainer = document.createElement('div');
-                    exerciseContainer.id = 'dynamicExerciseContainer';
-                    exerciseContainer.className = 'my-3 p-4 bg-emerald-50/40 rounded-xl border border-emerald-100 transition-all';
+                    h3.replaceWith(headerWrapper);
+                }
+            });
 
-                    // Move following elements until next h3 or hr into exerciseContainer
-                    let nextElem = h3.nextElementSibling;
-                    const elementsToMove = [];
-                    while (nextElem && nextElem.tagName !== 'H3' && !nextElem.innerText.includes('5️⃣') && nextElem.tagName !== 'HR') {
-                        elementsToMove.push(nextElem);
-                        nextElem = nextElem.nextElementSibling;
+            // 2) Handle Solution Hiding (Collapsible Box)
+            const headings4 = outputContent.querySelectorAll('h4');
+            headings4.forEach((h4) => {
+                const text = h4.innerText || '';
+                if (text.includes('الحل') || text.includes('حل') || text.includes('🔑')) {
+                    // Create toggle container
+                    const toggleWrapper = document.createElement('div');
+                    toggleWrapper.className = 'solution-toggle-wrapper';
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.type = 'button';
+                    toggleBtn.className = 'solution-toggle-btn';
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i> <span>عرض حل التمرين النموذجي</span>';
+
+                    const solutionContainer = document.createElement('div');
+                    solutionContainer.className = 'solution-content-container';
+
+                    // Collect all sibling elements that belong to solution until next h3, h2, or hr
+                    let next = h4.nextElementSibling;
+                    const solutionElements = [h4.cloneNode(true)];
+
+                    while (next && next.tagName !== 'H3' && next.tagName !== 'H2' && next.tagName !== 'HR') {
+                        solutionElements.push(next);
+                        const temp = next.nextElementSibling;
+                        next = temp;
                     }
 
-                    h3.replaceWith(headerWrapper);
-                    headerWrapper.after(exerciseContainer);
+                    // Move collected elements into solutionContainer
+                    solutionElements.forEach(el => {
+                        solutionContainer.appendChild(el);
+                    });
 
-                    elementsToMove.forEach(el => exerciseContainer.appendChild(el));
+                    toggleBtn.onclick = () => {
+                        const isShowing = solutionContainer.classList.contains('show');
+                        if (isShowing) {
+                            solutionContainer.classList.remove('show');
+                            toggleBtn.classList.remove('revealed');
+                            toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i> <span>عرض حل التمرين النموذجي</span>';
+                        } else {
+                            solutionContainer.classList.add('show');
+                            toggleBtn.classList.add('revealed');
+                            toggleBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> <span>إخفاء الحل</span>';
+                            renderMath(solutionContainer);
+                        }
+                    };
+
+                    toggleWrapper.appendChild(toggleBtn);
+                    toggleWrapper.appendChild(solutionContainer);
+
+                    h4.replaceWith(toggleWrapper);
                 }
             });
         }
@@ -781,9 +1175,7 @@
         async function refreshExerciseVariation() {
             const changeBtn = document.getElementById('changeExerciseBtn');
             const refreshIcon = document.getElementById('refreshIcon');
-            const exerciseContainer = document.getElementById('dynamicExerciseContainer');
-
-            if (!exerciseContainer) return;
+            const toggleWrapper = document.querySelector('.solution-toggle-wrapper');
 
             if (changeBtn) changeBtn.disabled = true;
             if (refreshIcon) refreshIcon.classList.add('rotating');
@@ -808,12 +1200,14 @@
 
                 const data = await response.json();
                 if (data.success && data.exerciseMarkdown) {
-                    exerciseContainer.style.opacity = '0.4';
-                    setTimeout(() => {
-                        exerciseContainer.innerHTML = marked.parse(data.exerciseMarkdown);
-                        exerciseContainer.style.opacity = '1';
-                        renderMath(exerciseContainer);
-                    }, 180);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = marked.parse(data.exerciseMarkdown);
+
+                    if (toggleWrapper) {
+                        toggleWrapper.replaceWith(tempDiv);
+                    }
+                    enhanceExerciseAndHideSolution();
+                    renderMath(document.getElementById('outputContent'));
                 }
             } catch (err) {
                 console.error("Refresh exercise error:", err);
@@ -833,13 +1227,12 @@
         function copySummary() {
             const content = document.getElementById('outputContent').innerText;
             navigator.clipboard.writeText(content).then(() => {
-                alert('تم نسخ الملخص إلى الحافظة بنجاح!');
+                alert('تم نسخ المحتوى إلى الحافظة بنجاح!');
             }).catch(err => {
                 console.error('Could not copy text: ', err);
             });
         }
 
-        // تحويل وصياغة المعادلات والرموز الرياضية والفيزيائية آلياً بتقنية KaTeX
         function renderMath(element) {
             if (!element) return;
             if (window.renderMathInElement) {
