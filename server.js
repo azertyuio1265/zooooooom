@@ -1710,7 +1710,8 @@ const csrfExcludedPaths = [
     '/api/logs',
     '/api/subscribe',
     '/api/groups',
-    '/api/group'
+    '/api/group',
+    '/api/ai'
 ];
 
 app.use((req, res, next) => {
