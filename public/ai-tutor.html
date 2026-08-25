@@ -523,22 +523,21 @@
                         <span>تخصيص الدرس والمادة</span>
                     </h2>
                     
-                    <!-- Subject Selector -->
+                    <!-- Subject Manual Input -->
                     <div class="mb-3.5">
-                        <label for="subjectSelect" class="block text-xs font-bold text-slate-700 mb-1">المادة الدراسية:</label>
+                        <label for="subjectInput" class="block text-xs font-bold text-slate-700 mb-1">المادة الدراسية (أدخلها يدوياً):</label>
                         <div class="relative">
-                            <select id="subjectSelect" onchange="updateLessonSuggestions()" class="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition">
-                                <option value="الرياضيات">📐 الرياضيات (Mathematics)</option>
-                                <option value="الفيزياء">⚡ الفيزياء (Physics)</option>
-                                <option value="العلوم الطبيعية">🧬 العلوم الطبيعية (Sciences)</option>
-                                <option value="الأدب العربي">📖 الأدب العربي (Arabic Literature)</option>
-                                <option value="الفلسفة">💡 الفلسفة (Philosophy)</option>
-                                <option value="العلوم الإسلامية">🕌 العلوم الإسلامية (Islamic Sciences)</option>
-                                <option value="اللغة الإنجليزية">🇬🇧 اللغة الإنجليزية (English)</option>
-                                <option value="اللغة الفرنسية">🇫🇷 اللغة الفرنسية (French)</option>
-                                <option value="تكنولوجيا وهندسة">⚙️ تكنولوجيا وهندسة (Engineering)</option>
-                                <option value="التسيير والاقتصاد">📊 التسيير والاقتصاد (Economics)</option>
-                            </select>
+                            <input type="text" id="subjectInput" placeholder="مثال: الرياضيات، قواعد البيانات، الفيزياء النووية..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 font-cairo text-xs sm:text-sm text-slate-800 transition">
+                            <i class="fa-solid fa-book text-slate-400 absolute left-2.5 top-2.5 text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <!-- Specialty / Level Manual Input -->
+                    <div class="mb-3.5">
+                        <label for="specialtyInput" class="block text-xs font-bold text-slate-700 mb-1">التخصص أو المستوى الدراسي (أدخله يدوياً):</label>
+                        <div class="relative">
+                            <input type="text" id="specialtyInput" placeholder="مثال: الثالثة ثانوي علوم تجريبية، تقني سامي إعلام آلي، سنة أولى لماند..." class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 font-cairo text-xs sm:text-sm text-slate-800 transition">
+                            <i class="fa-solid fa-graduation-cap text-slate-400 absolute left-2.5 top-2.5 text-xs pointer-events-none"></i>
                         </div>
                     </div>
 
@@ -2251,7 +2250,8 @@
 
         // 1) GENERATE SUMMARY FROM LESSON NAME
         async function generateAISummary() {
-            const subject = document.getElementById('subjectSelect').value;
+            const subject = document.getElementById('subjectInput').value.trim() || 'المادة العامة';
+            const specialty = document.getElementById('specialtyInput').value.trim() || detectedLevelText || 'غير محدد';
             const lesson = document.getElementById('lessonInput').value.trim();
 
             if (!lesson) {
@@ -2267,7 +2267,7 @@
             document.getElementById('outputContainer').classList.add('hidden');
             document.getElementById('noExerciseAlert').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
-            startLoadingCarousel('جاري استحضار وصياغة الدرس...');
+            startLoadingCarousel('جاري البحث المعمق واستحضار الدرس والتمارين...');
 
             try {
                 const response = await fetch('/api/ai/summarize', {
@@ -2276,7 +2276,7 @@
                     body: JSON.stringify({ 
                         subject, 
                         lesson,
-                        education_level: detectedLevelText || 'غير محدد'
+                        education_level: specialty
                     })
                 });
 
