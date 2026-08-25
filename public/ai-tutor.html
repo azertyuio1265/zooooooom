@@ -393,7 +393,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
         
         <!-- Clean Compact Hero Bar (ZoomDz Elegant Brand Gradient) -->
-        <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-sm mb-5 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-sm mb-4 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-emerald-400 text-xs font-bold mb-1.5">
                     <i class="fa-solid fa-brain"></i>
@@ -403,17 +403,89 @@
                     المعلم الافتراضي والمساعد الدراسي وحلال التمارين
                 </h1>
                 <p class="text-slate-300 text-xs sm:text-sm mt-0.5">
-                    اختر درساً للمراجعة الشاملة أو التقط صورة لأي تمرين لحله خطوة بخطوة مع إخفاء الحل لاختبار نفسك.
+                    اختر درساً للمراجعة الشاملة أو التقط صورة لأي تمرين لحله خطوة بخطوة وفق المنهاج الجزائري الرسمي المعتمد.
                 </p>
             </div>
             
-            <!-- Detected Student Level Badge -->
-            <div id="studentLevelBadgeContainer" class="hidden flex-shrink-0">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-900/40 border border-blue-500/30 text-xs">
-                    <i class="fa-solid fa-graduation-cap text-blue-400"></i>
-                    <span class="text-slate-300">مستواك:</span>
-                    <span id="detectedStudentLevel" class="text-blue-300 font-bold">تحميل...</span>
+            <!-- Detected / Selected Student Level Badge & Quick Edit Button -->
+            <div id="studentLevelBadgeContainer" class="flex-shrink-0 flex items-center gap-2">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-900/50 border border-blue-400/40 text-xs text-white">
+                    <i class="fa-solid fa-graduation-cap text-amber-400 text-sm"></i>
+                    <div>
+                        <div class="text-[10px] text-blue-200">المستوى والتخصص الدراسي:</div>
+                        <span id="detectedStudentLevel" class="text-white font-bold">السنة الثالثة ثانوي (BAC) - علوم تجريبية</span>
+                    </div>
                 </div>
+                <button type="button" onclick="toggleLevelSelectorCard()" class="px-2.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-emerald-300 hover:text-white transition flex items-center gap-1" title="تعديل المستوى والشعبة">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span class="hidden sm:inline">تغيير المستوى</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dynamic Algerian Curriculum Level & Stream Selection Card -->
+        <div id="levelSelectionCard" class="glass-card p-4 sm:p-5 mb-5 border-2 border-blue-500/40 bg-gradient-to-br from-blue-50/70 via-white to-slate-50 relative">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 mb-3.5 border-b border-blue-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span>تحديد مستواك وشعبتك بدقة (المنهاج الجزائري الرسمي)</span>
+                            <span class="text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold border border-emerald-300">
+                                🇩🇿 التحيين الوزاري الأخير
+                            </span>
+                        </h2>
+                        <p class="text-xs text-slate-600">
+                            يتم تخصيص قائمة المواد الدراسية، الدروس، ونماذج التمارين فوراً وفق تخصصك وسنتك الدراسية.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleLevelSelectorCard()" class="text-slate-400 hover:text-slate-700 text-xs px-2 py-1 rounded">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Interlinked Selectors Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- 1. الطور التعليمي -->
+                <div>
+                    <label for="stageSelector" class="block text-xs font-bold text-slate-700 mb-1">1. الطور التعليمي:</label>
+                    <select id="stageSelector" onchange="onStageChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
+                        <option value="secondary">الطور الثانوي (Secondary)</option>
+                        <option value="middle">الطور المتوسط (Middle School)</option>
+                        <option value="primary">الطور الابتدائي (Primary)</option>
+                    </select>
+                </div>
+
+                <!-- 2. السنة الدراسية -->
+                <div>
+                    <label for="gradeSelector" class="block text-xs font-bold text-slate-700 mb-1">2. السنة الدراسية:</label>
+                    <select id="gradeSelector" onchange="onGradeChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+                <!-- 3. الشعبة / التخصص (للثانوي) -->
+                <div id="streamSelectorWrapper">
+                    <label for="streamSelector" class="block text-xs font-bold text-slate-700 mb-1">3. الشعبة / التخصص:</label>
+                    <select id="streamSelector" onchange="onStreamChanged()" class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-xs sm:text-sm font-cairo font-semibold text-slate-800 transition shadow-sm">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Confirmation & Status Notification -->
+            <div class="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-xs text-blue-800 font-medium">
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                    <span id="activeLevelSummaryText">المواد المعروضة متوافقة 100% مع كتب وبرامج وزارة التربية الوطنية الجزائرية.</span>
+                </div>
+                <button type="button" onclick="applyAndCloseLevelSelector()" class="px-4 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-check"></i>
+                    <span>تأكيد واستعراض المواد والدروس</span>
+                </button>
             </div>
         </div>
 
@@ -695,24 +767,537 @@
 
     <!-- Scripts for Logic & Interactivity -->
     <script>
+        // 🇩🇿 موسوعة المنهاج الجزائري الرسمي المعتمد (الطور الابتدائي، المتوسط، والثانوي بكافة الشعب والمواد)
+        const ALGERIAN_CURRICULUM = {
+            // ================= 1. الطور الابتدائي =================
+            'pri_1': {
+                stage: 'primary',
+                name: 'السنة الأولى ابتدائي',
+                shortName: '1 ابتدائي',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' },
+                    { name: 'التربية العلمية والتكنولوجية', icon: '🌱' },
+                    { name: 'التربية الفنية والموسيقية', icon: '🎨' }
+                ]
+            },
+            'pri_2': {
+                stage: 'primary',
+                name: 'السنة الثانية ابتدائي',
+                shortName: '2 ابتدائي',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' },
+                    { name: 'التربية العلمية والتكنولوجية', icon: '🌱' },
+                    { name: 'التربية الفنية', icon: '🎨' }
+                ]
+            },
+            'pri_3': {
+                stage: 'primary',
+                name: 'السنة الثالثة ابتدائي',
+                shortName: '3 ابتدائي',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية العلمية والتكنولوجية', icon: '🌱' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية المدنية', icon: '🏛️' }
+                ]
+            },
+            'pri_4': {
+                stage: 'primary',
+                name: 'السنة الرابعة ابتدائي',
+                shortName: '4 ابتدائي',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية العلمية والتكنولوجية', icon: '🌱' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية المدنية', icon: '🏛️' }
+                ]
+            },
+            'pri_5': {
+                stage: 'primary',
+                name: 'السنة الخامسة ابتدائي (الامتحان النهائي)',
+                shortName: '5 ابتدائي',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية العلمية والتكنولوجية', icon: '🌱' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية المدنية', icon: '🏛️' }
+                ]
+            },
+
+            // ================= 2. الطور المتوسط =================
+            'mid_1': {
+                stage: 'middle',
+                name: 'السنة الأولى متوسط',
+                shortName: '1 متوسط',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'العلوم الفيزيائية والتكنولوجيا', icon: '⚡' },
+                    { name: 'علوم الطبيعة والحياة', icon: '🧬' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' },
+                    { name: 'الإعلام الآلي', icon: '💻' }
+                ]
+            },
+            'mid_2': {
+                stage: 'middle',
+                name: 'السنة الثانية متوسط',
+                shortName: '2 متوسط',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'العلوم الفيزيائية والتكنولوجيا', icon: '⚡' },
+                    { name: 'علوم الطبيعة والحياة', icon: '🧬' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' },
+                    { name: 'الإعلام الآلي', icon: '💻' }
+                ]
+            },
+            'mid_3': {
+                stage: 'middle',
+                name: 'السنة الثالثة متوسط',
+                shortName: '3 متوسط',
+                subjects: [
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'العلوم الفيزيائية والتكنولوجيا', icon: '⚡' },
+                    { name: 'علوم الطبيعة والحياة', icon: '🧬' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' },
+                    { name: 'الإعلام الآلي', icon: '💻' }
+                ]
+            },
+            'mid_4': {
+                stage: 'middle',
+                name: 'السنة الرابعة متوسط (شهادة التعليم المتوسط BEM)',
+                shortName: '4 متوسط (BEM)',
+                subjects: [
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'العلوم الفيزيائية والتكنولوجيا', icon: '⚡' },
+                    { name: 'علوم الطبيعة والحياة', icon: '🧬' },
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'التربية الإسلامية', icon: '🕌' },
+                    { name: 'التربية المدنية', icon: '🏛️' }
+                ]
+            },
+
+            // ================= 3. الطور الثانوي =================
+            // 1 ثانوي
+            'sec_1_st': {
+                stage: 'secondary',
+                grade: '1as',
+                stream: 'st',
+                name: 'السنة الأولى ثانوي - جذع مشترك علوم وتكنولوجيا',
+                shortName: '1 ثانوي (علمي)',
+                subjects: [
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'التكنولوجيا والهندسة', icon: '⚙️' },
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'الإعلام الآلي', icon: '💻' }
+                ]
+            },
+            'sec_1_lit': {
+                stage: 'secondary',
+                grade: '1as',
+                stream: 'lit',
+                name: 'السنة الأولى ثانوي - جذع مشترك آداب',
+                shortName: '1 ثانوي (أدبي)',
+                subjects: [
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'الإعلام الآلي', icon: '💻' }
+                ]
+            },
+
+            // 2 ثانوي
+            'sec_2_se': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'se',
+                name: 'السنة الثانية ثانوي - شعبة علوم تجريبية',
+                shortName: '2 ثانوي (علوم تجريبية)',
+                subjects: [
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'الفلسفة', icon: '💡' }
+                ]
+            },
+            'sec_2_m': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'm',
+                name: 'السنة الثانية ثانوي - شعبة رياضيات',
+                shortName: '2 ثانوي (رياضيات)',
+                subjects: [
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' }
+                ]
+            },
+            'sec_2_tm': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'tm',
+                name: 'السنة الثانية ثانوي - شعبة تقني رياضي',
+                shortName: '2 ثانوي (تقني رياضي)',
+                subjects: [
+                    { name: 'تكنولوجيا وهندسة', icon: '⚙️' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' }
+                ]
+            },
+            'sec_2_ge': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'ge',
+                name: 'السنة الثانية ثانوي - شعبة تسيير واقتصاد',
+                shortName: '2 ثانوي (تسيير واقتصاد)',
+                subjects: [
+                    { name: 'التسيير المحاسبي والمالي', icon: '📊' },
+                    { name: 'الاقتصاد والمناجمنت', icon: '📈' },
+                    { name: 'القانون', icon: '⚖️' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغات الأجنبية', icon: '🌐' }
+                ]
+            },
+            'sec_2_lp': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'lp',
+                name: 'السنة الثانية ثانوي - شعبة آداب وفلسفة',
+                shortName: '2 ثانوي (آداب وفلسفة)',
+                subjects: [
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'الرياضيات', icon: '📐' }
+                ]
+            },
+            'sec_2_fl': {
+                stage: 'secondary',
+                grade: '2as',
+                stream: 'fl',
+                name: 'السنة الثانية ثانوي - شعبة لغات أجنبية',
+                shortName: '2 ثانوي (لغات أجنبية)',
+                subjects: [
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'اللغة الأجنبية الثالثة (إسبانية/ألمانية/إيطالية)', icon: '🇪🇸' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'الفلسفة', icon: '💡' }
+                ]
+            },
+
+            // 3 ثانوي (BAC)
+            'sec_3_se': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'se',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة علوم تجريبية',
+                shortName: '3 ثانوي BAC (علوم تجريبية)',
+                subjects: [
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' }
+                ]
+            },
+            'sec_3_m': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'm',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة رياضيات',
+                shortName: '3 ثانوي BAC (رياضيات)',
+                subjects: [
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'العلوم الطبيعية', icon: '🧬' },
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' }
+                ]
+            },
+            'sec_3_tm': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'tm',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة تقني رياضي',
+                shortName: '3 ثانوي BAC (تقني رياضي)',
+                subjects: [
+                    { name: 'تكنولوجيا وهندسة', icon: '⚙️' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'الفيزياء', icon: '⚡' },
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' }
+                ]
+            },
+            'sec_3_ge': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'ge',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة تسيير واقتصاد',
+                shortName: '3 ثانوي BAC (تسيير واقتصاد)',
+                subjects: [
+                    { name: 'التسيير المحاسبي والمالي', icon: '📊' },
+                    { name: 'الاقتصاد والمناجمنت', icon: '📈' },
+                    { name: 'القانون', icon: '⚖️' },
+                    { name: 'الرياضيات', icon: '📐' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية', icon: '📖' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغات الأجنبية', icon: '🌐' }
+                ]
+            },
+            'sec_3_lp': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'lp',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة آداب وفلسفة',
+                shortName: '3 ثانوي BAC (آداب وفلسفة)',
+                subjects: [
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'الرياضيات', icon: '📐' }
+                ]
+            },
+            'sec_3_fl': {
+                stage: 'secondary',
+                grade: '3as',
+                stream: 'fl',
+                name: 'السنة الثالثة ثانوي (BAC) - شعبة لغات أجنبية',
+                shortName: '3 ثانوي BAC (لغات أجنبية)',
+                subjects: [
+                    { name: 'اللغة الأجنبية الثالثة (إسبانية/ألمانية/إيطالية)', icon: '🇪🇸' },
+                    { name: 'اللغة الفرنسية', icon: '🇫🇷' },
+                    { name: 'اللغة الإنجليزية', icon: '🇬🇧' },
+                    { name: 'اللغة العربية وآدابها', icon: '📖' },
+                    { name: 'الفلسفة', icon: '💡' },
+                    { name: 'التاريخ والجغرافيا', icon: '🌍' },
+                    { name: 'العلوم الإسلامية', icon: '🕌' }
+                ]
+            }
+        };
+
+        // بنك المقترحات الذكية الدقيقة حسب المواد والمنهاج الجزائري
         const suggestions = {
-            'الرياضيات': ['الدوال الأسية واللوغاريتمية', 'المتتاليات الحسابية والهندسية', 'الاحتمالات والتحليل التوفيقي', 'الأعداد المركبة وحساب المثلثات', 'الهندسة في الفضاء'],
-            'الفيزياء': ['حركة الكواكب والأقمار الصناعية', 'الميكانيك وقوانين نيوتن', 'ثنائي القطب RC و RL', 'الظواهر النووية والنشاط الإشعاعي', 'مراقبة تطور جملة كيميائية'],
-            'العلوم الطبيعية': ['التركيب الضوئي وآلياته', 'تأثير الإنزيمات في التفاعلات', 'الاتصال العصبي والمشبك', 'المناعة والدفاع العضوي', 'التنفس والتخمر'],
-            'الأدب العربي': ['شعر المهجر ومدرسته الرومانسية', 'النثر العلمي المتأدب', 'البلاغة: المجاز المرسل والتشبيه', 'القواعد: إعراب الجمل الحالية والنعتية', 'ظاهرة الحزن والألم في الشعر المعاصر'],
-            'الفلسفة': ['السؤال العلمي والسؤال الفلسفي', 'المشكلة والاشكالية', 'الحقيقة والنسبية', 'فلسفة الرياضيات والمطلقية', 'الشعور واللاشعور'],
-            'العلوم الإسلامية': ['العقل ومكانته في القرآن الكريم', 'الربا وأنواعه وأحكامه', 'القيم في القرآن الكريم', 'الصحة النفسية والجسمية في الإسلام', 'مقاصد الشريعة الإسلامية'],
-            'اللغة الإنجليزية': ['Ancient Civilizations (الحضارات القديمة)', 'Business Ethics (أخلاقيات العمل)', 'Education Systems (المنظومات التعليمية)', 'Passive and Active Voice', 'Conditional Sentences'],
-            'اللغة الفرنسية': ['Le texte historique (النص التاريخي)', 'Appel à l\'action (الدعوة إلى الفعل)', 'Le débat d\'idées (جدال الأفكار)', 'Les rapports logiques', 'Le discours rapporté'],
-            'تكنولوجيا وهندسة': ['الأنظمة المنطقية والتحكم الرقمي', 'الترانزستور كمفتاح ومضخم', 'الهندسة المعمارية ورسم الأبعاد', 'أنظمة التبريد والتكييف'],
-            'التسيير والاقتصاد': ['الميزانية المالية وتحليلها', 'التدفقات المالية والتسيير النقدي', 'محاسبة الشركات وتوزيع الأرباح', 'الضرائب والرسوم في القانون الجزائري']
+            'الرياضيات': [
+                'الدوال العددية ودراسة الاشتقاق',
+                'الدوال الأسية واللوغاريتمية النيبيرية',
+                'المتتاليات الحسابية والهندسية والتراجع',
+                'الاحتمالات والتحليل التوفيقي والمحاكاة',
+                'الأعداد المركبة وحساب المثلثات والتحويلات',
+                'الهندسة في الفضاء والمعادلات الديكارتية',
+                'الحساب التكاملي والدوال الأصلية والمساحات',
+                'الحساب والقسمة في Z والموافقات (للرياضيات)'
+            ],
+            'الفيزياء': [
+                'المتابعة الزمنية لتحول كيميائي وسرعة التفاعل',
+                'تطور جملة ميكانيكية وقوانين نيوتن وحركة الكواكب',
+                'الظواهر الكهربائية: ثنائي القطب RC و RL والاهتزازات',
+                'التحولات النووية: النشاط الإشعاعي والانشطار والاندماج',
+                'تطور جملة كيميائية نحو حالة التوازن (الأحماض والأسس)',
+                'مراقبة تطور جملة كيميائية والأسترة والحلمأة'
+            ],
+            'العلوم الفيزيائية والتكنولوجيا': [
+                'المادة وتحولاتها (الذرات والشوارد والتحليل الكهربائي)',
+                'الظواهر الميكانيكية والجاذبية والثقل',
+                'الظواهر الكهربائية والأمن الكهربائي',
+                'الظواهر الضوئية والمرايا وانكسار الضوء'
+            ],
+            'العلوم الطبيعية': [
+                'آليات تركيب البروتين (الاستنساخ والترجمة)',
+                'العلاقة بين بنية ووظيفة البروتين والنشاط الإنزيمي',
+                'دور البروتينات في الدفاع عن الذات (المناعة الخلطية والخلوية)',
+                'دور البروتينات في الاتصال العصبي والمشبك وكمون العمل',
+                'آليات تحويل الطاقة الضوئية إلى طاقة كيميائية (التركيب الضوئي)',
+                'آليات تحويل الطاقة الكامنة في الجزيئات (التنفس والتخمر)'
+            ],
+            'علوم الطبيعة والحياة': [
+                'التغذية عند الإنسان والهضم والامتصاص',
+                'التنسيق الوظيفي في العضوية والاتصال العصبي',
+                'الاستجابة المناعية والاعتلالات والميكروبات',
+                'انتقال الصفات الوراثية وتكاثر الخلايا'
+            ],
+            'اللغة العربية': [
+                'شعر المنفى والمهجر والنزعة الإنسانية',
+                'النثر العلمي المتأدب وخصائصه',
+                'ظاهرة الحزن والألم والالتزام في الشعر العربي الحديث',
+                'البلاغة: الاستعارة والمجاز المرسل والتشبيه',
+                'الإعراب التقديري والمحلي والجمل التي لها محل من الإعراب'
+            ],
+            'اللغة العربية وآدابها': [
+                'شعر المنفى والمهجر والنزعة الإنسانية والوجدانية',
+                'النثر العلمي المتأدب عند ابن خلدون والقزويني',
+                'ظاهرة الالتزام في الشعر الثوري الجزائري والفلسطيني',
+                'البلاغة: المجاز المرسل والكناية والاستعارة التمثيلية',
+                'قواعد اللغة: إعراب إذ، إذا، إذن، وحينئذ، لو، لولا، لوما'
+            ],
+            'الفلسفة': [
+                'السؤال العلمي والسؤال الفلسفي والمشكلة والإشكالية',
+                'فلسفة الرياضيات وأصل المفاهيم الرياضية (عقلية أم تجريبية)',
+                'فلسفة العلوم الطبيعية والبيولوجيا وتطبيق المنهج التجريبي',
+                'الشعور واللاشعور ومدرسة التحليل النفسي لفرويد',
+                'الذاكرة والخيال بين النظرية المادية والنظرية النفسية',
+                'الحرية والمسؤولية بين الحتمية والتحرر',
+                'الديمقراطية السياسية والعدالة الاجتماعية بين التفاوت والمساواة'
+            ],
+            'العلوم الإسلامية': [
+                'العقل ومكانته وموقفه من الفكر والموروثات',
+                'مقاصد الشريعة الإسلامية الضرورية والحاجية والتحسينية',
+                'القيم الفردية والأسرية والاجتماعية في القرآن الكريم',
+                'المعاملات المالية الجائزة والمحرمة وحكم الربا والصرف',
+                'الصحة النفسية والجسمية في القرآن والسنة',
+                'الميراث في الإسلام وطرق توزيعه العادل'
+            ],
+            'التاريخ والجغرافيا': [
+                'بروز الصراع وتشكل العالم بعد الحرب العالمية الثانية',
+                'مساعي الانفراج الدولي والتعايش السلمي',
+                'استراتيجية الثورة الجزائرية داخلياً وخارجياً (1954-1962)',
+                'إشكالية التقدم والتخلف ومؤشرات التنمية',
+                'القوى الاقتصادية الكبرى (الولايات المتحدة، الاتحاد الأوروبي، شرق آسيا)'
+            ],
+            'اللغة الإنجليزية': [
+                'Ancient Civilizations (الحضارات القديمة وعوامل ازدهارها)',
+                'Ethics in Business & Counterfeiting (أخلاقيات الأعمال ومكافحة الفساد)',
+                'Education Systems in the World (أنظمة التعليم)',
+                'Feelings and Emotions (المشاعر والسلوكيات الإنسانية)',
+                'Astronomy and the Solar System (علم الفلك والنظام الشمسي)'
+            ],
+            'اللغة الفرنسية': [
+                'Le texte d\'histoire et le témoignage historique (النص التاريخي)',
+                'L\'appel et le texte incitatif (النص التحريضي والدعوة للعمل)',
+                'Le débat d\'idées et l\'argumentation (جدال الأفكار والمناظرة)',
+                'La nouvelle réaliste et fantastique (القصة القصيرة)'
+            ],
+            'تكنولوجيا وهندسة': [
+                'الأنظمة المنطقية المبرمجة والدارات المندمجة',
+                'الهندسة الميكانيكية: نقل الحركة ودراسة الإجهادات',
+                'الهندسة الكهربائية: المحركات والمتحكمات الدقيقة',
+                'الهندسة المدنية: الخرسانة المسلحة وتوزيع القوى',
+                'هندسة الطرائق: التفاعلات العضوية وصناعة البوليمرات'
+            ],
+            'التسيير المحاسبي والمالي': [
+                'التسويات ونهاية الدورة المحاسبية وأعمال الجرد',
+                'الاهتلاكات ونقص قيمة التثبيتات',
+                'حساب النتائج وتحليل السيولة والقدرة على التمويل الذاتي',
+                'محاسبة الأجور والاشتراكات الاجتماعية'
+            ],
+            'الاقتصاد والمناجمنت': [
+                'النقود والوظائف النقدية والكتلة النقدية',
+                'السوق والأسعار وقوانين العرض والطلب',
+                'النظام المصرفي ودور البنك المركزي',
+                'التجارة الخارجية وميزان المدفوعات وسياسات الصرف'
+            ],
+            'القانون': [
+                'عقد العمل وعلاقات العمل الفردية والجماعية',
+                'الشركات التجارية وتأسيس شركة المساهمة و SARL',
+                'عقد البيع والالتزامات المتبادلة',
+                'الضرائب والرسوم وإجراءات التحصيل'
+            ],
+            'التربية الإسلامية': [
+                'أركان الإيمان والإحسان وفضل القرآن الكريم',
+                'قصص الأنبياء والعبر المستفادة',
+                'الآداب والأخلاق الفاضلة في الحياة اليومية'
+            ],
+            'التربية المدنية': [
+                'المؤسسات الدستورية للجمهورية الجزائرية',
+                'حقوق وواجبات المواطن الجزائري وحرية التعبير',
+                'القضاء وفض النزاعات والهلال الأحمر الجزائري'
+            ],
+            'التربية العلمية والتكنولوجية': [
+                'حياة النبات الأخضر والتركيب الضوئي',
+                'جسم الإنسان والتنفس والدورة الدموية',
+                'حالات المادة والكهرباء واستخدام الطاقة بأمان'
+            ]
         };
 
         const loadingTips = [
-            "جاري التفكير وصياغة الشرح الأكاديمي وفق المناهج التعليمية المعتمدة...",
-            "نقوم بصياغة تمرين تطبيقي فريد لمساعدتك على تثبيت المفاهيم...",
-            "المعلم الافتراضي يحلل أسئلة الامتحانات السابقة وصياغة نصائح النجاح...",
-            "جاري تنسيق القوانين والمعادلات الرياضية وإخفاء الحل لتختبر نفسك...",
+            "جاري التفكير وصياغة الشرح الأكاديمي وفق المنهاج الجزائري الرسمي المعتمد...",
+            "نقوم بصياغة تمرين تطبيقي فريد مستوحى من بنك الامتحانات الرسمية لتثبيت المفاهيم...",
+            "المعلم الافتراضي يحلل سلم التنقيط الوزاري وصياغة نصائح النجاح والتفوق...",
+            "جاري تنسيق القوانين والمعادلات الرياضية وإخفاء الحل لتختبر نفسك أولاً...",
             "تقريباً جاهز! ننسق الخطوط والأقسام ليكون الملخص سهلاً للمطالعة والطباعة..."
         ];
 
@@ -723,6 +1308,10 @@
         let selectedImageBase64 = null;
         let selectedMimeType = 'image/jpeg';
         let mediaStream = null;
+
+        // Current active curriculum level key & text
+        let currentCurriculumKey = 'sec_3_se'; // Default: BAC Experimental Sciences
+        let detectedLevelText = 'السنة الثالثة ثانوي (BAC) - شعبة علوم تجريبية';
 
         // Switch between Lesson Mode and Photo Mode
         function switchMode(mode) {
@@ -749,65 +1338,239 @@
             }
         }
 
+        // Toggle visibility of Level Selector Card
+        function toggleLevelSelectorCard() {
+            const card = document.getElementById('levelSelectionCard');
+            if (card.classList.contains('hidden')) {
+                card.classList.remove('hidden');
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                card.classList.add('hidden');
+            }
+        }
+
+        function applyAndCloseLevelSelector() {
+            const card = document.getElementById('levelSelectionCard');
+            card.classList.add('hidden');
+            
+            // Scroll to the main panel
+            const panel = document.getElementById('panelLesson');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 🧠 Initializing Curriculum & Stage / Grade / Stream Interlinking
+        function onStageChanged() {
+            const stage = document.getElementById('stageSelector').value;
+            const gradeSelect = document.getElementById('gradeSelector');
+            const streamWrapper = document.getElementById('streamSelectorWrapper');
+            
+            gradeSelect.innerHTML = '';
+
+            if (stage === 'primary') {
+                streamWrapper.classList.add('hidden');
+                gradeSelect.innerHTML = `
+                    <option value="pri_1">السنة الأولى ابتدائي</option>
+                    <option value="pri_2">السنة الثانية ابتدائي</option>
+                    <option value="pri_3">السنة الثالثة ابتدائي</option>
+                    <option value="pri_4">السنة الرابعة ابتدائي</option>
+                    <option value="pri_5" selected>السنة الخامسة ابتدائي (الامتحان النهائي)</option>
+                `;
+                currentCurriculumKey = gradeSelect.value;
+            } else if (stage === 'middle') {
+                streamWrapper.classList.add('hidden');
+                gradeSelect.innerHTML = `
+                    <option value="mid_1">السنة الأولى متوسط</option>
+                    <option value="mid_2">السنة الثانية متوسط</option>
+                    <option value="mid_3">السنة الثالثة متوسط</option>
+                    <option value="mid_4" selected>السنة الرابعة متوسط (شهادة BEM)</option>
+                `;
+                currentCurriculumKey = gradeSelect.value;
+            } else {
+                // Secondary
+                streamWrapper.classList.remove('hidden');
+                gradeSelect.innerHTML = `
+                    <option value="1as">السنة الأولى ثانوي (1AS)</option>
+                    <option value="2as">السنة الثانية ثانوي (2AS)</option>
+                    <option value="3as" selected>السنة الثالثة ثانوي - بكالوريا (BAC)</option>
+                `;
+                updateSecondaryStreams();
+            }
+
+            syncCurriculumSelection();
+        }
+
+        function onGradeChanged() {
+            const stage = document.getElementById('stageSelector').value;
+            if (stage === 'secondary') {
+                updateSecondaryStreams();
+            } else {
+                currentCurriculumKey = document.getElementById('gradeSelector').value;
+            }
+            syncCurriculumSelection();
+        }
+
+        function updateSecondaryStreams() {
+            const grade = document.getElementById('gradeSelector').value;
+            const streamSelect = document.getElementById('streamSelector');
+            streamSelect.innerHTML = '';
+
+            if (grade === '1as') {
+                streamSelect.innerHTML = `
+                    <option value="sec_1_st" selected>جذع مشترك علوم وتكنولوجيا</option>
+                    <option value="sec_1_lit">جذع مشترك آداب</option>
+                `;
+            } else if (grade === '2as') {
+                streamSelect.innerHTML = `
+                    <option value="sec_2_se" selected>شعبة علوم تجريبية</option>
+                    <option value="sec_2_m">شعبة رياضيات</option>
+                    <option value="sec_2_tm">شعبة تقني رياضي</option>
+                    <option value="sec_2_ge">شعبة تسيير واقتصاد</option>
+                    <option value="sec_2_lp">شعبة آداب وفلسفة</option>
+                    <option value="sec_2_fl">شعبة لغات أجنبية</option>
+                `;
+            } else {
+                // 3as - BAC
+                streamSelect.innerHTML = `
+                    <option value="sec_3_se" selected>شعبة علوم تجريبية (BAC)</option>
+                    <option value="sec_3_m">شعبة رياضيات (BAC)</option>
+                    <option value="sec_3_tm">شعبة تقني رياضي (BAC)</option>
+                    <option value="sec_3_ge">شعبة تسيير واقتصاد (BAC)</option>
+                    <option value="sec_3_lp">شعبة آداب وفلسفة (BAC)</option>
+                    <option value="sec_3_fl">شعبة لغات أجنبية (BAC)</option>
+                `;
+            }
+            currentCurriculumKey = streamSelect.value;
+        }
+
+        function onStreamChanged() {
+            currentCurriculumKey = document.getElementById('streamSelector').value;
+            syncCurriculumSelection();
+        }
+
+        // Apply chosen curriculum key to UI, subjects, and suggestions
+        function syncCurriculumSelection() {
+            const curriculumInfo = ALGERIAN_CURRICULUM[currentCurriculumKey];
+            if (!curriculumInfo) return;
+
+            detectedLevelText = curriculumInfo.name;
+
+            // Save preference to localStorage
+            try {
+                localStorage.setItem('aiTutorSelectedLevelKey', currentCurriculumKey);
+                localStorage.setItem('aiTutorSelectedLevelName', curriculumInfo.name);
+            } catch (e) {}
+
+            // Update Badges
+            document.getElementById('detectedStudentLevel').innerText = curriculumInfo.name;
+            document.getElementById('activeLevelSummaryText').innerText = `تم تفعيل مقررات: ${curriculumInfo.name} وفق آخر تحيين لوزارة التربية الوطنية الجزائرية.`;
+
+            // Populate Subjects dropdown
+            const subjectSelect = document.getElementById('subjectSelect');
+            subjectSelect.innerHTML = '';
+            
+            curriculumInfo.subjects.forEach((subj, idx) => {
+                const opt = document.createElement('option');
+                opt.value = subj.name;
+                opt.innerText = `${subj.icon} ${subj.name}`;
+                if (idx === 0) opt.selected = true;
+                subjectSelect.appendChild(opt);
+            });
+
+            // Update Lesson suggestions for the newly selected subject
+            updateLessonSuggestions();
+        }
+
+        // Update Quick Suggestions based on Subject & Active Level
         function updateLessonSuggestions() {
             const subject = document.getElementById('subjectSelect').value;
             const container = document.getElementById('suggestionsContainer');
             container.innerHTML = '';
             
-            if (suggestions[subject]) {
-                suggestions[subject].forEach(sug => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.onclick = () => {
-                        document.getElementById('lessonInput').value = sug;
-                    };
-                    btn.className = "px-2 py-0.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200/80 rounded transition";
-                    btn.innerText = sug;
-                    container.appendChild(btn);
-                });
-            }
+            const list = suggestions[subject] || [
+                `الوحدة الأولى في ${subject}`,
+                `ملخص القوانين والتمارين في ${subject}`,
+                `حل مسائل الامتحانات السابقة في ${subject}`
+            ];
+
+            list.forEach(sug => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => {
+                    document.getElementById('lessonInput').value = sug;
+                };
+                btn.className = "px-2 py-1 text-xs font-semibold text-slate-700 bg-white hover:bg-blue-50 hover:text-blue-700 border border-slate-200 rounded-lg shadow-2xs transition text-right";
+                btn.innerHTML = `<i class="fa-solid fa-angle-left text-[10px] text-blue-500 ml-1"></i> ${sug}`;
+                container.appendChild(btn);
+            });
         }
 
-        const levelMap = {
-            'primary_all': 'جميع مستويات الابتدائي',
-            'primary_1': 'السنة الأولى ابتدائي',
-            'primary_2': 'السنة الثانية ابتدائي',
-            'primary_3': 'السنة الثالثة ابتدائي',
-            'primary_4': 'السنة الرابعة ابتدائي',
-            'primary_5': 'السنة الخامسة ابتدائي',
-            '5eme_pri': 'خامسة ابتدائي',
-            'middle_all': 'جميع مستويات المتوسط',
-            '1ere_am': 'أولى متوسط',
-            '2eme_am': 'ثانية متوسط',
-            '3eme_am': 'ثالثة متوسط',
-            '4eme_am': 'رابعة متوسط (BEM)',
-            'bem': 'رابعة متوسط (BEM)',
-            'secondary_all': 'جميع مستويات الثانوي',
-            '1ere_as': 'أولى ثانوي',
-            '2eme_as': 'ثانية ثانوي',
-            '3eme_as': 'ثالثة ثانوي (BAC)',
-            'bac': 'ثالثة ثانوي (BAC)',
-            'university': 'المستوى الجامعي'
-        };
-
-        let detectedLevel = '';
-        let detectedLevelText = '';
-
+        // Auto initialization on load
         window.onload = () => {
-            updateLessonSuggestions();
-            
-            // Auto detect student level from localStorage
+            // Check if user has a stored level or if they are in "All Levels" mode
+            let initialKey = 'sec_3_se'; // standard fallback
+            let shouldOpenLevelPrompt = false;
+
             try {
+                const savedKey = localStorage.getItem('aiTutorSelectedLevelKey');
                 const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-                if (userData && userData.education_level) {
-                    detectedLevel = userData.education_level;
-                    detectedLevelText = levelMap[detectedLevel] || detectedLevel;
-                    
-                    document.getElementById('detectedStudentLevel').innerText = detectedLevelText;
-                    document.getElementById('studentLevelBadgeContainer').classList.remove('hidden');
+                const userLevel = userData.education_level || '';
+
+                if (savedKey && ALGERIAN_CURRICULUM[savedKey]) {
+                    initialKey = savedKey;
+                } else if (userLevel) {
+                    // Check if generic "all levels" was chosen in registration/profile
+                    if (userLevel === 'primary_all' || userLevel === 'middle_all' || userLevel === 'secondary_all' || userLevel === 'all' || userLevel === 'غير محدد') {
+                        shouldOpenLevelPrompt = true;
+                        if (userLevel === 'primary_all') initialKey = 'pri_5';
+                        else if (userLevel === 'middle_all') initialKey = 'mid_4';
+                        else initialKey = 'sec_3_se';
+                    } else {
+                        // Map known keys
+                        const mapObj = {
+                            'primary_1': 'pri_1', 'primary_2': 'pri_2', 'primary_3': 'pri_3', 'primary_4': 'pri_4', 'primary_5': 'pri_5', '5eme_pri': 'pri_5',
+                            '1ere_am': 'mid_1', '2eme_am': 'mid_2', '3eme_am': 'mid_3', '4eme_am': 'mid_4', 'bem': 'mid_4',
+                            '1ere_as': 'sec_1_st', '2eme_as': 'sec_2_se', '3eme_as': 'sec_3_se', 'bac': 'sec_3_se'
+                        };
+                        if (mapObj[userLevel]) {
+                            initialKey = mapObj[userLevel];
+                        }
+                    }
+                } else {
+                    // No level set at all: open selection card
+                    shouldOpenLevelPrompt = true;
                 }
             } catch (err) {
-                console.error("Error reading student profile:", err);
+                console.error("Error reading profile:", err);
+            }
+
+            // Sync selectors to match initialKey
+            const curInfo = ALGERIAN_CURRICULUM[initialKey];
+            if (curInfo) {
+                currentCurriculumKey = initialKey;
+                document.getElementById('stageSelector').value = curInfo.stage;
+                
+                // Trigger stage changes
+                onStageChanged();
+                
+                if (curInfo.stage === 'primary' || curInfo.stage === 'middle') {
+                    document.getElementById('gradeSelector').value = initialKey;
+                } else if (curInfo.stage === 'secondary') {
+                    if (curInfo.grade) document.getElementById('gradeSelector').value = curInfo.grade;
+                    updateSecondaryStreams();
+                    if (document.getElementById('streamSelector')) {
+                        document.getElementById('streamSelector').value = initialKey;
+                    }
+                }
+            }
+
+            syncCurriculumSelection();
+
+            // Open or hide level card based on whether specific level was already known
+            const levelCard = document.getElementById('levelSelectionCard');
+            if (shouldOpenLevelPrompt) {
+                levelCard.classList.remove('hidden');
+            } else {
+                levelCard.classList.add('hidden');
             }
 
             // Drag & Drop event handlers
