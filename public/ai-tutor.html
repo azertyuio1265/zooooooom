@@ -528,16 +528,17 @@
                         <span>تخصيص الدرس والمادة</span>
                     </div>
 
-                    <!-- Subject dropdown (from curriculum) -->
+                    <div class="mb-4">
+                        <label class="field-label">المستوى الدراسي والسنة:</label>
+                        <input type="text" id="manualEducationLevel" placeholder="مثال: السنة الثانية ثانوي" class="field-input" autocomplete="off">
+                    </div>
+                    <div class="mb-4">
+                        <label class="field-label">الشعبة والتخصص:</label>
+                        <input type="text" id="manualSpecialty" placeholder="مثال: علوم تجريبية، إعلام آلي" class="field-input" autocomplete="off">
+                    </div>
                     <div class="mb-4">
                         <label class="field-label">المادة الدراسية:</label>
-                        <select id="subjectSelect" class="field-input" onchange="updateLessonSuggestions()"></select>
-                    </div>
-
-                    <!-- Subject manual input (optional override) -->
-                    <div class="mb-4">
-                        <label class="field-label">أو أدخل مادة يدوياً (اختياري):</label>
-                        <input type="text" id="subjectInput" placeholder="مثال: الرياضيات، قواعد البيانات..." class="field-input">
+                        <input type="text" id="subjectInput" placeholder="اكتب اسم المادة يدوياً" class="field-input" autocomplete="off" required>
                     </div>
 
                     <!-- Lesson Input -->
@@ -546,13 +547,7 @@
                         <input type="text" id="lessonInput" placeholder="مثال: الدوال الأسية، حركة القذيفة..." class="field-input">
                     </div>
 
-                    <!-- Popular Suggestions -->
-                    <div class="mb-5">
-                        <span class="field-label flex items-center gap-1.5">
-                            <i class="fa-solid fa-lightbulb text-amber-500"></i> مقترحات سريعة:
-                        </span>
-                        <div id="suggestionsContainer" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto"></div>
-                    </div>
+
 
                     <button id="generateBtn" onclick="generateAISummary()" class="btn-primary w-full">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -692,6 +687,7 @@
                         </div>
                         <div class="p-5 sm:p-7">
                             <div id="outputContent" class="markdown-body"></div>
+                            <div id="sourceList" class="mt-6 border-t border-slate-200 pt-4 hidden"></div>
                         </div>
                     </article>
 
@@ -738,7 +734,7 @@
     <script>
         // ===== Algerian Curriculum Data =====
         const ALGERIAN_CURRICULUM = {
-            'pri_1': { stage:'primary', name:'السنة الأولى ابتدائي', shortName:'1 ابتدائي', subjects:[
+            'pri_1': { stage:'primary', name:'السنة الأولى ابتدائي', shortName:'1 ابتدا��ي', subjects:[
                 {name:'اللغة العربية',icon:'📖'},{name:'الرياضيات',icon:'📐'},{name:'التربية الإسلامية',icon:'🕌'},{name:'التربية المدنية',icon:'🏛️'},{name:'التربية العلمية والتكنولوجية',icon:'🌱'},{name:'التربية الفنية والموسيقية',icon:'🎨'}]},
             'pri_2': { stage:'primary', name:'السنة الثانية ابتدائي', shortName:'2 ابتدائي', subjects:[
                 {name:'اللغة العربية',icon:'📖'},{name:'الرياضيات',icon:'📐'},{name:'التربية الإسلامية',icon:'🕌'},{name:'التربية المدنية',icon:'🏛️'},{name:'التربية العلمية والتكنولوجية',icon:'🌱'},{name:'التربية الفنية',icon:'🎨'}]},
@@ -1094,7 +1090,7 @@
             const specialty = specialtySelect.options[specialtySelect.selectedIndex] ? specialtySelect.options[specialtySelect.selectedIndex].text : '';
 
             const summaryText = document.getElementById('activeLevelSummaryText');
-            if (summaryText) summaryText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-blue-600"></i> جاري البحث عن المنهاج...`;
+            if (summaryText) summaryText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-blue-600"></i> جاري ال��حث عن المنهاج...`;
             const subjectSelect = document.getElementById('subjectSelect');
             if (subjectSelect) subjectSelect.innerHTML = '<option>⏳ جاري جلب المواد...</option>';
 
@@ -1304,12 +1300,12 @@
 
         // ===== Generate AI Summary =====
         async function generateAISummary() {
-            const manualSubject = document.getElementById('subjectInput').value.trim();
-            const subject = manualSubject || document.getElementById('subjectSelect').value || 'المادة العامة';
-            const specialty = detectedLevelText || 'غير محدد';
+            const subject = document.getElementById('subjectInput').value.trim();
+            const educationLevel = document.getElementById('manualEducationLevel').value.trim();
+            const specialty = document.getElementById('manualSpecialty').value.trim();
             const lesson = document.getElementById('lessonInput').value.trim();
 
-            if (!lesson) { alert('يرجى كتابة اسم الدرس أو الموضوع أولاً!'); return; }
+            if (!subject || !lesson) { alert('يرجى كتابة المادة واسم الدرس أو الموضوع أولاً!'); return; }
 
             currentSubject = subject;
             currentLesson = lesson;
@@ -1325,7 +1321,7 @@
                 const response = await fetch('/api/ai/summarize', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ subject, lesson, education_level: specialty })
+                    body: JSON.stringify({ subject, lesson, education_level: educationLevel, specialty })
                 });
 
                 if (!response.ok) {
@@ -1373,7 +1369,7 @@
 
         // ===== Solve Exercise Image =====
         async function solveExerciseImage() {
-            if (!selectedImageBase64) { alert('يرجى التقاط أو اختيار صورة للتمرين أولاً!'); return; }
+            if (!selectedImageBase64) { alert('يرجى ا��تقاط أو اختيار صورة للتمرين أولاً!'); return; }
             const notes = document.getElementById('photoNotesInput').value.trim();
 
             document.getElementById('emptyState').classList.add('hidden');

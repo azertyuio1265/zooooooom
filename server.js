@@ -2946,7 +2946,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
             window.location.href = '/teacher-dashboard.html';
         }
 
-        // حفظ وإيقاف الموقت تلقائياً عند إغلاق التبويب أو مغادرة الصفحة دون إنهاء البث
+        // حفظ وإيق��ف الموقت تلقائياً عند إغلاق التبويب أو مغادرة الصفحة دون إنهاء البث
         window.addEventListener('pagehide', function() {
             if (isLeaving) return;
             isTimerPaused = true;
@@ -3909,7 +3909,7 @@ function getAiClient() {
 
 app.post('/api/ai/summarize', async (req, res) => {
     try {
-        const { subject, lesson, education_level } = req.body;
+        const { subject, lesson, education_level, specialty } = req.body;
         if (!subject || !lesson) {
             return res.status(400).json({
                 success: false,
@@ -3928,8 +3928,9 @@ app.post('/api/ai/summarize', async (req, res) => {
 
             const ai = getAiClient();
             const prompt = `أنت بروفيسور وعالم تربوي وأستاذ أطروحات متميز، خبير في المناهج الرسمية والبرامج التعليمية الجزائرية.
-الطالب يدخل التخصص أو المستوى: ${levelText}، والمادة: ${subject}.
-المطلوب منك كتابة **محاضرة أكاديمية تفصيلية، موسعة، وشاملة بكل ما تحمله الكلمة من معنى** لدرس: "${cleanLesson}".
+الطالب يدخل المستوى: ${levelText}، الشعبة أو التخصص: ${specialty || 'غير محدد'}، والمادة: ${subject}.
+قبل الكتابة استخدم Google Search للعثور على مصادر موثوقة وحديثة تخص هذا الدرس والمستوى، ثم تحقّق من توافقها. لا تخمّن ولا تنشئ معلومات عامة غير مستندة إلى المصادر. اذكر في نهاية الشرح المصادر التي اعتمدت عليها بروابطها إن توفرت.
+المطلوب منك كتابة **شرح فعلي دقيق ومبسّط** لدرس: "${cleanLesson}".
 
 تعليمات صارمة لا تقبل التراجع لضمان فهم الطالب فهماً تاماً وعميقاً ومبسطاً:
 1. **مبدأ التبسيط والتفصيل (Simplify & Detail):**
@@ -3954,19 +3955,26 @@ app.post('/api/ai/summarize', async (req, res) => {
             try {
                 response = await ai.models.generateContent({
                     model: 'gemini-2.5-flash',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    config: { tools: [{ googleSearch: {} }] }
                 });
             } catch (modelErr) {
                 response = await ai.models.generateContent({
                     model: 'gemini-2.5-pro',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    config: { tools: [{ googleSearch: {} }] }
                 });
             }
             explanation = response.text() || '';
         } catch (aiErr) {
-            console.warn('⚠️ تفعيل محرك الطوارئ الذكي المتخصص للشرح:', aiErr.message);
+            console.error('❌ فشل البحث أو توليد الشرح الحقيقي:', aiErr.message);
+            return res.status(502).json({
+                success: false,
+                error: 'تعذر البحث عن الدرس أو توليد شرح موثوق حالياً. يرجى المحاولة مرة أخرى.'
+            });
             
-            // Generate rich domain-specific fallback content based on lesson name
+            // لا توجد إجابة احتياطية ثابتة؛ يجب أن يأتي الشرح من Gemini بعد البحث.
+            /* Generate rich domain-specific fallback content based on lesson name
             const isProgramming = /برمجة|دلفي|delphi|python|java|c\+\+|sql|php|html|javascript|الخوارزميات|برامج/i.test(cleanLesson + ' ' + subject);
             const isMath = /رياضيات|دوال|متتاليات|احتمالات|أعداد|معادلات|integrals|math/i.test(cleanLesson + ' ' + subject);
             
@@ -4051,7 +4059,7 @@ end.
 **شرح الكود خطوة بخطوة:**
 1. **التقاط الحدث:** عند الضغط على الزر \`BtnProcess\`, يتم استدعاء الإجراء \`BtnProcessClick\`.
 2. **التحقق من المدخلات:** نتأكد من أن حقل الإدخال ليس فارغاً لتجنب الأخطاء (\`Exceptions\`).
-3. **تنفيذ المنطق البرمجي:** يتم إجراء العمليات المطلوبة وعرض النتائج مباشرة داخل مكون \`MemoOutput\`.
+3. **تنفيذ المنطق البرمجي:** يتم إجراء العمليات المطلوبة وعرض النتا��ج مباشرة داخل مكون \`MemoOutput\`.
 
 ---
 
@@ -4132,9 +4140,10 @@ end;
 #### 🔑 الحل المفصل خطوة بخطوة:
 1. **الخطوة الأولى:** تفكيك المعطيات الأساسية واستخراج المطلوب.
 2. **الخطوة الثانية:** تطبيق القواعد والنظريات المقررة بدقة.
-3. **الخطوة الثالثة:** صياغة النتيجة النهائية مع ذكر الوحدات والمصطلحات العلمية المناسبة.
+                3. **الخطوة الثالثة:** صياغة النتيجة النهائية مع ذكر الوحدات والمصطلحات العلمية المناسبة.
 `;
             }
+            */
         }
 
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
