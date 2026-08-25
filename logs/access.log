@@ -1,0 +1,108 @@
+[2026-08-23 20:25:02.986] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 06:12:21.411] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 09:34:00.452] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 09:46:01.563] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 10:00:15.302] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 18:11:26.812] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-24 18:12:18.208] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-25 05:35:41.280] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }
+[2026-08-25 08:19:40.901] [INFO] CORS Origins configured:
+  Details: {
+      "count": 13,
+      "origins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app"
+      ],
+      "isFromEnv": false
+    }

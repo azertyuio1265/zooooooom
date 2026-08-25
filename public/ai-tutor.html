@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZoomDz | المعلم الافتراضي الذكي والمراجع السريع</title>
+    <link rel="icon" type="image/png" href="/images/zoomdz.png">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Markdown Parser CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    
+    <!-- Custom Style using Tailwind CSS CDN (V4 standard mapping equivalent utilities) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            600: '#1e40af',
+                            700: '#1d4ed8',
+                            800: '#1e3a8a',
+                        },
+                        secondary: {
+                            500: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Markdown custom rendering */
+        .markdown-body h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .markdown-body h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-body h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-body p {
+            line-height: 1.8;
+            color: #334155;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+        .markdown-body ul, .markdown-body ol {
+            padding-right: 1.5rem;
+            margin-bottom: 1rem;
+            list-style-type: decimal;
+        }
+        .markdown-body ul {
+            list-style-type: disc;
+        }
+        .markdown-body li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+            color: #334155;
+        }
+        .markdown-body blockquote {
+            border-right: 4px solid #1e40af;
+            padding: 0.5rem 1rem;
+            background-color: #eff6ff;
+            color: #1e3a8a;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1rem;
+        }
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .markdown-body th, .markdown-body td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: right;
+        }
+        .markdown-body th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .markdown-body tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .markdown-body code {
+            font-family: monospace;
+            background-color: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #dc2626;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2">
+                    <img src="/images/zoomdz.png" alt="ZoomDz" class="h-10 w-auto rounded-lg" referrerPolicy="no-referrer">
+                    <span class="text-xl font-bold text-blue-900 font-cairo">Zoom<span class="text-blue-600">Dz</span></span>
+                </a>
+                <span class="hidden md:inline px-2.5 py-1 text-xs font-semibold text-emerald-800 bg-emerald-100 rounded-full">المعلم الذكي v1.0</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/student-dashboard.html" class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 bg-slate-100 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span>العودة للوحة التحكم</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Hero Alert -->
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="relative z-10 max-w-3xl">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-4">
+                    <i class="fa-solid fa-sparkles"></i>
+                    <span>مجاني 100% وبدون اشتراك</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold mb-3 leading-tight font-cairo">راجع دروسك ذكياً مع المعلم الافتراضي!</h1>
+                <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
+                    اختر المادة واكتب اسم الدرس، وسيقوم الذكاء الاصطناعي ببناء ملخص شامل ومبسط، شرح كامل، تمارين محلولة بالتفصيل وصورة توضيحية فورية لمساعدتك في الاستيعاب البصري.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Input Form (lg:col-span-4) -->
+            <section class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-blue-600"></i>
+                        <span>إعدادات المراجعة</span>
+                    </h2>
+                    
+                    <!-- Subject Selector -->
+                    <div class="mb-5">
+                        <label for="subjectSelect" class="block text-sm font-semibold text-slate-700 mb-2">اختر المادة الدراسية:</label>
+                        <select id="subjectSelect" onchange="updateLessonSuggestions()" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-cairo text-sm text-slate-800">
+                            <option value="الرياضيات">الرياضيات (Mathematics)</option>
+                            <option value="الفيزياء">الفيزياء (Physics)</option>
+                            <option value="العلوم الطبيعية">العلوم الطبيعية (Natural Sciences)</option>
+                            <option value="الأدب العربي">الأدب العربي (Arabic Literature)</option>
+                            <option value="الفلسفة">الفلسفة (Philosophy)</option>
+                            <option value="العلوم الإسلامية">العلوم الإسلامية (Islamic Sciences)</option>
+                            <option value="اللغة الإنجليزية">اللغة الإنجليزية (English Language)</option>
+                            <option value="اللغة الفرنسية">اللغة الفرنسية (French Language)</option>
+                            <option value="تكنولوجيا وهندسة">تكنولوجيا وهندسة (Technology & Eng.)</option>
+                            <option value="التسيير والاقتصاد">التسيير والاقتصاد (Economics)</option>
+                        </select>
+                    </div>
+
+                    <!-- Lesson Input -->
+                    <div class="mb-5">
+                        <label for="lessonInput" class="block text-sm font-semibold text-slate-700 mb-2">اسم الدرس أو الوحدة:</label>
+                        <input type="text" id="lessonInput" placeholder="أدخل اسم الدرس هنا..." class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-cairo text-sm text-slate-800">
+                    </div>
+
+                    <!-- Popular Suggestions -->
+                    <div class="mb-6">
+                        <span class="block text-xs font-semibold text-slate-500 mb-2.5">مقترحات شائعة لهذا اليوم:</span>
+                        <div id="suggestionsContainer" class="flex flex-wrap gap-2">
+                            <!-- suggestions dynamically injected -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="generateBtn" onclick="generateAISummary()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-blue-200 transition-all duration-150 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>توليد الملخص والشرح والرسومات</span>
+                </button>
+            </section>
+
+            <!-- Right Panel: Output & Explanation (lg:col-span-8) -->
+            <section class="lg:col-span-8">
+                
+                <!-- Empty Placeholder State -->
+                <div id="emptyState" class="bg-white border border-slate-200 rounded-2xl p-12 text-center shadow-sm flex flex-col items-center justify-center min-h-[450px]">
+                    <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl mb-4 animate-bounce">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">معلمك الافتراضي جاهز لمساعدتك!</h3>
+                    <p class="text-slate-500 max-w-md text-sm leading-relaxed mb-6">
+                        اختر المادة والدرس من اليمين ثم اضغط على زر توليد لبناء ملخص دراسي تفاعلي رائع مدعوم بالصور والشرح الواضح.
+                    </p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden bg-white border border-slate-200 rounded-2xl p-12 text-center shadow-sm flex flex-col items-center justify-center min-h-[450px]">
+                    <div class="relative w-24 h-24 mb-6">
+                        <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+                        <div class="absolute inset-0 flex items-center justify-center text-2xl text-blue-600">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">جاري التفكير وتوليد الشرح الأكاديمي...</h3>
+                    <p id="loadingTip" class="text-blue-600 max-w-md text-sm font-semibold animate-pulse leading-relaxed">
+                        نكتب لك شرحاً تفصيلياً وفق المنهاج المعتمد...
+                    </p>
+                </div>
+
+                <!-- Output Display Container -->
+                <div id="outputContainer" class="hidden flex flex-col gap-6">
+                    
+                    <!-- Result Actions Bar -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span id="outputBadge" class="px-3 py-1 text-xs font-semibold text-blue-800 bg-blue-50 rounded-full"></span>
+                            <span id="outputLesson" class="text-sm font-bold text-slate-800"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <!-- Text to speech -->
+                            <button id="speakBtn" onclick="toggleSpeech()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition duration-150 flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid fa-volume-high"></i>
+                                <span id="speakText">قراءة بصوت عالٍ</span>
+                            </button>
+                            <!-- Print button -->
+                            <button onclick="printSummary()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition duration-150 flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid fa-print"></i>
+                                <span>طباعة / حفظ PDF</span>
+                            </button>
+                            <!-- Copy button -->
+                            <button onclick="copySummary()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition duration-150 flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>نسخ</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Article Card -->
+                    <article class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        
+                        <!-- AI Generated Image -->
+                        <div id="imageWrapper" class="relative w-full bg-slate-900 border-b border-slate-100">
+                            <img id="outputImage" src="" alt="شرح توضيحي" class="w-full max-h-[400px] object-cover mx-auto" referrerPolicy="no-referrer">
+                            <div class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>صورة مفهومية مولدة بالذكاء الاصطناعي</span>
+                            </div>
+                        </div>
+
+                        <!-- Markdown Explanation Content -->
+                        <div class="p-6 sm:p-8">
+                            <div id="outputContent" class="markdown-body">
+                                <!-- generated summary HTML goes here -->
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500 font-cairo">
+            &copy; 2026 ZoomDz. جميع الحقوق محفوظة. تم تطوير المعلم الذكي لمساعدة أبنائنا الطلبة في النجاح والتميز.
+        </div>
+    </footer>
+
+    <!-- Scripts for Logic & Interactivity -->
+    <script>
+        const suggestions = {
+            'الرياضيات': ['الدوال الأسية واللوغاريتمية', 'المتتاليات الحسابية والهندسية', 'الاحتمالات والتحليل التوفيقي', 'الأعداد المركبة وحساب المثلثات'],
+            'الفيزياء': ['حركة الكواكب والأقمار الصناعية', 'الميكانيك والظواهر الميكانيكية', 'ثنائي القطب RC و RL', 'الظواهر النووية والنشاط الإشعاعي'],
+            'العلوم الطبيعية': ['التركيب الضوئي وآلياته', 'تأثير الإنزيمات في التفاعلات', 'الاتصال العصبي والمشبك', 'المناعة والدفاع العضوي'],
+            'الأدب العربي': ['شعر المهجر ومدرسته الرومانسية', 'النثر العلمي المتأدب', 'البلاغة: المجاز المرسل والتشبيه', 'القواعد: إعراب الجمل الحالية والنعتية'],
+            'الفلسفة': ['السؤال العلمي والسؤال الفلسفي', 'المشكلة والاشكالية', 'الحقيقة والنسبية', 'فلسفة الرياضيات والمطلقية'],
+            'العلوم الإسلامية': ['العقل ومكانته في القرآن الكرم', 'الربا وأنواعه وأحكامه', 'القيم في القرآن الكريم', 'الصحة النفسية والجسمية في الإسلام'],
+            'اللغة الإنجليزية': ['Ancient Civilizations (الحضارات القديمة)', 'Business Ethics (أخلاقيات العمل)', 'Education Systems (المنظومات التعليمية)', 'Passive and Active Voice'],
+            'اللغة الفرنسية': ['Le texte historique (النص التاريخي)', 'Appel à l\'action (الدعوة إلى الفعل)', 'Le débat d\'idées (جدال الأفكار)', 'Les rapports logiques'],
+            'تكنولوجيا وهندسة': ['الأنظمة المنطقية والتحكم الرقمي', 'الترانزستور كمفتاح ومضخم', 'الهندسة المعمارية ورسم الأبعاد', 'أنظمة التبريد والتكييف'],
+            'التسيير والاقتصاد': ['الميزانية المالية وتحليلها', 'التدفقات المالية والتسيير النقدي', 'محاسبة الشركات وتوزيع الأرباح', 'الضرائب والرسوم في القانون الجزائري']
+        };
+
+        const loadingTips = [
+            "جاري التفكير وصياغة الشرح الأكاديمي وفق المناهج التعليمية المعتمدة...",
+            "نقوم بصياغة تمرين تطبيقي فريد لمساعدتك على تثبيت المفاهيم...",
+            "المعلم الافتراضي يحلل أسئلة الامتحانات السابقة وصياغة نصائح النجاح...",
+            "جاري تصميم رسم توضيحي بصري مخصص لتوضيح جوهر الدرس لعينيك...",
+            "تقريباً جاهز! ننسق الخطوط ونرتب الأقسام ليكون الملخص سهلاً للمطالعة والطباعة..."
+        ];
+
+        let tipInterval = null;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateLessonSuggestions() {
+            const subject = document.getElementById('subjectSelect').value;
+            const container = document.getElementById('suggestionsContainer');
+            container.innerHTML = '';
+            
+            if (suggestions[subject]) {
+                suggestions[subject].forEach(sug => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.onclick = () => {
+                        document.getElementById('lessonInput').value = sug;
+                    };
+                    btn.className = "px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-150";
+                    btn.innerText = sug;
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        // Initialize suggestions on load
+        window.onload = () => {
+            updateLessonSuggestions();
+        };
+
+        function startLoadingCarousel() {
+            let index = 0;
+            const loadingTip = document.getElementById('loadingTip');
+            loadingTip.innerText = loadingTips[0];
+            
+            tipInterval = setInterval(() => {
+                index = (index + 1) % loadingTips.length;
+                loadingTip.innerText = loadingTips[index];
+            }, 3000);
+        }
+
+        function stopLoadingCarousel() {
+            if (tipInterval) {
+                clearInterval(tipInterval);
+                tipInterval = null;
+            }
+        }
+
+        async function generateAISummary() {
+            const subject = document.getElementById('subjectSelect').value;
+            const lesson = document.getElementById('lessonInput').value.trim();
+
+            if (!lesson) {
+                alert('يرجى كتابة اسم الدرس أو الموضوع أولاً!');
+                return;
+            }
+
+            // Stop speech if running
+            if (isSpeaking) {
+                toggleSpeech();
+            }
+
+            // Show Loading UI
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('outputContainer').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            startLoadingCarousel();
+
+            try {
+                const response = await fetch('/api/ai/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ subject, lesson })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'فشل التوليد الذكي');
+                }
+
+                // Render Content
+                document.getElementById('outputBadge').innerText = data.subject;
+                document.getElementById('outputLesson').innerText = data.lesson;
+                
+                // Parse markdown to HTML
+                document.getElementById('outputContent').innerHTML = marked.parse(data.explanation);
+                
+                // Render Image
+                if (data.imageUrl) {
+                    document.getElementById('outputImage').src = data.imageUrl;
+                    document.getElementById('imageWrapper').classList.remove('hidden');
+                } else {
+                    document.getElementById('imageWrapper').classList.add('hidden');
+                }
+
+                // Show Output UI
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('outputContainer').classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert(`عذراً، حدث خطأ: ${error.message}`);
+                
+                // Revert UI
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
+                stopLoadingCarousel();
+            }
+        }
+
+        function printSummary() {
+            window.print();
+        }
+
+        function copySummary() {
+            const content = document.getElementById('outputContent').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('تم نسخ الملخص إلى الحافظة بنجاح!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function toggleSpeech() {
+            if (!('speechSynthesis' in window)) {
+                alert('ميزة القراءة الصوتية غير مدعومة في متصفحك الحالي.');
+                return;
+            }
+
+            const speakBtn = document.getElementById('speakBtn');
+            const speakText = document.getElementById('speakText');
+
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                speakBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                speakBtn.classList.add('bg-slate-100', 'hover:bg-slate-200', 'text-slate-700');
+                speakText.innerText = "قراءة بصوت عالٍ";
+            } else {
+                const text = document.getElementById('outputContent').innerText;
+                // clean up the text from special symbols
+                const cleanText = text.replace(/[*#_\\-]/g, '');
+                
+                currentUtterance = new SpeechSynthesisUtterance(cleanText);
+                currentUtterance.lang = 'ar-SA';
+                currentUtterance.rate = 1.0;
+
+                currentUtterance.onend = () => {
+                    isSpeaking = false;
+                    speakBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                    speakBtn.classList.add('bg-slate-100', 'hover:bg-slate-200', 'text-slate-700');
+                    speakText.innerText = "قراءة بصوت عالٍ";
+                };
+
+                currentUtterance.onerror = (e) => {
+                    console.error("Speech error:", e);
+                    isSpeaking = false;
+                    speakBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                    speakBtn.classList.add('bg-slate-100', 'hover:bg-slate-200', 'text-slate-700');
+                    speakText.innerText = "قراءة بصوت عالٍ";
+                };
+
+                window.speechSynthesis.speak(currentUtterance);
+                isSpeaking = true;
+                
+                speakBtn.classList.remove('bg-slate-100', 'hover:bg-slate-200', 'text-slate-700');
+                speakBtn.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                speakText.innerText = "إيقاف القراءة";
+            }
+        }
+    </script>
+
+</body>
+</html>
