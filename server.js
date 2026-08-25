@@ -4170,6 +4170,71 @@ $$E(x) = ax^2 + bx + c$$
 });
 
 /**
+ * @route   POST /api/ai/discover-curriculum
+ * @desc    بحث ذكي بالذكاء الاصطناعي عن المواد والدروس والشعب الرسمية في المنهاج الجزائري
+ * @access  Public / Students
+ */
+app.post('/api/ai/discover-curriculum', async (req, res) => {
+    try {
+        const { stage, grade, branch, specialty, levelName } = req.body;
+        
+        if (!process.env.GEMINI_API_KEY) {
+            return res.json({ success: false, error: 'API key not configured' });
+        }
+
+        const ai = getAiClient();
+        const prompt = `أنت خبير تربوي ومستشار مناهج تعليمية وخبير في المنهاج الرسمي الجزائري (وزارة التربية الوطنية، وزارة التعليم العالي والبحث العلمي، ووزارة التكوين والتعليم المهنيين).
+المطلوب منك تحليل وتحديد المواد الدراسية الرسمية بدقة تامة للمستوى والتخصص التالي في الجزائر:
+- الطور التعليمي: ${stage || 'غير محدد'}
+- السنة الدراسية: ${grade || 'غير محدد'}
+- الشعبة: ${branch || 'غير محدد'}
+- التخصص الدقيق: ${specialty || levelName || 'غير محدد'}
+
+قم بتوليد قائمة المواد الدراسية الرسمية المقررة لهذا المستوى والتخصص الدقيق تماماً حسب المنهاج الجزائري الرسمي المعتمد، بحيث تكون كل مادة مرفقة بأيقونة مناسبة (emoji) و3 إلى 5 وحدات أو دروس رئيسية (units).
+يجب أن تكون الإجابة حصراً بصيغة JSON وفق الهيكل التالي بدون أي مقدمات أو شروحات إضافية:
+{
+  "curriculumName": "الاسم الرسمي الكامل للمستوى والشعبة والتخصص في الجزائر",
+  "subjects": [
+    {
+      "name": "اسم المادة (مثلاً: الرياضيات، تصميم وقواعد البيانات، الفيزياء...)",
+      "icon": "أيقونة إيموجي تناسب المادة",
+      "units": ["الوحدة 1", "الوحدة 2", "الوحدة 3"]
+    }
+  ]
+}`;
+
+        // Try gemini-3.6-flash first, fallback to gemini-3.7-flash
+        let response;
+        try {
+            response = await ai.models.generateContent({
+                model: 'gemini-3.6-flash',
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                config: {
+                    responseMimeType: 'application/json'
+                }
+            });
+        } catch (modelErr) {
+            console.warn('Fallback to gemini-3.7-flash for curriculum discovery:', modelErr.message);
+            response = await ai.models.generateContent({
+                model: 'gemini-3.7-flash',
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                config: {
+                    responseMimeType: 'application/json'
+                }
+            });
+        }
+
+        const text = response.text();
+        const data = JSON.parse(text);
+        return res.json({ success: true, ...data });
+
+    } catch (err) {
+        console.error('Curriculum discovery error:', err);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+/**
  * @route   POST /api/ai/solve-image
  * @desc    تحليل صورة تمرين دراسي بالذكاء الاصطناعي والتحقق منها وحلها خطوة بخطوة مع رفض فوري للصور غير الدراسية
  * @access  Public / Students

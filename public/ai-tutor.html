@@ -1540,10 +1540,61 @@
             }
         }
 
-        function applyAndCloseLevelSelector() {
+        async function discoverCurriculumViaAI() {
+            const stage = document.getElementById('stageSelector').value;
+            const gradeSelect = document.getElementById('gradeSelector');
+            const grade = gradeSelect && gradeSelect.options[gradeSelect.selectedIndex] ? gradeSelect.options[gradeSelect.selectedIndex].text : '';
+            const branchSelect = document.getElementById('branchSelector');
+            const branch = branchSelect && branchSelect.options[branchSelect.selectedIndex] ? branchSelect.options[branchSelect.selectedIndex].text : '';
+            const specialtySelect = document.getElementById('specialtySelector');
+            const specialty = specialtySelect && specialtySelect.options[specialtySelect.selectedIndex] ? specialtySelect.options[specialtySelect.selectedIndex].text : '';
+
+            const summaryText = document.getElementById('activeLevelSummaryText');
+            if (summaryText) {
+                summaryText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-blue-600"></i> جاري بحث الذكاء الاصطناعي عن المنهاج الجزائري الرسمي المعتمد (${detectedLevelText})...`;
+            }
+
+            try {
+                const res = await fetch('/api/ai/discover-curriculum', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stage, grade, branch, specialty, levelName: detectedLevelText })
+                });
+                const data = await res.json();
+                if (data.success && data.subjects && data.subjects.length > 0) {
+                    const curr = ALGERIAN_CURRICULUM[currentCurriculumKey] || { name: detectedLevelText, stage };
+                    curr.subjects = data.subjects.map(s => ({ name: s.name, icon: s.icon || '📚' }));
+                    
+                    data.subjects.forEach(s => {
+                        if (s.units && s.units.length > 0) {
+                            suggestions[s.name] = s.units;
+                        }
+                    });
+
+                    syncCurriculumSelection();
+                    if (summaryText) {
+                        summaryText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> تم اكتشاف واستعراض مواد المنهاج الجزائري الرسمي بنجاح عبر الذكاء الاصطناعي (${data.curriculumName || detectedLevelText}).`;
+                    }
+                } else {
+                    if (summaryText) {
+                        summaryText.innerHTML = `تم تفعيل مقررات: ${detectedLevelText} وفق آخر تحيين لوزارة التربية الوطنية والتكوين والتعليم المهني في الجزائر.`;
+                    }
+                }
+            } catch (err) {
+                console.error('Error discovering curriculum:', err);
+                if (summaryText) {
+                    summaryText.innerHTML = `تم تفعيل مقررات: ${detectedLevelText} (الوضع المحلي).`;
+                }
+            }
+        }
+
+        async function applyAndCloseLevelSelector() {
             const card = document.getElementById('levelSelectionCard');
             card.classList.add('hidden');
             
+            // Trigger AI curriculum discovery to fetch precise Algerian curriculum
+            await discoverCurriculumViaAI();
+
             // Scroll to the main panel
             const panel = document.getElementById('panelLesson');
             panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
