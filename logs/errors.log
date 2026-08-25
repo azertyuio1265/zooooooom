@@ -224,3 +224,27 @@
 [2026-08-25 09:22:24.952] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
 [2026-08-25 09:26:38.692] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
 [2026-08-25 09:26:38.912] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:07:03.269] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:07:03.467] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:08:53.513] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:08:53.707] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:23:30.576] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:23:30.779] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:39:27.178] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:39:27.356] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:51:50.346] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:51:50.568] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:52:15.527] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:52:15.710] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 14:52:19.722] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 14:52:19.907] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:24:35.366] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:24:35.566] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:30:35.289] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:30:35.508] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:36:39.620] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:36:39.821] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:36:53.480] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:36:53.656] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-25 15:42:14.725] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-25 15:42:14.904] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
