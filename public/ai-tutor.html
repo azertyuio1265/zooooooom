@@ -2098,6 +2098,8 @@
                 `;
             } else {
                 levelCard.classList.add('hidden');
+                // Automatically fetch real-time AI curriculum and study materials from Gemini API
+                await discoverCurriculumViaAI();
             }
 
             // Drag & Drop event handlers

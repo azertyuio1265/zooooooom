@@ -3943,12 +3943,12 @@ app.post('/api/ai/summarize', async (req, res) => {
             let response;
             try {
                 response = await ai.models.generateContent({
-                    model: 'gemini-3.6-flash',
+                    model: 'gemini-2.5-flash',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }]
                 });
             } catch (modelErr) {
                 response = await ai.models.generateContent({
-                    model: 'gemini-3.7-flash',
+                    model: 'gemini-2.5-pro',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }]
                 });
             }
@@ -4077,13 +4077,13 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
             let response;
             try {
                 response = await ai.models.generateContent({
-                    model: 'gemini-3.6-flash',
+                    model: 'gemini-2.5-flash',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     config: { responseMimeType: 'application/json' }
                 });
             } catch (modelErr) {
                 response = await ai.models.generateContent({
-                    model: 'gemini-3.7-flash',
+                    model: 'gemini-2.5-pro',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     config: { responseMimeType: 'application/json' }
                 });
@@ -4181,11 +4181,11 @@ app.post('/api/ai/solve-image', async (req, res) => {
   "solution_markdown": "الحل الكامل المنسق بصيغة Markdown الغنية فقط إذا كانت is_exercise=true وإلا اتركها فارغة"
 }`;
 
-                // Try gemini-3.6-flash first, fallback to gemini-3.7-flash
+                // Try gemini-2.5-flash first, fallback to gemini-2.5-pro
                 let response;
                 try {
                     response = await ai.models.generateContent({
-                        model: 'gemini-3.6-flash',
+                        model: 'gemini-2.5-flash',
                         contents: [
                             {
                                 role: 'user',
@@ -4207,9 +4207,9 @@ app.post('/api/ai/solve-image', async (req, res) => {
                         }
                     });
                 } catch (modelErr) {
-                    console.warn('Fallback to gemini-3.7-flash for vision:', modelErr.message);
+                    console.warn('Fallback to gemini-2.5-pro for vision:', modelErr.message);
                     response = await ai.models.generateContent({
-                        model: 'gemini-3.7-flash',
+                        model: 'gemini-2.5-pro',
                         contents: [
                             {
                                 role: 'user',
@@ -4333,12 +4333,12 @@ app.post('/api/ai/exercise-variation', async (req, res) => {
         let response;
         try {
             response = await ai.models.generateContent({
-                model: 'gemini-3.6-flash',
+                model: 'gemini-2.5-flash',
                 contents: [{ role: 'user', parts: [{ text: prompt }] }]
             });
         } catch (modelErr) {
             response = await ai.models.generateContent({
-                model: 'gemini-3.7-flash',
+                model: 'gemini-2.5-pro',
                 contents: [{ role: 'user', parts: [{ text: prompt }] }]
             });
         }
