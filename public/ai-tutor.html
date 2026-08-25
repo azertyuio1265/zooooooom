@@ -1170,6 +1170,20 @@
             },
 
             // ================= 4. التكوين المهني والمعاهد (تقني سامي) =================
+            'voc_bdd': {
+                stage: 'vocational',
+                name: 'المعاهد الوطنية المتخصصة (INSFP) - تقني سامي تخصص قاعدة بيانات (Base de Données)',
+                shortName: 'تقني سامي (قاعدة بيانات)',
+                subjects: [
+                    { name: 'تصميم وتحليل قواعد البيانات (Merise & UML)', icon: '🗄️' },
+                    { name: 'لغة الاستعلام المهيكلة المتقدمة (SQL / PL-SQL)', icon: '💻' },
+                    { name: 'نظم إدارة قواعد البيانات (MySQL, Oracle, PostgreSQL)', icon: '⚙️' },
+                    { name: 'تطوير وتأمين قواعد البيانات والنسخ الاحتياطي', icon: '🔒' },
+                    { name: 'الخوارزميات وهياكل البيانات', icon: '📊' },
+                    { name: 'اللغة الفرنسية والإنجليزية التقنية', icon: '🌐' },
+                    { name: 'التشريع وقانون العمل', icon: '⚖️' }
+                ]
+            },
             'insfp': {
                 stage: 'vocational',
                 name: 'المعاهد الوطنية المتخصصة (INSFP - تقني سامي)',
@@ -1592,16 +1606,19 @@
             },
             'vocational': {
                 grades: [
-                    { id: 'insfp_1', name: 'السنة الأولى - تقني سامي (INSFP / BTS)' },
-                    { id: 'insfp_2', name: 'السنة الثانية - تقني سامي (INSFP / BTS)' }
+                    { id: 'insfp_1', name: 'السنة الأولى - تقني سامي (INSFP / BTS) [مستوى دخول: الثالثة ثانوي/بكالوريا]' },
+                    { id: 'insfp_2', name: 'السنة الثانية - تقني سامي (INSFP / BTS)' },
+                    { id: 'insfp_3', name: 'السنة الثالثة / مذكرة التخرج وتربص تطبيقي' }
                 ],
                 branches: [
                     {
                         id: 'voc_it',
-                        name: 'شعبة الإعلام الآلي، الرقمية والاتصال',
+                        name: 'شعبة الإعلام الآلي، الرقمية والاتصال (Informatique & TIC)',
                         specialties: [
+                            { id: 'voc_bdd', name: 'تخصص: تقني سامي في قاعدة البيانات (Base de Données - BDD)', curriculumKey: 'voc_bdd' },
                             { id: 'voc_web', name: 'تخصص: تقني سامي في تطوير الويب وتطبيقات المحمول', curriculumKey: 'insfp' },
-                            { id: 'voc_net', name: 'تخصص: تقني سامي في شبكات وأنظمة الإعلام الآلي', curriculumKey: 'bts' }
+                            { id: 'voc_net', name: 'تخصص: تقني سامي في شبكات وأنظمة الإعلام الآلي', curriculumKey: 'bts' },
+                            { id: 'voc_sys', name: 'تخصص: تقني سامي في صيانة أنظمة الإعلام الآلي', curriculumKey: 'insfp' }
                         ]
                     },
                     {
@@ -1616,14 +1633,16 @@
                         id: 'voc_elec',
                         name: 'شعبة الكهرباء، الإلكترونيك والأتمتة',
                         specialties: [
-                            { id: 'voc_electromec', name: 'تخصص: تقني سامي في الكهروميكانيك والأتمتة', curriculumKey: 'insfp' }
+                            { id: 'voc_electromec', name: 'تخصص: تقني سامي في الكهروميكانيك والأتمتة', curriculumKey: 'insfp' },
+                            { id: 'voc_elec_ind', name: 'تخصص: تقني سامي في الإلكترونيك والصناعة', curriculumKey: 'bts' }
                         ]
                     },
                     {
                         id: 'voc_mgmt',
                         name: 'شعبة التسيير، المحاسبة والبنوك',
                         specialties: [
-                            { id: 'voc_acc', name: 'تخصص: تقني سامي في المحاسبة وتسيير المؤسسات', curriculumKey: 'insfp' }
+                            { id: 'voc_acc', name: 'تخصص: تقني سامي في المحاسبة وتسيير المؤسسات', curriculumKey: 'insfp' },
+                            { id: 'voc_mkt', name: 'تخصص: تقني سامي في التسويق والتجارة الدولية', curriculumKey: 'bts' }
                         ]
                     }
                 ]
@@ -1886,6 +1905,7 @@
             
             if (ALGERIAN_CURRICULUM[l]) return l;
             
+            if (l.includes('قاعدة بيانات') || l.includes('database') || l.includes('bdd') || l.includes('base de données')) return 'voc_bdd';
             if (l.includes('insfp') || l.includes('تقني سامي') || l.includes('bts') || l.includes('تكوين مهني') || l.includes('مهني')) return 'insfp';
             if (l.includes('cap') || l.includes('كفاءة مهنية')) return 'insfp';
             if (l.includes('cmp') || l.includes('تحكم مهني')) return 'insfp';
