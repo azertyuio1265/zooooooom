@@ -3940,11 +3940,31 @@ app.post('/api/ai/summarize', async (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
 
-        // 1. توليد الملخص وبثه لحظياً للمتصفح باستخدام نموذج gemini-3.7-flash الفائق السرعة
-        const textStream = await ai.models.generateContentStream({
-            model: 'gemini-3.7-flash',
-            contents: promptContent
-        });
+        // 1. توليد الملخص وبثه لحظياً للمتصفح مع نظام حماية وتراجع ثنائي (Dual-Model Fallback) لضمان موثوقية 100%
+        let textStream;
+        try {
+            // المحاولة الأولى باستخدام النموذج الموصى به الأكثر استقراراً وعمومية gemini-2.5-flash
+            textStream = await ai.models.generateContentStream({
+                model: 'gemini-2.5-flash',
+                contents: promptContent
+            });
+        } catch (firstTryError) {
+            console.warn('⚠️ فشل نموذج gemini-2.5-flash، جاري الانتقال للنموذج الاحتياطي الموثوق:', firstTryError);
+            try {
+                // المحاولة البديلة باستخدام النموذج الاحتياطي ذو الاعتمادية العالية gemini-1.5-flash
+                textStream = await ai.models.generateContentStream({
+                    model: 'gemini-1.5-flash',
+                    contents: promptContent
+                });
+            } catch (secondTryError) {
+                console.warn('⚠️ فشل نموذج gemini-1.5-flash، جاري تجربة نموذج gemini-2.5-pro كخيار أخير:', secondTryError);
+                // المحاولة الأخيرة باستخدام gemini-2.5-pro لضمان الخدمة المستمرة
+                textStream = await ai.models.generateContentStream({
+                    model: 'gemini-2.5-pro',
+                    contents: promptContent
+                });
+            }
+        }
 
         for await (const chunk of textStream) {
             if (chunk.text) {
