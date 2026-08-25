@@ -3362,6 +3362,10 @@
                     <span class="tab-label">الرسائل</span>
                     <span class="nav-badge" id="messagesBadge" style="display:none; background:#ef4444; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; font-weight:800; margin-right:4px;">0</span>
                 </button>
+                <button class="nav-tab" onclick="window.location.href='/ai-tutor'" style="background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(16,185,129,0.1)); border: 1px solid rgba(37,99,235,0.2);">
+                    <i class="fas fa-robot" style="color:var(--primary);"></i>
+                    <span class="tab-label" style="font-weight:700; color:var(--primary);">المعلم الذكي (AI)</span>
+                </button>
             </div>
             <button class="tab-scroll-btn left" onclick="document.getElementById('navTabs').scrollBy({left: -150, behavior: 'smooth'})">
                 <i class="fas fa-chevron-left"></i>
@@ -11848,6 +11852,14 @@ function updateUI() {
                 <span>المعاملات والعمليات المالية</span>
             </div>
             <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5;"></i>
+        </div>
+
+        <div class="mobile-drawer-menu-item" onclick="window.location.href='/ai-tutor'; closeMobileDrawer();" style="background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(16,185,129,0.15)); border: 1px solid rgba(59,130,246,0.3);">
+            <div class="item-content">
+                <i class="fas fa-robot" style="color:#38bdf8;"></i>
+                <span style="font-weight:700; color:#38bdf8;">المعلم الذكي والتمارين التوليدية (AI)</span>
+            </div>
+            <i class="fas fa-chevron-left" style="font-size:0.8rem; opacity:0.5; color:#38bdf8;"></i>
         </div>
 
         <div class="mobile-drawer-menu-item" onclick="showSection('referral'); closeMobileDrawer();">
