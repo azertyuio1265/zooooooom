@@ -1504,43 +1504,111 @@
             });
         }
 
+        // Mapping helper for student levels from student dashboard / database
+        function mapStudentLevelToCurriculumKey(lvl) {
+            if (!lvl) return null;
+            const l = lvl.toLowerCase().trim();
+            
+            if (ALGERIAN_CURRICULUM[l]) return l;
+            
+            if (l.includes('pri_1') || l.includes('1_pri') || l.includes('الأولى ابتدائي')) return 'pri_1';
+            if (l.includes('pri_2') || l.includes('2_pri') || l.includes('الثانية ابتدائي')) return 'pri_2';
+            if (l.includes('pri_3') || l.includes('3_pri') || l.includes('الثالثة ابتدائي')) return 'pri_3';
+            if (l.includes('pri_4') || l.includes('4_pri') || l.includes('الرابعة ابتدائي')) return 'pri_4';
+            if (l.includes('pri_5') || l.includes('5_pri') || l.includes('5eme_pri') || l.includes('الخامسة ابتدائي')) return 'pri_5';
+
+            if (l.includes('mid_1') || l.includes('1ere_am') || l.includes('الأولى متوسط')) return 'mid_1';
+            if (l.includes('mid_2') || l.includes('2ere_am') || l.includes('2eme_am') || l.includes('الثانية متوسط')) return 'mid_2';
+            if (l.includes('mid_3') || l.includes('3ere_am') || l.includes('3eme_am') || l.includes('الثالثة متوسط')) return 'mid_3';
+            if (l.includes('mid_4') || l.includes('4ere_am') || l.includes('4eme_am') || l.includes('bem') || l.includes('الرابعة متوسط')) return 'mid_4';
+
+            if (l.includes('sec_1_lit') || l.includes('جذع مشترك آداب')) return 'sec_1_lit';
+            if (l.includes('sec_1_st') || l.includes('جذع مشترك علوم')) return 'sec_1_st';
+            if (l.includes('1ere_as') || l.includes('أولى ثانوي')) return 'sec_1_st';
+
+            if (l.includes('sec_2_se') || l.includes('2as_se') || (l.includes('علوم تجريبية') && l.includes('الثانية'))) return 'sec_2_se';
+            if (l.includes('sec_2_m') || l.includes('2as_m') || (l.includes('رياضيات') && l.includes('الثانية'))) return 'sec_2_m';
+            if (l.includes('sec_2_tm') || l.includes('2as_tm') || (l.includes('تقني رياضي') && l.includes('الثانية'))) return 'sec_2_tm';
+            if (l.includes('sec_2_ge') || l.includes('2as_ge') || (l.includes('تسيير') && l.includes('الثانية'))) return 'sec_2_ge';
+            if (l.includes('sec_2_lp') || l.includes('2as_lp') || (l.includes('آداب وفلسفة') && l.includes('الثانية'))) return 'sec_2_lp';
+            if (l.includes('sec_2_fl') || l.includes('2as_fl') || (l.includes('لغات أجنبية') && l.includes('الثانية'))) return 'sec_2_fl';
+            if (l.includes('2eme_as') || l.includes('ثانية ثانوي')) return 'sec_2_se';
+
+            if (l.includes('sec_3_se') || l.includes('bac_se') || (l.includes('علوم تجريبية') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_se';
+            if (l.includes('sec_3_m') || l.includes('bac_m') || (l.includes('رياضيات') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_m';
+            if (l.includes('sec_3_tm') || l.includes('bac_tm') || (l.includes('تقني رياضي') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_tm';
+            if (l.includes('sec_3_ge') || l.includes('bac_ge') || (l.includes('تسيير') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_ge';
+            if (l.includes('sec_3_lp') || l.includes('bac_lp') || (l.includes('آداب وفلسفة') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_lp';
+            if (l.includes('sec_3_fl') || l.includes('bac_fl') || (l.includes('لغات أجنبية') && (l.includes('الثالثة') || l.includes('bac')))) return 'sec_3_fl';
+            if (l.includes('3eme_as') || l.includes('bac') || l.includes('ثالثة ثانوي')) return 'sec_3_se';
+
+            return null;
+        }
+
         // Auto initialization on load
-        window.onload = () => {
-            // Check if user has a stored level or if they are in "All Levels" mode
+        window.onload = async () => {
             let initialKey = 'sec_3_se'; // standard fallback
             let shouldOpenLevelPrompt = false;
+            let promptMessage = "";
 
             try {
-                const savedKey = localStorage.getItem('aiTutorSelectedLevelKey');
-                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-                const userLevel = userData.education_level || '';
-
-                if (savedKey && ALGERIAN_CURRICULUM[savedKey]) {
-                    initialKey = savedKey;
-                } else if (userLevel) {
-                    // Check if generic "all levels" was chosen in registration/profile
-                    if (userLevel === 'primary_all' || userLevel === 'middle_all' || userLevel === 'secondary_all' || userLevel === 'all' || userLevel === 'غير محدد') {
-                        shouldOpenLevelPrompt = true;
-                        if (userLevel === 'primary_all') initialKey = 'pri_5';
-                        else if (userLevel === 'middle_all') initialKey = 'mid_4';
-                        else initialKey = 'sec_3_se';
-                    } else {
-                        // Map known keys
-                        const mapObj = {
-                            'primary_1': 'pri_1', 'primary_2': 'pri_2', 'primary_3': 'pri_3', 'primary_4': 'pri_4', 'primary_5': 'pri_5', '5eme_pri': 'pri_5',
-                            '1ere_am': 'mid_1', '2eme_am': 'mid_2', '3eme_am': 'mid_3', '4eme_am': 'mid_4', 'bem': 'mid_4',
-                            '1ere_as': 'sec_1_st', '2eme_as': 'sec_2_se', '3eme_as': 'sec_3_se', 'bac': 'sec_3_se'
-                        };
-                        if (mapObj[userLevel]) {
-                            initialKey = mapObj[userLevel];
-                        }
+                // 1) Fetch student profile from backend (/api/student/me)
+                const token = localStorage.getItem('token') || localStorage.getItem('access_token');
+                const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+                const res = await fetch('/api/student/me', { headers });
+                
+                let userLevel = '';
+                if (res.ok) {
+                    const data = await res.json();
+                    const student = data.student || data;
+                    if (student && student.education_level) {
+                        userLevel = student.education_level.trim();
+                        try {
+                            const cached = JSON.parse(localStorage.getItem('userData') || '{}');
+                            cached.education_level = userLevel;
+                            localStorage.setItem('userData', JSON.stringify(cached));
+                        } catch(e){}
                     }
-                } else {
-                    // No level set at all: open selection card
+                }
+
+                if (!userLevel) {
+                    // Fallback to localStorage userData
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    userLevel = userData.education_level || '';
+                }
+
+                const savedKey = localStorage.getItem('aiTutorSelectedLevelKey');
+
+                // 2) Check if user selected "all levels" or general in their student dashboard profile
+                const allLevelKeywords = ['all', 'primary_all', 'middle_all', 'secondary_all', 'university', 'vocational_all', 'جميع المستويات', 'جميع المستويات الدراسية', 'غير محدد'];
+                
+                if (!userLevel || allLevelKeywords.includes(userLevel) || userLevel.includes('_all')) {
                     shouldOpenLevelPrompt = true;
+                    promptMessage = "لقد اخترت 'جميع المستويات' في لوحة الطالب الخاصة بك. يرجى تحديد مستواك الدراسي والتخصص بدقة أدناه لكي يتم تخصيص الدروس والتمارين فوراً وفق المنهاج الجزائري الرسمي المعتمد.";
+                    initialKey = savedKey && ALGERIAN_CURRICULUM[savedKey] ? savedKey : 'sec_3_se';
+                } else {
+                    const mapped = mapStudentLevelToCurriculumKey(userLevel);
+                    if (mapped && ALGERIAN_CURRICULUM[mapped]) {
+                        initialKey = mapped;
+                        shouldOpenLevelPrompt = false;
+                    } else if (savedKey && ALGERIAN_CURRICULUM[savedKey]) {
+                        initialKey = savedKey;
+                        shouldOpenLevelPrompt = false;
+                    } else {
+                        shouldOpenLevelPrompt = true;
+                        promptMessage = `المستوى المسجل في لوحة الطالب (${userLevel}) عام. يرجى اختيار مستواك الدقيق والشعبة أدناه لتخصيص محتوى المعلم الذكي.`;
+                        initialKey = 'sec_3_se';
+                    }
                 }
             } catch (err) {
-                console.error("Error reading profile:", err);
+                console.error("Error auto-detecting student level:", err);
+                const savedKey = localStorage.getItem('aiTutorSelectedLevelKey');
+                if (savedKey && ALGERIAN_CURRICULUM[savedKey]) {
+                    initialKey = savedKey;
+                } else {
+                    shouldOpenLevelPrompt = true;
+                    promptMessage = "يرجى تحديد مستواك الدراسي والتخصص بدقة من القائمة أدناه للاستفادة من المعلم الذكي وفق المنهاج الجزائري.";
+                }
             }
 
             // Sync selectors to match initialKey
@@ -1549,7 +1617,6 @@
                 currentCurriculumKey = initialKey;
                 document.getElementById('stageSelector').value = curInfo.stage;
                 
-                // Trigger stage changes
                 onStageChanged();
                 
                 if (curInfo.stage === 'primary' || curInfo.stage === 'middle') {
@@ -1565,10 +1632,24 @@
 
             syncCurriculumSelection();
 
-            // Open or hide level card based on whether specific level was already known
+            // Open or hide level card based on whether "all levels" or unselected
             const levelCard = document.getElementById('levelSelectionCard');
             if (shouldOpenLevelPrompt) {
                 levelCard.classList.remove('hidden');
+                let alertBox = document.getElementById('levelPromptAlert');
+                if (!alertBox) {
+                    alertBox = document.createElement('div');
+                    alertBox.id = 'levelPromptAlert';
+                    alertBox.className = 'p-3 mb-3 bg-amber-50 border border-amber-300 text-amber-900 rounded-lg text-xs flex items-start gap-2';
+                    levelCard.insertBefore(alertBox, levelCard.firstChild);
+                }
+                alertBox.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 text-base mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <span class="font-bold block mb-0.5">تنبيه من لوحة الطالب:</span>
+                        <span>${promptMessage}</span>
+                    </div>
+                `;
             } else {
                 levelCard.classList.add('hidden');
             }
