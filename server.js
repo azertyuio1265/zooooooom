@@ -2374,7 +2374,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
 
         // بدء الموقت فقط بعد إضافة الطلبة (هنا يبدأ في حالة التوقف مؤقتاً بانتظار إضافة الطلاب)
         if (streamRemainingSeconds <= 0) {
-            alert('🎉 تهان��نا تم اكتمال البث وحصلت على عوائدك');
+            alert('🎉 ته��ن��نا تم اكتمال البث وحصلت على عوائدك');
             window.location.href = '/teacher-dashboard.html';
         } else {
             isTimerPaused = true;
@@ -3863,7 +3863,7 @@ app.use('/api', authRoutes);
 // ✅ 3. مسارات الإدارة (تحتاج مصادقة إدارية)
 app.use('/api/admin', adminRoutes);
 
-// ✅ 4. مسارات الأستاذ والطالب (تحتاج مصادقة)
+// ✅ 4. مسارات الأستاذ والطالب (تحت��ج مصادقة)
 app.use('/api/teacher', authenticate, teacherRoutes);
 app.use('/api/student', authenticate, studentRoutes);
 
@@ -3887,24 +3887,16 @@ app.use('/api', blogRoutes);
 // ============================================================
 // 🤖 ذكاء اصطناعي مجاني بالكامل - ملخصات وشروح مع الصور
 // ============================================================
-let aiClient = null;
-function getAiClient() {
-    if (!aiClient) {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            throw new Error('مفتاح GEMINI_API_KEY غير متوفر حالياً. يرجى ضبطه في ملف الإعدادات أو لوحة التحكم لتفعيل المعلم الافتراضي.');
+let aiGateway = null;
+async function getAiGateway() {
+    if (!aiGateway) {
+        if (!process.env.AI_GATEWAY_API_KEY) {
+            throw new Error('AI_GATEWAY_API_KEY غير مضبوط في بيئة الخادم.');
         }
-        const { GoogleGenAI } = require("@google/genai");
-        aiClient = new GoogleGenAI({
-            apiKey: apiKey,
-            httpOptions: {
-                headers: {
-                    'User-Agent': 'aistudio-build'
-                }
-            }
-        });
+        const { createGateway } = await import('@ai-sdk/gateway');
+        aiGateway = createGateway({ apiKey: process.env.AI_GATEWAY_API_KEY });
     }
-    return aiClient;
+    return aiGateway;
 }
 
 app.post('/api/ai/summarize', async (req, res) => {
@@ -3922,11 +3914,8 @@ app.post('/api/ai/summarize', async (req, res) => {
 
         let explanation = '';
         try {
-            if (!process.env.GEMINI_API_KEY) {
-                throw new Error('GEMINI_API_KEY not configured');
-            }
-
-            const ai = getAiClient();
+            const gateway = await getAiGateway();
+            const { generateText } = await import('ai');
             const prompt = `أنت بروفيسور وعالم تربوي وأستاذ أطروحات متميز، خبير في المناهج الرسمية والبرامج التعليمية الجزائرية.
 الطالب يدخل المستوى: ${levelText}، الشعبة أو التخصص: ${specialty || 'غير محدد'}، والمادة: ${subject}.
 قبل الكتابة استخدم Google Search للعثور على مصادر موثوقة وحديثة تخص هذا الدرس والمستوى، ثم تحقّق من توافقها. لا تخمّن ولا تنشئ معلومات عامة غير مستندة إلى المصادر. اذكر في نهاية الشرح المصادر التي اعتمدت عليها بروابطها إن توفرت.
@@ -3951,21 +3940,12 @@ app.post('/api/ai/summarize', async (req, res) => {
 3. **لغة الإخراج:** باللغة العربية الفصحى الأكاديمية المبسطة وبصيغة Markdown الغنية والمنسقة باحترافية.
 4. **المعادلات الرياضية:** استخدم صيغة LaTeX بين رموز $ للمعادلات السطرية و $ للمعادلات المعروضة.`;
 
-            let response;
-            try {
-                response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    config: { tools: [{ googleSearch: {} }] }
-                });
-            } catch (modelErr) {
-                response = await ai.models.generateContent({
-                    model: 'gemini-3.1-pro-preview',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    config: { tools: [{ googleSearch: {} }] }
-                });
-            }
-            explanation = response.text() || '';
+            const result = await generateText({
+                model: gateway('google/gemini-3.1-pro-preview'),
+                system: 'أنت معلم جزائري دقيق. لا تختلق معلومات، واشرح فقط ما تعرفه بثقة وبأسلوب مبسط.',
+                prompt
+            });
+            explanation = result.text || '';
         } catch (aiErr) {
             console.error('❌ فشل البحث أو توليد الشرح الحقيقي:', aiErr.message);
             return res.status(502).json({
@@ -4113,7 +4093,7 @@ end;
 ### 2️⃣ الشرح المفاهيمي والنظري المفصل
 * **التعريف والمصطلحات الأساسية:** ضبط المفاهيم بدقة علمية وأكاديمية.
 * **القوانين والنظريات المعمول بها:** العلاقات الرياضية أو العلمية المرتبطة بـ **${cleanLesson}**.
-* **المنهجية والتحليل:** خطوات التفكير النقدي وحل المشكلات والوضعيات الإدماجية.
+* **المنهجية والتحليل:** خطوات التفكير النقدي وحل المشكلات والوض��يات الإدماجية.
 
 | المحور المعرفي | القاعدة أو الأساس النظري | طريقة التطبيق والتحليل |
 | :--- | :--- | :--- |
@@ -4254,7 +4234,7 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
                 subjects: [
                     { name: `${specName} (أساسيات ومفاهيم)`, icon: "📘", units: ["مدخل ومفاهيم أساسية", "النظريات والقواعد المعمول بها", "التطبيقات العملية والتحليل"] },
                     { name: `المنهجية والتحليل في ${specName}`, icon: "🔍", units: ["تحليل الإشكاليات والوضعيات", "منهجية الحلول والنمذجة", "دراسة حالات تطبيقية رسمية"] },
-                    { name: `التطبيقات المتقدمة لـ ${specName}`, icon: "⚡", units: ["المسائل المعقدة والحلول المبتكرة", "التحضير للامتحانات الرسمية والمهنية", "التقييم الشامل ومراجعة الشاملة"] }
+                    { name: `الت��بيقات المتقدمة لـ ${specName}`, icon: "⚡", units: ["المسائل المعقدة والحلول المبتكرة", "التحضير للامتحانات الرسمية والمهنية", "التقييم الشامل ومراجعة الشاملة"] }
                 ]
             };
         }
@@ -5853,7 +5833,7 @@ if (require.main === module || !process.env.IS_TEST) {
         console.log(`🚀 الخادم يعمل على http://localhost:${PORT}`);
         console.log('='.repeat(60));
         console.log('📅 التاريخ:', new Date().toLocaleString('ar-EG'));
-        console.log('✅ نظام البث: Jitsi Meet (مجاني 100%)');
+        console.log('�� نظام البث: Jitsi Meet (مجاني 100%)');
         console.log('✅ مسارات المصادقة: /api/student/register و /api/teacher/register');
         console.log('✅ مسارات /me: /api/student/me و /api/teacher/me');
         console.log('='.repeat(60));

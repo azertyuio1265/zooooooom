@@ -462,33 +462,15 @@
 
         <!-- Level Selection Card (shown when needed) -->
         <div id="levelSelectionCard" class="level-card hidden">
-            <div id="levelPromptAlert" class="level-alert">
-                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5 flex-shrink-0"></i>
-                <div id="levelPromptText"><span class="font-bold block mb-0.5">يرجى تحديد مستواك:</span><span>اختر مستواك الدراسي والتخصص بدقة لكي يتم تخصيص الدروس والتمارين وفق المنهاج الجزائري.</span></div>
+            <div class="level-alert">
+                <i class="fa-solid fa-pen-to-square text-amber-600 text-lg mt-0.5 flex-shrink-0"></i>
+                <div><span class="font-bold block mb-0.5">أدخل معلوماتك الدراسية:</span><span>اكتب الطور والسنة والشعبة والتخصص يدويًا لتخصيص الشرح حسب معلوماتك.</span></div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div>
-                    <label class="field-label">الطور الدراسي:</label>
-                    <select id="stageSelector" class="field-input" onchange="onStageChanged()">
-                        <option value="primary">الابتدائي</option>
-                        <option value="middle">المتوسط</option>
-                        <option value="secondary" selected>الثانوي</option>
-                        <option value="vocational">تقني سامي / تكوين مهني</option>
-                        <option value="university">الجامعي (LMD)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="field-label">السنة الدراسية:</label>
-                    <select id="gradeSelector" class="field-input" onchange="onGradeChanged()"></select>
-                </div>
-                <div id="branchSelectorWrapper">
-                    <label class="field-label">الشعبة:</label>
-                    <select id="branchSelector" class="field-input" onchange="onBranchChanged()"></select>
-                </div>
-                <div id="specialtySelectorWrapper">
-                    <label class="field-label">التخصص الدقيق:</label>
-                    <select id="specialtySelector" class="field-input" onchange="onSpecialtyChanged()"></select>
-                </div>
+                <div><label class="field-label">الطور الدراسي:</label><input id="manualStage" class="field-input" placeholder="مثال: ثانوي"></div>
+                <div><label class="field-label">السنة الدراسية:</label><input id="manualGrade" class="field-input" placeholder="مثال: الثالثة ثانوي"></div>
+                <div><label class="field-label">الشعبة:</label><input id="manualBranch" class="field-input" placeholder="مثال: علوم تجريبية"></div>
+                <div><label class="field-label">التخصص الدقيق:</label><input id="manualSelectorSpecialty" class="field-input" placeholder="اكتب تخصصك"></div>
             </div>
             <div class="mt-4 flex items-center gap-3 flex-wrap">
                 <button onclick="applyAndCloseLevelSelector()" class="btn-primary">
@@ -507,7 +489,7 @@
                 </div>
                 <div>
                     <span class="block text-xs text-slate-500 font-semibold">المستوى النشط</span>
-                    <span id="detectedStudentLevel" class="text-sm font-bold text-slate-800">السنة الثالثة ثانوي (BAC) - شعبة علوم تجريبية</span>
+                    <span id="detectedStudentLevel" class="text-sm font-bold text-slate-800">لم يتم إدخال المستوى بعد</span>
                 </div>
             </div>
             <button onclick="toggleLevelSelectorCard()" class="btn-ghost">
@@ -735,7 +717,7 @@
         // ===== Algerian Curriculum Data =====
         const ALGERIAN_CURRICULUM = {
             'pri_1': { stage:'primary', name:'السنة الأولى ابتدائي', shortName:'1 ابتدا��ي', subjects:[
-                {name:'اللغة العربية',icon:'📖'},{name:'الرياضيات',icon:'📐'},{name:'التربية الإسلامية',icon:'🕌'},{name:'التربية المدنية',icon:'🏛️'},{name:'التربية العلمية والتكنولوجية',icon:'🌱'},{name:'التربية الفنية والموسيقية',icon:'🎨'}]},
+                {name:'اللغة العربية',icon:'📖'},{name:'ال��ياضيات',icon:'📐'},{name:'التربية الإسلامية',icon:'🕌'},{name:'التربية المدنية',icon:'🏛️'},{name:'التربية العلمية والتكنولوجية',icon:'🌱'},{name:'التربية الفنية والموسيقية',icon:'🎨'}]},
             'pri_2': { stage:'primary', name:'السنة الثانية ابتدائي', shortName:'2 ابتدائي', subjects:[
                 {name:'اللغة العربية',icon:'📖'},{name:'الرياضيات',icon:'📐'},{name:'التربية الإسلامية',icon:'🕌'},{name:'التربية المدنية',icon:'🏛️'},{name:'التربية العلمية والتكنولوجية',icon:'🌱'},{name:'التربية الفنية',icon:'🎨'}]},
             'pri_3': { stage:'primary', name:'السنة الثالثة ابتدائي', shortName:'3 ابتدائي', subjects:[
@@ -789,7 +771,7 @@
             'university': { stage:'university', name:'التعليم الجامعي (LMD)', shortName:'جامعي (LMD)', subjects:[
                 {name:'الرياضيات المتقدمة والإحصاء',icon:'📐'},{name:'الفيزياء المتقدمة',icon:'⚡'},{name:'الإعلام الآلي والبرمجة',icon:'💻'},{name:'المنهجية وإعداد البحوث',icon:'📚'},{name:'اللغات الأجنبية',icon:'🌐'}]},
             'univ_st_cs': { stage:'university', name:'جامعي - إعلام آلي (ST)', shortName:'جامعي ST (إعلام آلي)', subjects:[
-                {name:'الرياضيات المتقدمة',icon:'📐'},{name:'البرمجة وهياكل البيانات',icon:'💻'},{name:'الهندسة المعمارية للحاسوب',icon:'🖥️'},{name:'الخوارزميات والتعقيد',icon:'⚙️'},{name:'اللغات الأجنبية',icon:'🌐'}]},
+                {name:'الرياضيات المتقدمة',icon:'📐'},{name:'البرمجة وهياكل البيانات',icon:'💻'},{name:'الهندسة المعمارية للحاسوب',icon:'🖥️'},{name:'الخوا��زميات والتعقيد',icon:'⚙️'},{name:'اللغات الأجنبية',icon:'🌐'}]},
             'univ_st_net': { stage:'university', name:'جامعي - شبكات وأمن (ST)', shortName:'جامعي ST (شبكات)', subjects:[
                 {name:'شبكات الحاسوب والبروتوكولات',icon:'🌐'},{name:'أمن الأنظمة',icon:'🔒'},{name:'أنظمة التشغيل المتقدمة',icon:'💻'},{name:'الرياضيات التطبيقية',icon:'📐'}]},
             'univ_mi_cs': { stage:'university', name:'جامعي - إعلام آلي (MI)', shortName:'جامعي MI (إعلام آلي)', subjects:[
@@ -831,7 +813,7 @@
             "نقوم بصياغة تمرين تطبيقي مستوحى من الامتحانات الرسمية...",
             "المعلم الافتراضي يحلل سلم التنقيط ويصيغ نصائح النجاح...",
             "جاري تنسيق القوانين والمعادلات وإخفاء الحل لتختبر نفسك...",
-            "تقريباً جاهز! ننسق الأقسام ليكون الشرح سهلاً ومبسطاً..."
+            "تقريباً جاهز! ننسق الأقسام ليكون الشرح سهلاً ��مبسطاً..."
         ];
 
         const ADVANCED_CURRICULUM_MATRIX = {
@@ -1118,9 +1100,12 @@
             }
         }
 
-        async function applyAndCloseLevelSelector() {
+        function applyAndCloseLevelSelector() {
+            const values = ['manualStage', 'manualGrade', 'manualBranch', 'manualSelectorSpecialty'].map(id => document.getElementById(id).value.trim());
+            const summary = values.filter(Boolean).join(' - ');
+            document.getElementById('detectedStudentLevel').innerText = summary || 'لم يتم إدخال المستوى بعد';
+            document.getElementById('activeLevelSummaryText').innerText = summary ? 'تم حفظ المعلومات يدويًا' : 'اكتب معلومات المستوى أولاً';
             document.getElementById('levelSelectionCard').classList.add('hidden');
-            await discoverCurriculumViaAI();
             document.getElementById('panelLesson').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -1321,7 +1306,12 @@
                 const response = await fetch('/api/ai/summarize', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ subject, lesson, education_level: educationLevel, specialty })
+                    body: JSON.stringify({
+                        subject,
+                        lesson,
+                        education_level: [document.getElementById('manualStage').value.trim(), document.getElementById('manualGrade').value.trim(), educationLevel].filter(Boolean).join(' - '),
+                        specialty: [document.getElementById('manualBranch').value.trim(), document.getElementById('manualSelectorSpecialty').value.trim(), specialty].filter(Boolean).join(' - ')
+                    })
                 });
 
                 if (!response.ok) {
@@ -1369,7 +1359,7 @@
 
         // ===== Solve Exercise Image =====
         async function solveExerciseImage() {
-            if (!selectedImageBase64) { alert('يرجى ا��تقاط أو اختيار صورة للتمرين أولاً!'); return; }
+            if (!selectedImageBase64) { alert('يرجى ا��تقاط أو اختيار صورة للتمري�� أولاً!'); return; }
             const notes = document.getElementById('photoNotesInput').value.trim();
 
             document.getElementById('emptyState').classList.add('hidden');
