@@ -6745,14 +6745,11 @@
 
     function updateUpgradeButtonsVisibility() {
         if (!userData) return;
-        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
         const isVerified = Boolean(userData.email_verified || userData.status === 'approved');
-        const shouldShow = isVerified;
-        // Fix: Also show for certified teachers to allow them to re-access, or simply remove the !isCertified check if they want to hide it completely. The prompt implies it is NOT showing for certified teachers, so maybe they should hide it only if fully certified? Actually, the user says "is not showing", meaning it is hidden for them. If I want it to show for them, I should change the condition.
-
         document.querySelectorAll('.nav-upgrade-btn, .sidebar-upgrade-btn, .mobile-drawer-upgrade-item, .dropdown-upgrade-item').forEach(el => {
-            el.style.display = shouldShow ? 'inline-flex' : 'none';
+            el.style.display = isVerified ? 'inline-flex' : 'none';
         });
+    });
     }
     window.updateUpgradeButtonsVisibility = updateUpgradeButtonsVisibility;
 
@@ -8341,16 +8338,16 @@ function updateUI() {
 
     async function startStreamNow(offerId) {
         if (checkGuestAction()) return;
-        const shouldStart = confirm("⚠️ هل تريد بدء البث المباشر؟"); if (!shouldStart) return;
-            const autoAdmit = confirm("هل تريد إدخال الطلاب تلقائياً؟ (موافق: تلقائي، إلغاء: يدوياً)");
-            if (autoAdmit) {
-                // Send notification to students automatically
-                await fetchWithAuth("/api/send-stream-notification", {
-                    method: "POST",
-                    body: JSON.stringify({ offer_id: offerId })
-                });
-            }
+        const shouldStart = confirm("⚠️ هل تريد بدء البث المباشر؟");
+        if (!shouldStart) return;
 
+        const autoAdmit = confirm("هل تريد إدخال الطلاب تلقائياً؟ (موافق: تلقائي، إلغاء: يدوياً)");
+        if (autoAdmit) {
+            await fetchWithAuth("/api/send-stream-notification", {
+                method: "POST",
+                body: JSON.stringify({ offer_id: offerId })
+            });
+        }
         try {
             const res = await fetchWithAuth('/api/start-agora-stream', {
                 method: 'POST',
