@@ -3973,7 +3973,7 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
     try {
         const studentId = req.user?.userId;
         if (!studentId || studentId === -1 || studentId === '-1') {
-            return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول للوصول إلى المعلم الذكي.' });
+            return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول للوصول إلى Zoomy.' });
         }
 
         const student = await getOne('students', 'id', studentId);
@@ -3981,12 +3981,35 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             return res.status(404).json({ success: false, error: 'الطالب غير موجود.' });
         }
 
-        // التحقق من النقاط المتاحة للطالب (الافتراضي 20 نقطة)
-        const currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20;
+        // التحقق من التجديد اليومي التلقائي وإعادة شحن النقاط مجاناً لـ 50 نقطة
+        let currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 50;
+        
+        const now = new Date();
+        const lastResetStr = student.last_ai_reset;
+        const lastReset = lastResetStr ? new Date(lastResetStr) : null;
+        
+        const isNewDay = !lastReset || 
+            now.getFullYear() !== lastReset.getFullYear() || 
+            now.getMonth() !== lastReset.getMonth() || 
+            now.getDate() !== lastReset.getDate();
+            
+        if (isNewDay) {
+            currentTokens = 50;
+            try {
+                await update('students', studentId, {
+                    ai_tokens: 50,
+                    last_ai_reset: now.toISOString()
+                });
+                console.log(`⏳ [Zoomy] تم تجديد النقاط المجانية اليومية (50 نقطة) للطالب ${studentId}`);
+            } catch (dbErr) {
+                console.warn('⚠️ Could not update last_ai_reset or ai_tokens in chat endpoint:', dbErr.message);
+            }
+        }
+
         if (currentTokens <= 0) {
             return res.status(403).json({ 
                 success: false, 
-                error: 'لقد نفدت نقاط المعلم الذكي المتاحة لك. يرجى شحن رصيدك للمتابعة.',
+                error: 'لقد نفدت نقاط Zoomy المتاحة لك لهذا اليوم. تجدد النقاط المجانية تلقائياً كل يوم، أو يمكنك شحن نقاط إضافية للمتابعة الآن!',
                 out_of_tokens: true
             });
         }
@@ -4015,7 +4038,7 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
         const { GoogleGenAI } = require('@google/genai');
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         
-        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود لمنصة ZoomDz التعليمية بالجزائر. ساعد الطالب في أي موضوع بأسلوب ممتع ومشجع، واشرح بالفصحى المبسطة المناسبة لمستواه الدراسي (${education_level}).
+        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود واسمك Zoomy لمنصة ZoomDz التعليمية بالجزائر. ساعد الطالب في أي موضوع بأسلوب ممتع ومشجع، واشرح بالفصحى المبسطة المناسبة لمستواه الدراسي (${education_level}).
 عند حل أي مسألة أو تمرين:
 1. اذكر المعطيات بوضوح.
 2. حدد المنهجية المتبعة.
@@ -4031,10 +4054,33 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             last.parts.push({ inlineData: { mimeType, data } });
         }
         
-        const response = await ai.models.generateContent({ 
-            model: selectedModel, 
-            contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] 
-        });
+        // محاولة استدعاء النموذج المحدد مع تفعيل التبديل والتبديل التلقائي الاحتياطي في حال الفشل
+        const modelPool = ['gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.1-pro-preview'];
+        const order = [selectedModel, ...modelPool.filter(m => m !== selectedModel)];
+        
+        let response = null;
+        let lastError = null;
+        let activeModelUsed = selectedModel;
+        
+        for (const currentModel of order) {
+            try {
+                console.log(`🤖 [Zoomy] Trying Gemini model: ${currentModel}...`);
+                response = await ai.models.generateContent({ 
+                    model: currentModel, 
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] 
+                });
+                activeModelUsed = currentModel;
+                console.log(`✅ [Zoomy] Success with Gemini model: ${currentModel}`);
+                break;
+            } catch (err) {
+                console.warn(`⚠️ [Zoomy] Gemini model ${currentModel} failed:`, err.message);
+                lastError = err;
+            }
+        }
+        
+        if (!response) {
+            throw new Error(`تعذر الاتصال بجميع نماذج الذكاء الاصطناعي المتاحة حالياً. الخطأ الأخير: ${lastError ? lastError.message : 'غير معروف'}`);
+        }
         
         const messageText = typeof response.text === 'function'
             ? await response.text()
@@ -4055,7 +4101,7 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
         });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);
-        return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي أو انتهت صلاحية الجلسة. حاول مرة أخرى.' });
+        return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي Zoomy أو انتهت صلاحية الجلسة. حاول مرة أخرى.' });
     }
 });
 
@@ -4525,24 +4571,50 @@ app.get('/api/student/me', authenticate, authorize(['student']), async (req, res
         console.log('📥 جلب بيانات الطالب:', studentId);
         
         const { data: student, error } = await supabase
-            .from('students')
-            .select('*')
-            .eq('id', studentId)
-            .single();
-        
+             .from('students')
+             .select('*')
+             .eq('id', studentId)
+             .single();
+         
         if (error || !student) {
-            console.error('❌ خطأ في جلب بيانات الطالب:', error);
-            return res.status(404).json({ 
-                success: false, 
-                error: 'الطالب غير موجود' 
-            });
+             console.error('❌ خطأ في جلب بيانات الطالب:', error);
+             return res.status(404).json({ 
+                 success: false, 
+                 error: 'الطالب غير موجود' 
+             });
+        }
+         
+        // التحقق من التجديد اليومي التلقائي وإعادة شحن النقاط مجاناً لـ 50 نقطة
+        const now = new Date();
+        const lastResetStr = student.last_ai_reset;
+        const lastReset = lastResetStr ? new Date(lastResetStr) : null;
+        
+        const isNewDay = !lastReset || 
+            now.getFullYear() !== lastReset.getFullYear() || 
+            now.getMonth() !== lastReset.getMonth() || 
+            now.getDate() !== lastReset.getDate();
+            
+        if (isNewDay) {
+            student.ai_tokens = 50;
+            student.last_ai_reset = now.toISOString();
+            try {
+                await update('students', studentId, {
+                    ai_tokens: 50,
+                    last_ai_reset: now.toISOString()
+                });
+                console.log(`⏳ تم تجديد النقاط المجانية اليومية (50 نقطة) للطالب ${studentId}`);
+            } catch (dbErr) {
+                console.warn('⚠️ Could not update last_ai_reset or ai_tokens in me endpoint:', dbErr.message);
+            }
+        } else if (student.ai_tokens === undefined || student.ai_tokens === null) {
+            student.ai_tokens = 50; // الافتراضي الجديد 50
         }
         
         console.log('✅ تم جلب بيانات الطالب:', student.full_name);
-        
+         
         res.json({ 
-            success: true, 
-            ...student 
+             success: true, 
+             ...student 
         });
     } catch (error) {
         console.error('❌ خطأ في جلب بيانات الطالب:', error.message);

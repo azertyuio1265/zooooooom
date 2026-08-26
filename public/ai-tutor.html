@@ -4,7 +4,7 @@
     <script>window.onerror = function(message, source, lineno, colno, error) { console.error("Platform Error:", message, "at", source, lineno, colno, error); };</script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>المعلم الذكي | ZoomDz</title>
+    <title>Zoomy | ZoomDz</title>
     <link rel="icon" href="/images/zoomdz-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -620,7 +620,7 @@
     </a>
     <div class="status">
         <i class="dot"></i>
-        <span>المعلم الذكي متاح الآن</span>
+        <span>Zoomy متاح الآن</span>
     </div>
 </header>
 
@@ -631,11 +631,11 @@
         <p>مساعدك الدراسي للشرح، حل التمارين، وتحليل الصور خطوة بخطوة في أي مادة.</p>
     </section>
     
-    <section class="chat" aria-label="محادثة المعلم الذكي">
+    <section class="chat" aria-label="محادثة Zoomy">
         <div class="chat-head">
             <div class="chat-head-info">
-                <strong>المعلم الذكي</strong>
-                <small>إجابات واضحة تناسب مستواك</small>
+                <strong>Zoomy</strong>
+                <small>النقاط المجانية تتجدد كل يوم (50 نقطة)</small>
             </div>
             
             <!-- أداة عرض نقاط التوكنز وشحنها -->
@@ -654,9 +654,9 @@
         
         <div id="messages">
             <div class="welcome" id="welcome">
-                <div class="symbol">✦</div>
-                <h2>مرحباً، أنا جاهز لمساعدتك</h2>
-                <p>اكتب سؤالك بالعربية أو أرفق صورة لتمرين، وسأشرح لك الحل بطريقة بسيطة ودقيقة.</p>
+                <div class="symbol"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h2>مرحباً، أنا Zoomy! معلمك الذكي</h2>
+                <p>اكتب سؤالك بالعربية أو أرفق صورة لتمرين، وسأشرح لك الحل بطريقة بسيطة ودقيقة. تحصل يومياً على 50 نقطة مجانية تتجدد تلقائياً!</p>
                 <div class="chips">
                     <button class="chip" data-q="اشرح لي هذا الدرس بطريقة مبسطة">اشرح لي درساً</button>
                     <button class="chip" data-q="كيف أستعد للامتحان بطريقة فعالة؟">نصائح للمراجعة</button>
@@ -673,7 +673,7 @@
             </div>
             
             <div class="row">
-                <select id="modelSwitcher" class="icon" style="width: auto; padding: 0 8px; font-size: 0.9rem;">
+                <select id="modelSwitcher" class="icon" style="display: none;">
                     <option value="gemini-3.6-flash">Gemini 3.6 Flash (افتراضي)</option>
                     <option value="gemini-3.7-flash">Gemini 3.7 Flash (سريع جداً)</option>
                     <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro (ذكي وعميق)</option>
@@ -692,8 +692,8 @@
 <div class="modal" id="buyTokensModal">
     <div class="modal-card">
         <button class="modal-close" id="closeModalBtn">&times;</button>
-        <h3 style="font-family: Cairo; font-size: 1.3rem; margin-top: 0; margin-bottom: 6px; color: var(--ink);">شحن نقاط المعلم الذكي 🪙</h3>
-        <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 18px; line-height: 1.6;">اشحن نقاطك فوراً لمواصلة التعلم ومناقشة التمارين مع معلمك الذكي. يتم الخصم مباشرة من رصيد محفظتك المتاح.</p>
+        <h3 style="font-family: Cairo; font-size: 1.3rem; margin-top: 0; margin-bottom: 6px; color: var(--ink);">شحن نقاط Zoomy 🪙</h3>
+        <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 18px; line-height: 1.6;">اشحن نقاطك فوراً لمواصلة التعلم ومناقشة التمارين مع Zoomy. يتم الخصم مباشرة من رصيد محفظتك المتاح.</p>
         
         <div class="wallet-banner">
             <span>رصيد محفظتك الحالي:</span>
@@ -772,7 +772,7 @@ const token = localStorage.getItem('token');
 
 // 🔒 حماية الصفحة والتحقق من تسجيل الدخول
 if (!token || token === 'guest_token') {
-    alert('عذراً، يجب تسجيل الدخول بحساب طالب للوصول إلى لوحة المعلم الذكي.');
+    alert('عذراً، يجب تسجيل الدخول بحساب طالب للوصول إلى لوحة Zoomy.');
     window.location.href = '/?login=true';
 }
 
@@ -788,7 +788,7 @@ async function loadStudentData() {
         studentData = await response.json();
         
         // عرض النقاط في الواجهة
-        document.querySelector('#tokensCount').textContent = studentData.ai_tokens !== undefined && studentData.ai_tokens !== null ? studentData.ai_tokens : 20;
+        document.querySelector('#tokensCount').textContent = studentData.ai_tokens !== undefined && studentData.ai_tokens !== null ? studentData.ai_tokens : 50;
         document.querySelector('#modalWalletBalance').textContent = (studentData.wallet_balance || 0) + ' دج';
     } catch (e) {
         console.error('Error loading student data:', e);
@@ -868,7 +868,7 @@ function add(role, text, image) {
         formattedText = escapeHtml(text);
     }
 
-    el.innerHTML = '<div class="avatar">' + (role === 'user' ? 'أ' : '✦') + '</div>' +
+    el.innerHTML = '<div class="avatar">' + (role === 'user' ? 'أ' : 'Z') + '</div>' +
                    '<div class="bubble">' + (image ? '<img src="' + image + '" alt="الصورة المرفقة">' : '') + 
                    '<div class="text-content">' + formattedText + '</div></div>';
     
@@ -945,9 +945,9 @@ async function submit() {
     if (!text && !imageData) return;
     
     // التحقق من وجود توكن متبقي قبل الإرسال الفعلي
-    const currentTokens = studentData ? (studentData.ai_tokens !== undefined ? studentData.ai_tokens : 20) : 0;
+    const currentTokens = studentData ? (studentData.ai_tokens !== undefined ? studentData.ai_tokens : 50) : 0;
     if (currentTokens <= 0) {
-        alert('عذراً، لقد استهلكت جميع نقاط المحادثة المتاحة لديك. يرجى الشحن لمواصلة استخدام المعلم الذكي.');
+        alert('عذراً، لقد استهلكت جميع نقاط المحادثة المتاحة لديك لهذا اليوم. تجدد النقاط المجانية تلقائياً كل يوم، أو يمكنك شحن رصيدك لمواصلة استخدام Zoomy.');
         buyTokensModal.style.display = 'flex';
         return;
     }
@@ -985,9 +985,9 @@ async function submit() {
         
         if (!r.ok || !data.success) {
             if (data.out_of_tokens) {
-                alert('لقد نفدت نقاط المعلم الذكي الخاصة بك. يرجى إعادة الشحن للمتابعة.');
+                alert('لقد نفدت نقاط Zoomy الخاصة بك لهذا اليوم. تجدد النقاط المجانية تلقائياً كل يوم، أو يمكنك شحن نقاط إضافية للمتابعة.');
                 buyTokensModal.style.display = 'flex';
-                throw new Error('نفاد نقاط المعلم الذكي');
+                throw new Error('نفاد نقاط Zoomy');
             }
             throw new Error(data.error);
         }

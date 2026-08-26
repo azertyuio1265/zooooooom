@@ -130,7 +130,7 @@ router.post('/buy-tokens', authenticate, authorize(['student']), async (req, res
             });
         }
 
-        const currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20; // Default to 20 free tokens
+        const currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 50; // Default to 50 free tokens
         const newBalance = currentBalance - selectedPackage.price;
         const newTokens = currentTokens + selectedPackage.tokens;
 
@@ -647,7 +647,7 @@ router.get('/balance/:student_id', authenticate, authorize(['student']), [
             pending_count: pendingCount || 0,
             referral_balance: student.referral_balance || 0,
             gift_box_chances: student.gift_box_chances || 0,
-            ai_tokens: student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20,
+            ai_tokens: student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 50,
             transactions: transactions || []
         });
     } catch (error) {
