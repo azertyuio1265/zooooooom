@@ -531,6 +531,71 @@ router.post('/approve-teacher/:id', [
 });
 
 // ============================================================
+// 👑 اعتماد الأستاذ (منح أو إلغاء الشارة الذهبية)
+// ============================================================
+router.post('/toggle-certify-teacher/:id', [
+    authenticate,
+    authorize(['admin']),
+    param('id').isInt().withMessage('معرف الأستاذ غير صالح')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        const teacherId = parseInt(req.params.id);
+        const { is_certified } = req.body;
+
+        const teacher = await getOne('teachers', 'id', teacherId);
+        if (!teacher) {
+            return res.status(404).json({ success: false, error: 'الأستاذ غير موجود' });
+        }
+
+        const newCertState = (typeof is_certified === 'boolean') ? is_certified : !teacher.is_certified;
+
+        const { error: updateError } = await supabase
+            .from('teachers')
+            .update({ 
+                is_certified: newCertState,
+                status: newCertState ? 'approved' : teacher.status,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', teacherId);
+
+        if (updateError) {
+            logger.error('❌ خطأ في تحديث حالة الاعتماد للأستاذ:', updateError);
+            return res.status(500).json({ success: false, error: updateError.message });
+        }
+
+        // إرسال إشعار للأستاذ
+        try {
+            await createNotification({
+                user_id: teacherId,
+                user_role: 'teacher',
+                type: 'system',
+                title: newCertState ? '👑 تهانينا! أصبحت أستاذ معتمد' : 'تحديث حالة الاعتماد',
+                message: newCertState 
+                    ? 'تم منحك الشارة الذهبية لأستاذ معتمد في المنصة بنجاح 🎉' 
+                    : 'تم تعديل حالة الاعتماد الخاصة بك.'
+            });
+        } catch (nErr) {
+            console.warn('⚠️ Error sending cert notification:', nErr.message);
+        }
+
+        console.log(`👑 [ADMIN] Teacher ${teacherId} certification status updated to: ${newCertState}`);
+        res.json({
+            success: true,
+            is_certified: newCertState,
+            message: newCertState ? '👑 تم منح الأستاذ الشارة الذهبية (أستاذ معتمد) بنجاح' : 'تم إلغاء شارة الاعتماد عن الأستاذ'
+        });
+    } catch (error) {
+        logger.error('❌ خطأ في اعتماد الأستاذ:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
 // ✅ رفض الأستاذ (مع إرسال بريد رفض)
 // ============================================================
 router.post('/reject-teacher/:id', [

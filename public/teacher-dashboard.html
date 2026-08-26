@@ -7662,16 +7662,10 @@ function updateUI() {
             return;
         }
 
-        // ✅ التحقق من حالة حساب الأستاذ المسجل
-        if (userData && userData.status !== 'approved') {
+        // ✅ السماح لجميع الأساتذة بدخول قسم الأساتذة (ما عدا المرفوضين)
+        if (userData && userData.status === 'rejected') {
             if (container) {
-                if (userData.requires_profile_completion || !userData.profile_completion) {
-                    container.innerHTML = '<p style="text-align:center; padding:25px; color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> ⚠️ قم برفع الوثائق (صورة الشهادة/الدبلوم وإثبات الهوية) لتحقق من حسابك والوصول الى هذا القسم</p>';
-                } else if (userData.status === 'rejected') {
-                    container.innerHTML = '<p style="text-align:center; padding:25px; color:var(--danger);"><i class="fas fa-times-circle"></i> ❌ تم رفض طلبك. يرجى إعادة رفع الوثائق والصور للوصول إلى هذا القسم.</p>';
-                } else {
-                    container.innerHTML = '<p style="text-align:center; padding:25px; color:var(--gold-dark);"><i class="fas fa-clock"></i> حسابك قيد المراجعة. سيتم تفعيل قسم الأساتذة بعد قبول حسابك من الإدارة.</p>';
-                }
+                container.innerHTML = '<p style="text-align:center; padding:25px; color:var(--danger);"><i class="fas fa-times-circle"></i> ❌ تم رفض طلبك. يرجى التواصل مع الإدارة للوصول إلى هذا القسم.</p>';
             }
             return;
         }
@@ -7685,13 +7679,28 @@ function updateUI() {
                 container.innerHTML = '<p style="text-align:center; padding:25px; color:var(--gray-400);">لا يوجد أساتذة معتمدون حالياً</p>';
                 return;
             }
-            let html = '';
+            teachers.sort((a, b) => {
+                const aCert = (a.is_certified === true || a.status === "certified") ? 1 : 0;
+                const bCert = (b.is_certified === true || b.status === "certified") ? 1 : 0;
+                return bCert - aCert;
+            });
+
+            let html = "";
             for (const teacher of teachers) {
                 if (teacher.id == teacherId) continue;
                 const teacherImage = getValidImageUrl(teacher.profile_image, teacher.full_name, 60);
-                html += `<div class="teacher-card" onclick="viewTeacherProfile(${teacher.id})">
-                    <img src="${teacherImage}" data-original-url="${teacherImage}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
-                    <div class="teacher-name">${escapeHtml(teacher.full_name)}</div>
+                const isCert = Boolean(teacher.is_certified === true || teacher.status === "certified");
+                const certBadgeHtml = isCert
+                    ? '<span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; padding:2px 8px; border-radius:12px; font-size:0.68rem; font-weight:800; display:inline-flex; align-items:center; gap:3px; margin:4px 0;"><i class="fas fa-crown" style="color:#f59e0b;"></i> أستاذ معتمد</span>'
+                    : '<span style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 8px; border-radius:12px; font-size:0.68rem; font-weight:700; display:inline-flex; align-items:center; gap:3px; margin:4px 0;"><i class="fas fa-check-circle" style="color:#2563eb;"></i> أستاذ موثق</span>';
+
+                html += '<div class="teacher-card" onclick="viewTeacherProfile(' + teacher.id + ')">' +
+                    '<div style="position: relative; display: inline-block; margin-bottom: 6px;">' +
+                        '<img src="' + teacherImage + '" data-original-url="' + teacherImage + '" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="border: ' + (isCert ? '3px solid #f59e0b' : '2px solid white') + '; box-shadow: ' + (isCert ? '0 0 10px rgba(245, 158, 11, 0.4)' : '0 2px 8px rgba(0,0,0,0.1)') + ';">' +
+                        '' + (isCert ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.4);"><i class="fas fa-crown"></i></span>' : '<span title="أستاذ موثق" style="position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; border: 2px solid white;"><i class="fas fa-check"></i></span>') +
+                    '</div>' +
+                    '<div class="teacher-name">' + escapeHtml(teacher.full_name) + '</div>' +
+                    '<div>' + certBadgeHtml + '</div>';
                     <div class="teacher-specialty"><i class="fas fa-book"></i> ${teacher.specialization || 'تخصص عام'}</div>
                     <div class="teacher-specialty"><i class="fas fa-briefcase"></i> ${teacher.experience || '0'} سنة خبرة</div>
                     ${teacher.bio ? `<div style="font-size:0.75rem; color:var(--gray-500); margin-top:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${escapeHtml(teacher.bio)}</div>` : ''}

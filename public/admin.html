@@ -4267,6 +4267,31 @@
             }
         }
 
+        async function toggleTeacherCertify(id, certState) {
+    const actionText = certState ? "منح الشارة الذهبية وتصنيف الأستاذ كـ \"أستاذ معتمد\"" : "إلغاء شارة الاعتماد للأستاذ";
+    if (!confirm("هل أنت متأكد من " + actionText + "؟")) return;
+    try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/admin/toggle-certify-teacher/" + id, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ is_certified: certState })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showNotification(data.message, "success");
+            if (typeof loadApprovedTeachers === "function") loadApprovedTeachers();
+        } else {
+            showNotification(data.error || "حدث خطأ", "error");
+        }
+    } catch(e) {
+        showNotification("حدث خطأ في الاتصال بالخادم", "error");
+    }
+}
+window.toggleTeacherCertify = toggleTeacherCertify;
         function renderTeachers(teachers) {
             const container = document.getElementById('approvedTeachers');
             
@@ -4293,6 +4318,7 @@
                              onerror="handleImageError(this);" 
                              onclick="showFullImage('${imageUrl}')" 
                              style="cursor:pointer;">
+                        ${(t.is_certified === true || t.status === "certified") ? '<div style="margin-bottom: 8px;"><span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(245,158,11,0.2);"><i class="fas fa-crown" style="color: #f59e0b;"></i> أستاذ معتمد (شارة ذهبية)</span></div>' : '<div style="margin-bottom: 8px;"><span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 5px;"><i class="fas fa-check-circle" style="color: #2563eb;"></i> أستاذ موثق</span></div>'}
                         <h3>${escapeHtml(t.full_name)}</h3>
                         <p><i class="fas fa-envelope"></i> ${t.email}</p>
                         <p><i class="fas fa-phone"></i> ${t.phone}</p>
@@ -4316,6 +4342,10 @@
                                 <button class="btn-message" onclick="openSendMessageModal(${t.id}, '${escapeHtml(t.full_name)}', 'teacher')">
                                     <i class="fas fa-envelope"></i> مراسلة
                                 </button>
+                                ${(t.is_certified === true || t.status === 'certified')
+                                    ? '<button class="btn-certify" onclick="toggleTeacherCertify(' + t.id + ', false)" style="background: #fffbe0; color: #b45309; border: 1px solid #fde68a; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="إلغاء الاعتماد والشارة الذهبية"><i class="fas fa-crown"></i> إلغاء الاعتماد</button>'
+                                    : '<button class="btn-certify" onclick="toggleTeacherCertify(' + t.id + ', true)" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(245,158,11,0.35);" title="منح الشارة الذهبية وتصنيف الأستاذ كـ معتمد"><i class="fas fa-crown"></i> اعتماد (شارة ذهبية)</button>'
+                                }
                             ` : `
                                 <button class="btn-unban" onclick="showUnbanUserModal(${t.id}, 'teacher', '${escapeHtml(t.full_name)}', '${escapeHtml(t.ban_reason || '')}')">
                                     <i class="fas fa-unlock"></i> إلغاء الحظر
