@@ -1338,3 +1338,5 @@
       "url": "/images/student_hero1.jpg",
       "ip": "10.128.100.119"
     }
+[2026-08-26 05:19:42.700] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-26 05:19:42.793] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
