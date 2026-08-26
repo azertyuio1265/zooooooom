@@ -1288,3 +1288,53 @@
       "url": "/images/student_hero1.jpg",
       "ip": "10.128.39.85"
     }
+[2026-08-26 05:00:46.718] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-26 05:00:46.801] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 05:01:27.920] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.113] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.115] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.120] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.120] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.152] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.153] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.100.119"
+    }
+[2026-08-26 05:01:28.158] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.100.119"
+    }

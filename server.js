@@ -1912,7 +1912,7 @@ const handleStartZoomStream = async (req, res) => {
 };
 
 app.post('/api/start-agora-stream', authenticate, authorize(['teacher']), [
-    require('express-validator').body('offer_id').isInt().withMessage('معرف الدرس غير صالح')
+    require('express-validator').body('offer_id').isInt().withMessage('معرف ��لدرس غير صالح')
 ], handleStartZoomStream);
 
 app.post('/api/start-jitsi-stream', authenticate, authorize(['teacher']), [
@@ -2374,7 +2374,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
 
         // بدء الموقت فقط بعد إضافة الطلبة (هنا يبدأ في حالة التوقف مؤقتاً بانتظار إضافة الطلاب)
         if (streamRemainingSeconds <= 0) {
-            alert('🎉 ته��ن��نا تم اكتمال البث وحصلت على عوائدك');
+            alert('🎉 ته����ن��نا تم اكتمال البث وحصلت على عوائدك');
             window.location.href = '/teacher-dashboard.html';
         } else {
             isTimerPaused = true;
@@ -3392,7 +3392,7 @@ function generateStudentZoomPage(offer, student) {
 
                 if (rawErrStr.includes('PERMISSION_DENIED') || rawErrStr.includes('NotAllowedError') || rawErrStr.includes('Permission denied')) {
                     userFriendlyTitle = '📷🎤 الإذن بالوصول للميكروفون أو الكاميرا مرفوض';
-                    userFriendlyAdvice = 'يرجى السما�� بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
+                    userFriendlyAdvice = '��رجى السما�� بفتح الكاميرا والميكروفون من إعدادات المتصفح وإعادة المحاولة.';
                 } else if (rawErrStr.includes('NotFoundError') || rawErrStr.includes('DevicesNotFoundError')) {
                     userFriendlyTitle = '🔌 لم يتم العثور على كاميرا أو ميكروفون';
                     userFriendlyAdvice = 'تأكد من توصيل الكاميرا والميكروفون بجهازك بشكل صحيح.';
@@ -3863,7 +3863,7 @@ app.use('/api', authRoutes);
 // ✅ 3. مسارات الإدارة (تحتاج مصادقة إدارية)
 app.use('/api/admin', adminRoutes);
 
-// ✅ 4. مسارات الأستاذ والطالب (تحت��ج مصادقة)
+// ✅ 4. مسارات الأستاذ والطالب (ت��ت��ج مصادقة)
 app.use('/api/teacher', authenticate, teacherRoutes);
 app.use('/api/student', authenticate, studentRoutes);
 
@@ -4252,6 +4252,31 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
  * @desc    تحليل صورة تمرين دراسي بالذكاء الاصطناعي والتحقق منها وحلها خطوة بخطوة مع رفض فوري للصور غير الدراسية
  * @access  Public / Students
  */
+app.post('/api/ai/chat', async (req, res) => {
+    try {
+        const { messages = [], imageBase64, mimeType = 'image/jpeg', education_level = 'غير محدد' } = req.body || {};
+        const cleanMessages = Array.isArray(messages) ? messages.slice(-20).map(message => ({
+            role: message.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: String(message.content || '').slice(0, 12000) }]
+        })).filter(message => message.parts[0].text.trim()) : [];
+        if (!cleanMessages.length && !imageBase64) return res.status(400).json({ success: false, error: 'اكتب سؤالك أو أرفق صورة أولاً.' });
+        if (!process.env.GEMINI_API_KEY) return res.status(503).json({ success: false, error: 'محرك الذكاء الاصطناعي غير مضبوط حالياً.' });
+        const { GoogleGenAI } = require('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود لمنصة ZoomDz. ساعد الطالب في أي موضوع، واشرح بالفصحى المبسطة المناسبة لمستواه (${education_level}). لا تخترع معلومات، واطلب توضيحاً عند الحاجة. عند حل مسألة: اذكر المعطيات ثم المنهجية ثم الحل خطوة بخطوة ثم تحققاً مختصراً. استخدم Markdown وLaTeX بين $$ للمعادلات. إذا أرسل الطالب صورة فحلل محتواها واذكر ما تراه بوضوح، وإذا لم تكن تعليمية فاطلب منه صورة أوضح. اجعل إجابتك عملية ومشجعة دون مبالغة.`;
+        const last = cleanMessages[cleanMessages.length - 1] || { role: 'user', parts: [{ text: 'حلل الصورة المرفقة وقدم المساعدة.' }] };
+        if (imageBase64) {
+            const data = String(imageBase64).replace(/^data:[^;]+;base64,/, '');
+            last.parts.push({ inlineData: { mimeType, data } });
+        }
+        const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] });
+        return res.json({ success: true, message: response.text() || 'لم أستطع توليد إجابة الآن.' });
+    } catch (error) {
+        console.error('[v0] AI chat error:', error.message);
+        return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي. حاول مرة أخرى.' });
+    }
+});
+
 app.post('/api/ai/solve-image', async (req, res) => {
     try {
         const { imageBase64, mimeType = 'image/jpeg', education_level, notes } = req.body;
