@@ -113,7 +113,7 @@ async function formatOffers(offers) {
     const teacherIds = [...new Set(offers.map(o => o.teacher_id))];
     const { data: teachers, error: teachersError } = await supabase
         .from('teachers')
-        .select('id, full_name, specialization, profile_image, profile_url, teaching_level')
+        .select('id, full_name, specialization, profile_image, profile_url, teaching_level, is_certified, status')
         .in('id', teacherIds);
 
     if (teachersError) {
@@ -130,7 +130,7 @@ async function formatOffers(offers) {
     return offers.map(offer => {
         const teacher = teachersMap[offer.teacher_id] || {};
         const views = getViewCount('offer', offer.id, offer.views_count || offer.views || 0);
-
+        const isCert = Boolean(teacher.is_certified === true || teacher.status === 'certified');
         return {
             id: offer.id,
             teacher_id: offer.teacher_id,
@@ -152,7 +152,10 @@ async function formatOffers(offers) {
             teacher_name: teacher.full_name || 'غير معروف',
             teacher_specialization: teacher.specialization || '',
             teacher_profile_image: teacher.profile_url || getPublicImageUrl('profiles', 'teachers', teacher.profile_image),
-            teacher_teaching_level: teacher.teaching_level || null
+            teacher_teaching_level: teacher.teaching_level || null,
+            is_certified: isCert,
+            teacher_is_certified: isCert,
+            teacher_status: teacher.status || 'approved'
         };
     });
 }

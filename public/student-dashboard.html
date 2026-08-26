@@ -5557,16 +5557,28 @@
                             <div>${isFree ? '<span class="free-badge"><i class="fas fa-gift"></i> مجانية</span>' : `<span class="paid-badge"><i class="fas fa-money-bill"></i> ${offer.price} دج</span>`}</div>
                         </div>
 
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer;" onclick="${offer.teacher_id ? `showTeacherProfile(${offer.teacher_id})` : ''}" title="عرض الملف الشخصي للأستاذ">
-                            <img src="${teacherImage}" data-original-url="${teacherImage}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border:2px solid white; box-shadow:var(--shadow-sm); transition: transform 0.2s;" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
-                            <div>
-                                <div style="font-weight: 800; font-size: 0.9rem; color:var(--primary); display: flex; align-items: center; gap: 4px;">
-                                    ${escapeHtml(offer.teacher_name || 'غير معروف')}
-                                    <i class="fas fa-id-card" style="font-size: 0.72rem; opacity: 0.8;"></i>
+                        ${(() => {
+                            const isOfferCert = Boolean(offer.is_certified === true || offer.teacher_is_certified === true || offer.status === 'certified');
+                            const offerBadgeOverlay = isOfferCert
+                                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 1.5px solid white; box-shadow: 0 1px 4px rgba(217,119,6,0.4); z-index: 2;"><i class="fas fa-crown"></i></span>'
+                                : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: -2px; right: -2px; background: #2563eb; color: white; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(37,99,235,0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
+                            const offerNameIcon = isOfferCert
+                                ? '<i class="fas fa-crown" style="font-size: 0.8rem; color: #f59e0b;" title="أستاذ معتمد 👑"></i>'
+                                : '<i class="fas fa-check-circle" style="font-size: 0.8rem; color: #2563eb;" title="أستاذ موثق 🔵"></i>';
+                            return `<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer;" onclick="${offer.teacher_id ? \`showTeacherProfile(${offer.teacher_id})\` : ''}" title="عرض الملف الشخصي للأستاذ">
+                                <div style="position: relative;">
+                                    <img src="${teacherImage}" data-original-url="${teacherImage}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: ${isOfferCert ? '2px solid #f59e0b' : '2px solid white'}; box-shadow:var(--shadow-sm); transition: transform 0.2s;" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+                                    ${offerBadgeOverlay}
                                 </div>
-                                <div style="font-size: 0.72rem; color: var(--gray-500);">${escapeHtml(offer.teacher_specialization || 'تخصص عام')}</div>
-                            </div>
-                        </div>
+                                <div>
+                                    <div style="font-weight: 800; font-size: 0.9rem; color:var(--primary); display: flex; align-items: center; gap: 6px;">
+                                        <span>${escapeHtml(offer.teacher_name || 'غير معروف')}</span>
+                                        ${offerNameIcon}
+                                    </div>
+                                    <div style="font-size: 0.72rem; color: var(--gray-500);">${escapeHtml(offer.teacher_specialization || 'تخصص عام')}</div>
+                                </div>
+                            </div>`;
+                        })()}
                         <div class="offer-title">${escapeHtml(offer.subject_name)}</div>
                         <div class="offer-info"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleDateString('ar-DZ', {timeZone: 'Africa/Algiers'})}</div>
                         <div class="offer-info"><i class="fas fa-clock"></i> ${offerDate.toLocaleTimeString('ar-DZ', {hour: '2-digit', minute:'2-digit', hour12: false, timeZone: 'Africa/Algiers'})} | ${offer.duration} دقيقة</div>
@@ -5837,14 +5849,23 @@
             html += `
                 <div class="teacher-card" onclick="showTeacherProfile(${teacher.id})" style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between;">
                     <div style="text-align: center;">
-                        <div style="position: relative; display: inline-block; margin-bottom: 8px;">
-            <img src="${teacherImage}" data-original-url="${teacherImage}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="width: 68px; height: 68px; border-radius: 50%; object-fit: cover; border: ${teacher.is_certified ? '3px solid #f59e0b' : '2px solid white'}; box-shadow: ${teacher.is_certified ? '0 0 12px rgba(245, 158, 11, 0.4)' : '0 2px 8px rgba(0,0,0,0.1)'};">
-            ${teacher.is_certified 
-                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 2px solid white; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4);"><i class="fas fa-crown"></i></span>'
-                : '<span title="أستاذ موثق" style="position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid white;"><i class="fas fa-check"></i></span>'
-            }
-        </div>
-                        <div class="teacher-name" style="font-weight: 800; font-size: 1rem; color: #1e293b;">${escapeHtml(teacher.full_name || 'أستاذ')}</div>
+                        ${(() => {
+                            const isTeacherCert = Boolean(teacher.is_certified === true || teacher.status === 'certified');
+                            const tAvatarOverlay = isTeacherCert
+                                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 2px solid white; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4); z-index: 2;"><i class="fas fa-crown"></i></span>'
+                                : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid white; box-shadow: 0 2px 5px rgba(37,99,235,0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
+                            const tNameBadge = isTeacherCert
+                                ? '<i class="fas fa-crown" style="font-size: 0.85rem; color: #f59e0b;" title="أستاذ معتمد 👑"></i>'
+                                : '<i class="fas fa-check-circle" style="font-size: 0.85rem; color: #2563eb;" title="أستاذ موثق 🔵"></i>';
+                            return `<div style="position: relative; display: inline-block; margin-bottom: 8px;">
+                                <img src="${teacherImage}" data-original-url="${teacherImage}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="width: 68px; height: 68px; border-radius: 50%; object-fit: cover; border: ${isTeacherCert ? '3px solid #f59e0b' : '2px solid #2563eb'}; box-shadow: ${isTeacherCert ? '0 0 12px rgba(245, 158, 11, 0.4)' : '0 2px 8px rgba(37,99,235,0.2)'};">
+                                ${tAvatarOverlay}
+                            </div>
+                            <div class="teacher-name" style="font-weight: 800; font-size: 1rem; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <span>${escapeHtml(teacher.full_name || 'أستاذ')}</span>
+                                ${tNameBadge}
+                            </div>`;
+                        })()}
                         ${starsHtml}
                         <div class="teacher-specialty" style="font-size: 0.82rem; color: #64748b; margin-top: 4px;"><i class="fas fa-book" style="color: var(--primary); margin-left:4px;"></i> ${escapeHtml(teacher.specialization || 'تخصص عام')}</div>
                         <div class="teacher-specialty" style="font-size: 0.8rem; color: #64748b; margin-top: 2px;"><i class="fas fa-briefcase" style="color: var(--primary); margin-left:4px;"></i> ${teacher.experience || '0'} سنة خبرة</div>
@@ -5936,16 +5957,27 @@
                     <div style="text-align: center;">
                         <!-- Banner -->
                         <div style="position:relative; background:linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%); height:110px;">
-                            <div style="position:absolute; bottom:-45px; left:50%; transform:translateX(-50%);">
-                                <img src="${escapeHtml(img)}" alt="avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" referrerpolicy="no-referrer" onerror="this.src='/images/default-avatar.svg'">
+                            ${(() => {
+                            const isCertModal = Boolean(t.is_certified === true || t.status === 'certified');
+                            const modalBadgeOverlay = isCertModal
+                                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; border: 3px solid white; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.5); z-index: 2;"><i class="fas fa-crown"></i></span>'
+                                : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; border: 3px solid white; box-shadow: 0 2px 5px rgba(37, 99, 235, 0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
+                            const modalNameIcon = isCertModal
+                                ? '<i class="fas fa-crown" style="font-size: 1.1rem; color: #f59e0b;" title="أستاذ معتمد (شارة ذهبية) 👑"></i>'
+                                : '<i class="fas fa-check-circle" style="font-size: 1.1rem; color: #2563eb;" title="أستاذ موثق (شارة زرقاء) 🔵"></i>';
+                            return `<div style="position:absolute; bottom:-45px; left:50%; transform:translateX(-50%);">
+                                <div style="position: relative; display: inline-block;">
+                                    <img src="${escapeHtml(img)}" alt="avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: ${isCertModal ? '4px solid #f59e0b' : '4px solid #2563eb'}; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" referrerpolicy="no-referrer" onerror="this.src='/images/default-avatar.svg'">
+                                    ${modalBadgeOverlay}
+                                </div>
                             </div>
                         </div>
-
                         <div style="padding: 52px 20px 0 20px;">
-                            <h3 style="font-weight: 850; color: #1e293b; font-size: 1.35rem; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                ${escapeHtml(t.full_name)}
-                                <i class="fas fa-check-circle" style="color: var(--primary); font-size: 1rem;" title="حساب معتمد"></i>
-                            </h3>
+                            <h3 style="font-weight: 850; color: #1e293b; font-size: 1.35rem; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <span>${escapeHtml(t.full_name)}</span>
+                                ${modalNameIcon}
+                            </h3>`;
+                        })()}
                             <div style="color: var(--primary); font-weight: 700; font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                                 <i class="fas fa-book-open"></i>
                                 <span>${escapeHtml(t.specialization || 'تخصص عام')}</span>
