@@ -3952,302 +3952,110 @@ app.post('/api/ai/summarize', async (req, res) => {
             console.error('❌ فشل البحث أو توليد الشرح الحقيقي:', aiErr.message);
             return res.status(502).json({
                 success: false,
-                error: 'تعذر البحث عن الدرس أو توليد شرح موثوق حالياً. يرجى المحاول�� مرة أخرى.'
+                error: 'تعذر البحث عن الدرس أو توليد شرح موثوق حالياً. يرجى المحاولة مرة أخرى.'
             });
-            
-            // لا توجد إجابة احتياطية ثابتة؛ يجب أن يأتي الشرح من Gemini بعد البحث.
-            /* Generate rich domain-specific fallback content based on lesson name
-            const isProgramming = /برمجة|دلفي|delphi|python|java|c\+\+|sql|php|html|javascript|الخوارزميات|برامج/i.test(cleanLesson + ' ' + subject);
-            const isMath = /رياضيات|دوال|متتاليات|احتمالات|أعداد|معادلات|integrals|math/i.test(cleanLesson + ' ' + subject);
-            
-            if (isProgramming) {
-                explanation = `## 💻 المحاضرة الأكاديمية الشاملة في: ${cleanLesson} (${subject})
-
-أهلاً بك يا بطل في المحاضرة التقنية التفصيلية حول **${cleanLesson}** ضمن مادة **${subject}** (${levelText}). نقدم لك فيما يلي شرحاً برمجياً وتطبيبقياً متكاملاً من الصفر حتى الاحتراف.
-
----
-
-### 1️⃣ مقدمة علمية وإشكالية الدرس
-تعتبر دراسة **${cleanLesson}** حجر الأساس في بناء التطبيقات البرمجية وتصميم واجهات المستخدم وإدارة تدفق البيانات. الهدف التقني هو تمكينك من كتابة كود نظيف، فهم الهياكل البيانية، وتطبيق المفاهيم البرمجية باحترافية في مشاريعك الامتحانية والتطبيقية.
-
----
-
-### 2️⃣ الشرح المفاهيمي والنظري المفصل
-في هذا المحور، نتناول الأركان الأساسية لـ **${cleanLesson}**:
-* **البنية الأساسية:** القواعد النحوية (Syntax)، تعريف المتغيرات والثوابت، وأنواع المعطيات (Data Types).
-* **هياكل التحكم والتكرار:** الجمل الشرطية (\`if-else\`, \`case\`) وحلقات التكرار (\`for\`, \`while\`, \`repeat-until\`).
-* **البرمجة كائنية التوجه (OOP) أو المعالجة الحدثية (Event-Driven):** كيفية ربط الأحداث (Events) مثل النقر على الأزرار (\`OnClick\`) بتنفيذ الإجراءات البرمجية.
-
-| المفاهيم البرمجية | الوظيفة الأساسية | مثال التوظيف النموذجي |
-| :--- | :--- | :--- |
-| **المتغيرات (Variables)** | تخزين القيم المؤقتة في الذاكرة | \`var x: Integer;\` |
-| **الإجراءات والدوال (Procedures & Functions)** | تقسيم الكود إلى وحدات قابلة لإعادة الاستخدام | \`function CalculateSum(a, b: Real): Real;\` |
-| **المكونات المرئية (Components)** | بناء واجهات المستخدم (GUI) | \`TButton\`, \`TEdit\`, \`TLabel\` |
-
----
-
-### 3️⃣ مثال تطبيقي برمجي مشروح خطوة بخطوة
-نستعرض مثالاً تطبيقياً كاملاً مكتوباً بلغة **دلفي / Object Pascal** يوضح كيفية إنجاز المهمة البرمجية لـ **${cleanLesson}**:
-
-\`\`\`pascal
-unit Unit1;
-
-interface
-
-uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
-
-type
-  TForm1 = class(TForm)
-    BtnProcess: TButton;
-    EditInput: TEdit;
-    MemoOutput: TMemo;
-    procedure BtnProcessClick(Sender: TObject; AObject: TObject);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
-
-var
-  Form1: TForm1;
-
-implementation
-
-{$R *.dfm}
-
-procedure TForm1.BtnProcessClick(Sender: TObject; AObject: TObject);
-var
-  inputVal: String;
-  resultMsg: String;
-begin
-  // 1. قراءة المعطيات من ��اجهة المستخدم
-  inputVal := EditInput.Text;
-  
-  // 2. معالجة البيانات وتطبيق المنطق البرمجي لـ ${cleanLesson}
-  if Trim(inputVal) = '' then
-    ShowMessage('يرجى إدخال قيمة صحيحة أولاً!')
-  else
-  begin
-    resultMsg := 'تمت معالجة المدخلات بنجاح: ' + inputVal;
-    MemoOutput.Lines.Add(resultMsg);
-  end;
-end;
-
-end.
-\`\`\`
-
-**شرح الكود خطوة بخطوة:**
-1. **التقاط الحدث:** عند الضغط على الزر \`BtnProcess\`, يتم استدعاء الإجراء \`BtnProcessClick\`.
-2. **التحقق من المدخلات:** نتأكد من أن حقل الإدخال ليس فارغاً لتجنب الأخطاء (\`Exceptions\`).
-3. **تنفيذ المنطق البرمجي:** يتم إجراء العمليات المطلوبة وعرض النتا��ج مباشرة داخل مكون \`MemoOutput\`.
-
----
-
-### 4️⃣ تمارين مقترحة متقدمة مع الحلول النموذجية
-
-#### 📝 التمرين المقترح الأول (مشروع تطبيقي):
-أنشئ واجهة مستخدم تحتوي على حقل إدخال وزر، وعند النقر يتم حساب وفحص الشروط البرمجية الخاصة بـ **${cleanLesson}** وعرض النتيجة.
-
-#### 🔑 الحل النموذجي المفصل:
-\`\`\`pascal
-// الحل النموذجي المعتمد في الامتحانات الرسمية
-procedure TForm1.CheckDataScore(score: Integer);
-begin
-  if score >= 10 then
-    ShowMessage('مبارك، الناجح في مادة ${subject}!')
-  else
-    ShowMessage('يرجى إعادة المحاولة.');
-end;
-\`\`\`
-
-#### 📝 التمرين المقترح الثاني:
-اكتب دالة برمجية (\`Function\`) تقوم بمعالجة مصفوفة من الأقام واستخراج القيمة الكبرى المرتبطة بـ **${cleanLesson}**.
-
-#### 🔑 الحل النموذجي للتمرين الثاني:
-\`\`\`pascal
-function GetMaxNumber(arr: array of Integer): Integer;
-var
-  i, max: Integer;
-begin
-  if Length(arr) = 0 then Exit(0);
-  max := arr[0];
-  for i := low(arr) to high(arr) do
-    if arr[i] > max then max := arr[i];
-  Result := max;
-end;
-\`\`\`
-`;
-            } else {
-                // General academic fallback
-                explanation = `## 📚 المحاضرة الأكاديمية الشاملة: ${cleanLesson} (${subject})
-
-أهلاً بك يا بطل في المحاضرة التفصيلية حول درس **${cleanLesson}** في مادة **${subject}** (${levelText}). نقدم لك شرحاً أاديمياً متكاملاً ومفصلاً من الصفر.
-
----
-
-### 1️⃣ مقدمة علمية وإشكالية الدرس
-يُعد درس **${cleanLesson}** من المحاور الجوهرية في المنهاج الرسمي. يهدف هذا الدرس إلى إكسابك القدرة على التحليل العميق، فهم النظريات والمبادئ العلمية، وتوظيفها بامتياز في الفروض والامتحانات.
-
----
-
-### 2️⃣ الشرح المفاهيمي والنظري المفصل
-* **التعريف والمصطلحات الأساسية:** ضبط المفاهيم بدقة علمية وأكاديمية.
-* **القوانين والنظريات المعمول بها:** العلاقات الرياضية أو العلمية المرتبطة بـ **${cleanLesson}**.
-* **المنهجية والتحليل:** خطوات التفكير النقدي وحل المشكلات والوض��يات الإدماجية.
-
-| المحور المعرفي | القاعدة أو الأساس النظري | طريقة التطبيق والتحليل |
-| :--- | :--- | :--- |
-| **المفاهيم الجوهرية** | التعريف الدقيق والمصطلحات | الحفظ الواعي وال��هم العميق |
-| **العلاقات والقوانين** | النظريات المثبتة علمياً | التوظيف الرياضي أو المنطقي |
-| **الوضعيات التطبيقية** | تحليل المعطيات واستخراج المطلوب | الربط المنهجي السليم |
-
----
-
-### 3️⃣ أمثلة تطبيقية مشروحة خطوة بخطوة
-* **المثال التوضيحي:** نعتبر المسألة أو الوضعية النموذجية المتعلقة بـ **${cleanLesson}**.
-* **خطوات الحل:** 
-  1. استخراج المعطيات وتحديد المطلوب بدقة.
-  2. اختيار القانون أو النظرية المناسبة.
-  3. التعويض والوصول إلى النتيجة النهائية مع التعليل.
-
----
-
-### 4️⃣ تمارين مقترحة متقدمة مع الحلول النموذجية
-
-#### 📝 التمرين المقترح الأول (مستوحى من الامتحانات الرسمية):
-قم بدراسة وتحليل الإشكالية التطبيقية التالية المتعلقة بـ **${cleanLesson}** وقدم الحل المفصل مع التعليل.
-
-#### 🔑 الحل المفصل خطوة بخطوة:
-1. **الخطوة الأولى:** تفكيك المعطيات الأساسية واستخراج المطلوب.
-2. **الخطوة الثانية:** تطبيق القواعد والنظريات المقررة بدقة.
-                3. **الخطوة الثالثة:** صياغة النتيجة النهائية مع ذكر الوحدات والمصطلحات العلمية المناسبة.
-`;
-            }
-            */
         }
 
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        res.setHeader('Transfer-Encoding', 'chunked');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-
-        const chunks = explanation.split(' ');
-        const chunkSize = 8;
-        const delayMs = 15;
-
-        let index = 0;
-        while (index < chunks.length) {
-            const nextChunk = chunks.slice(index, index + chunkSize).join(' ') + ' ';
-            res.write(nextChunk);
-            index += chunkSize;
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-
-        res.end();
-
+        res.json({
+            success: true,
+            explanation
+        });
     } catch (error) {
-        console.error('❌ خطأ في المعالجة بالذكاء الاصطناعي:', error);
-        if (res.headersSent) {
-            res.write(`\n\n[ERROR: ${error.message || 'حدث خطأ أثناء تشغيل محرك المراجعة الذكية'}]`);
-            res.end();
-        } else {
-            return res.status(500).json({
-                success: false,
-                error: error.message || 'حدث خطأ أثناء تشغيل محرك المراجعة الذكية'
+        console.error('❌ خطأ في تلخيص الدرس:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
+    }
+});
+
+// ============================================================
+// ✅ المعلم الذكي (AI Tutor) - محادثة تفاعلية مع الطالب ونظام النقاط
+// ============================================================
+app.post('/api/ai/chat', authenticate, async (req, res) => {
+    try {
+        const studentId = req.user?.userId;
+        if (!studentId || studentId === -1 || studentId === '-1') {
+            return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول للوصول إلى المعلم الذكي.' });
+        }
+
+        const student = await getOne('students', 'id', studentId);
+        if (!student) {
+            return res.status(404).json({ success: false, error: 'الطالب غير موجود.' });
+        }
+
+        // التحقق من النقاط المتاحة للطالب (الافتراضي 20 نقطة)
+        const currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20;
+        if (currentTokens <= 0) {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'لقد نفدت نقاط المعلم الذكي المتاحة لك. يرجى شحن رصيدك للمتابعة.',
+                out_of_tokens: true
             });
         }
-    }
-});
 
-/**
- * @route   POST /api/ai/discover-curriculum
- * @desc    بحث ذكي بالذكاء الاصطناعي عن المواد والدروس والشعب الرسمية في المنهاج الجزائري
- * @access  Public / Students
- */
-app.post('/api/ai/discover-curriculum', async (req, res) => {
-    try {
-        const { stage, grade, branch, specialty, levelName } = req.body;
+        const { messages = [], imageBase64, mimeType = 'image/jpeg', education_level = 'غير محدد', model = 'gemini-2.5-flash' } = req.body || {};
         
-        let data = null;
-        try {
-            if (!process.env.GEMINI_API_KEY) {
-                throw new Error('API key not configured');
-            }
-
-            const ai = getAiClient();
-            const prompt = `أنت خبير تربوي ومستشار مناهج تعليمية وخبير في المنهاج الرسمي الجزائري (وزارة التربية الوطنية، وزارة التعليم العالي والبحث العلمي، ووزارة التكوين والتعليم المهنيين INSFP).
-مهمتك الأساسية هي تحديد المواد الدراسية الرسمية والوحدات **حصرياً وحرفياً** بناءً على التخصص الدقيق والشعبة بدقة متناهية ودون أي تعميم أو تكرار لمواد غير تخصيصية:
-- الطور التعليمي: ${stage || 'غير محدد'}
-- السنة الدراسية: ${grade || 'غير محدد'}
-- الشعبة: ${branch || 'غير محدد'}
-- التخصص الدقيق: ${specialty || levelName || 'غير محدد'}
-
-تعليمات صارمة:
-1. إذا كان التخصص مهنياً أو جامعياً أو تقنياً (مثل الإعلام الآلي، قواعد البيانات، الشبكات، المحاسبة، الإلكتروتقني، التسيير، إلخ)، يجب أن تكو�� المواد **جميعها** مواد تخصصية تقنية بحتة ومتوافقة تماماً مع تخصص الطالب المذكور، ولا تضع مواد عامة لا تخصه.
-2. إذا كان الطور ثانوياً، التزم بالشعبة المحددة بدقة (علوم تجريبية، رياضيات، تقني رياضي، تسيير واقتصاد، آداب وفلسفة، لغات أجنبية).
-3. أرفق كل مادة بأيقونة إيموجي معبرة و3 إلى 5 وحدات دراسية دقيقة.
-4. يجب أن يكون الناتج بصيغة JSON حصرية وفق الهيكل التالي وبدون أي مقدمات:
-{
-  "curriculumName": "الاسم الرسمي الدقيق للمستوى والشعبة والتخصص في الجزائر",
-  "subjects": [
-    {
-      "name": "اسم المادة التخصصية",
-      "icon": "📱",
-      "units": ["الوحدة 1", "الوحدة 2", "الوحدة 3"]
-    }
-  ]
-}`;
-
-            let response;
-            try {
-                response = await ai.models.generateContent({
-                    model: 'gemini-3.6-flash',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    config: { responseMimeType: 'application/json' }
-                });
-            } catch (modelErr) {
-                response = await ai.models.generateContent({
-                    model: 'gemini-3.1-pro-preview',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    config: { responseMimeType: 'application/json' }
-                });
-            }
-
-            const text = (typeof response.text === 'function' ? response.text() : response.text);
-            try {
-                data = JSON.parse(text);
-            } catch (jsonErr) {
-                const match = text.match(/\{[\s\S]*\}/);
-                if (match) {
-                    data = JSON.parse(match[0]);
-                } else {
-                    throw jsonErr;
-                }
-            }
-        } catch (aiErr) {
-            console.warn('⚠️ تفعيل الاستجابة الاحتياطية الديناميكية المخصصة:', aiErr.message);
-            const title = `${stage || ''} ${grade || ''} ${branch || ''} ${specialty || levelName || ''}`.trim() || 'المنهاج الجزائري الرسمي';
-            
-            const specName = specialty || branch || grade || 'المادة التخصصية';
-            data = {
-                curriculumName: title,
-                subjects: [
-                    { name: `${specName} (أساسيات ومفاهيم)`, icon: "📘", units: ["مدخل ومفاهيم أساسية", "النظريات والقواعد المعمول بها", "التطبيقات العملية والتحليل"] },
-                    { name: `المنهجية والتحليل في ${specName}`, icon: "🔍", units: ["تحليل الإشكاليات والوضعيات", "منهجية الحلول والنمذجة", "دراسة حالات تطبيقية رسمية"] },
-                    { name: `الت��بيقات المتقدمة لـ ${specName}`, icon: "⚡", units: ["المسائل المعقدة والحلول المبتكرة", "التحضير للامتحانات الرسمية والمهنية", "التقييم الشامل ومراجعة الشاملة"] }
-                ]
-            };
+        // رسم خريطة النماذج لضمان استخدام النماذج الحديثة والمدعومة
+        let selectedModel = String(model);
+        const validModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        if (!validModels.includes(selectedModel)) {
+            selectedModel = 'gemini-2.5-flash';
         }
 
-        return res.json({ success: true, ...data });
+        const cleanMessages = Array.isArray(messages) ? messages.slice(-20).map(message => ({
+            role: message.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: String(message.content || '').slice(0, 12000) }]
+        })).filter(message => message.parts[0].text.trim()) : [];
+        
+        if (!cleanMessages.length && !imageBase64) return res.status(400).json({ success: false, error: 'اكتب سؤالك أو أرفق صورة أولاً.' });
+        if (!process.env.GEMINI_API_KEY) return res.status(503).json({ success: false, error: 'محرك الذكاء الاصطناعي غير مضبوط حالياً.' });
+        
+        const { GoogleGenAI } = require('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        
+        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود لمنصة ZoomDz التعليمية بالجزائر. ساعد الطالب في أي موضوع بأسلوب ممتع ومشجع، واشرح بالفصحى المبسطة المناسبة لمستواه الدراسي (${education_level}).
+عند حل أي مسألة أو تمرين:
+1. اذكر المعطيات بوضوح.
+2. حدد المنهجية المتبعة.
+3. اكتب الحل خطوة بخطوة مع شرح كل خطوة.
+4. اكتب القوانين والمعادلات الرياضية أو الفيزيائية بشكل كامل وصحيح باستخدام صيغة LaTeX ووضعها بين علامتي دولار مزدوجة $$ للمعادلات الكبيرة المنفصلة (مثال: $$ROI = \\left( \\frac{0.80}{1.00} \\right) \\times 100\\%$$) أو علامة دولار مفردة $ للمعادلات المدمجة داخل السطر.
+5. تحقق من صحة الحل بشكل مختصر في النهاية.
 
-    } catch (err) {
-        console.error('Curriculum discovery error:', err);
-        return res.status(500).json({ success: false, error: err.message });
+إذا أرسل الطالب صورة، فحلل محتواها بدقة واشرح تفاصيلها تبعا لأسئلته. وإذا لم تكن الصورة تعليمية أو واضحة، فاطلب منه بلطف رفع صورة أوضح لمساعدته.`;
+
+        const last = cleanMessages[cleanMessages.length - 1] || { role: 'user', parts: [{ text: 'حلل الصورة المرفقة وقدم المساعدة.' }] };
+        if (imageBase64) {
+            const data = String(imageBase64).replace(/^data:[^;]+;base64,/, '');
+            last.parts.push({ inlineData: { mimeType, data } });
+        }
+        
+        const response = await ai.models.generateContent({ 
+            model: selectedModel, 
+            contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] 
+        });
+        
+        const messageText = typeof response.text === 'function'
+            ? await response.text()
+            : response.text || response.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('');
+            
+        if (!messageText) {
+            throw new Error('فشل توليد نص الإجابة من نموذج الذكاء الاصطناعي.');
+        }
+
+        // تخصم نقطة واحدة فقط بعد نجاح توليد الإجابة
+        const finalTokens = Math.max(0, currentTokens - 1);
+        await update('students', studentId, { ai_tokens: finalTokens });
+
+        return res.json({ 
+            success: true, 
+            message: messageText,
+            ai_tokens: finalTokens
+        });
+    } catch (error) {
+        console.error('[v0] AI chat error:', error.message);
+        return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي أو انتهت صلاحية الجلسة. حاول مرة أخرى.' });
     }
 });
+
+
 
 /**
  * @route   POST /api/ai/platform-assistant
@@ -4931,6 +4739,13 @@ app.get('/api/teacher/offers/:teacherId', authenticate, authorize(['teacher']), 
         console.error('❌ خطأ في جلب دروس ا��أستاذ:', error.message);
         res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
     }
+});
+
+// ============================================================
+// مسار المعلم الذكي (AI Tutor)
+// ============================================================
+app.get(['/ai-tutor', '/ai-tutor.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ai-tutor.html'));
 });
 
 // ============================================================

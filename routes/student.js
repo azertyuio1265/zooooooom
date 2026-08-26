@@ -92,6 +92,77 @@ router.get('/me', authenticate, authorize(['student']), async (req, res) => {
 });
 
 // ============================================================
+// ✅ شراء باقة نقاط المعلم الذكي (AI Tokens) باستخدام رصيد المحفظة
+// ============================================================
+router.post('/buy-tokens', authenticate, authorize(['student']), async (req, res) => {
+    try {
+        const studentId = req.user.userId;
+        if (!studentId || studentId === -1 || studentId === '-1') {
+            return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول لإتمام هذه العملية.' });
+        }
+
+        const { packageId } = req.body;
+        
+        // تعريف باقات النقاط المتاحة وأسعارها بالدينار الجزائري (DZD)
+        const packages = {
+            'bronze': { tokens: 20, price: 30, name: 'الباقة البرونزية' },
+            'silver': { tokens: 100, price: 100, name: 'الباقة الفضية' },
+            'gold': { tokens: 300, price: 250, name: 'الباقة الذهبية' },
+            'platinum': { tokens: 1000, price: 700, name: 'الباقة البلاتينية' }
+        };
+
+        const selectedPackage = packages[packageId];
+        if (!selectedPackage) {
+            return res.status(400).json({ success: false, error: 'الباقة المحددة غير صالحة.' });
+        }
+
+        const student = await getOne('students', 'id', studentId);
+        if (!student) {
+            return res.status(404).json({ success: false, error: 'الطالب غير موجود.' });
+        }
+
+        const currentBalance = student.wallet_balance || 0;
+        if (currentBalance < selectedPackage.price) {
+            return res.status(400).json({ 
+                success: false, 
+                error: `رصيد محفظتك غير كافٍ لشراء هذه الباقة. الرصيد الحالي: ${currentBalance} دج، سعر الباقة: ${selectedPackage.price} دج. يرجى شحن رصيدك أولاً.`,
+                insufficient_balance: true
+            });
+        }
+
+        const currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20; // Default to 20 free tokens
+        const newBalance = currentBalance - selectedPackage.price;
+        const newTokens = currentTokens + selectedPackage.tokens;
+
+        // تحديث رصيد المحفظة ونقاط المعلم الذكي
+        await update('students', studentId, {
+            wallet_balance: newBalance,
+            ai_tokens: newTokens
+        });
+
+        // تسجيل العملية في جدول المعاملات ليكون السجل واضحاً للطالب
+        await insert('wallet_transactions', {
+            student_id: studentId,
+            amount: selectedPackage.price,
+            type: 'withdraw',
+            status: 'completed',
+            description: `شراء ${selectedPackage.name} للمعلم الذكي (+${selectedPackage.tokens} نقطة)`
+        });
+
+        res.json({
+            success: true,
+            message: `تم شراء ${selectedPackage.name} بنجاح! تم شحن ${selectedPackage.tokens} نقطة إلى حسابك وخصم ${selectedPackage.price} دج من رصيدك.`,
+            wallet_balance: newBalance,
+            ai_tokens: newTokens
+        });
+
+    } catch (error) {
+        logger.error('❌ خطأ في شراء باقة نقاط المعلم الذكي:', error.message);
+        res.status(500).json({ success: false, error: 'حدث خطأ في الخادم أثناء معالجة عملية الشراء.' });
+    }
+});
+
+// ============================================================
 // ✅ جلب الملف الشخصي العام لطالب معين (للأساتذة والطلاب)
 // ============================================================
 router.get('/public/student/:student_id', authenticate, async (req, res) => {
@@ -576,6 +647,7 @@ router.get('/balance/:student_id', authenticate, authorize(['student']), [
             pending_count: pendingCount || 0,
             referral_balance: student.referral_balance || 0,
             gift_box_chances: student.gift_box_chances || 0,
+            ai_tokens: student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 20,
             transactions: transactions || []
         });
     } catch (error) {
