@@ -4008,12 +4008,15 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             return res.status(404).json({ success: false, error: 'المستخدم غير موجود.' });
         }
 
-        // إذا كان أستاذ، يحصل على نقاط غير محدودة
-        let currentTokens = isTeacher ? 999999 : (student?.ai_tokens !== undefined && student?.ai_tokens !== null ? student.ai_tokens : 50);
+        // إذا كان أستاذ ولم يتم إضافة عمود النقاط لديه بعد، يمنح نقاط غير محدودة، أما إذا تمت إضافته فيعمل بنظام النقاط اليومية
+        let userObj = isTeacher ? teacher : student;
+        let userTable = isTeacher ? 'teachers' : 'students';
+        let hasCustomTokens = userObj?.ai_tokens !== undefined && userObj?.ai_tokens !== null;
+        let currentTokens = hasCustomTokens ? userObj.ai_tokens : (isTeacher ? 999999 : 50);
         
-        if (!isTeacher && student) {
+        if (hasCustomTokens || (!isTeacher && student)) {
             const now = new Date();
-            const lastResetStr = student.last_ai_reset;
+            const lastResetStr = userObj.last_ai_reset;
             const lastReset = lastResetStr ? new Date(lastResetStr) : null;
             
             const isNewDay = !lastReset || 
@@ -4024,11 +4027,11 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             if (isNewDay) {
                 currentTokens = 50;
                 try {
-                    await update('students', userId, {
+                    await update(userTable, userId, {
                         ai_tokens: 50,
                         last_ai_reset: now.toISOString()
                     });
-                    console.log(`⏳ [Zoomy] تم تجديد النقاط المجانية اليومية (50 نقطة) للطالب ${userId}`);
+                    console.log(`⏳ [Zoomy] تم تجديد النقاط المجانية اليومية (50 نقطة) للمستخدم ${userId}`);
                 } catch (dbErr) {
                     console.warn('⚠️ Could not update last_ai_reset or ai_tokens in chat endpoint:', dbErr.message);
                 }
@@ -4119,19 +4122,19 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             throw new Error('فشل توليد نص الإجابة من نموذج الذكاء الاصطناعي.');
         }
 
-        // تخصم نقطة واحدة فقط للطلاب بعد نجاح توليد الإجابة
+        // تخصم نقطة واحدة فقط للمستخدم بعد نجاح توليد الإجابة (إذا كان لديه نقاط محددة)
         let finalTokens = currentTokens;
-        if (!isTeacher && student) {
+        if (currentTokens !== 999999) {
             finalTokens = Math.max(0, currentTokens - 1);
             try {
-                await update('students', userId, { ai_tokens: finalTokens });
+                await update(userTable, userId, { ai_tokens: finalTokens });
             } catch (e) {}
         }
 
         return res.json({ 
             success: true, 
             message: messageText,
-            ai_tokens: isTeacher ? 999999 : finalTokens
+            ai_tokens: currentTokens === 999999 ? 999999 : finalTokens
         });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);

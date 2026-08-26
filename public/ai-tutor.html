@@ -781,7 +781,7 @@ if (!token || token === 'guest_token') {
 // جلب معلومات المستخدم والنقاط المتاحة (طالب أو أستاذ)
 async function loadStudentData() {
     try {
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch('/api/me', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) {
@@ -803,7 +803,7 @@ async function loadStudentData() {
         const walletEl = document.querySelector('#modalWalletBalance');
         const buyBtn = document.querySelector('#buyTokensBtn');
 
-        if (role === 'teacher') {
+        if (role === 'teacher' && (userData.ai_tokens === undefined || userData.ai_tokens === null)) {
             if (tokensEl) tokensEl.textContent = 'غير محدود ♾️';
             if (walletEl) walletEl.textContent = (userData.balance || userData.wallet_balance || 0) + ' دج';
             if (buyBtn) {
@@ -812,7 +812,7 @@ async function loadStudentData() {
             }
         } else {
             if (tokensEl) tokensEl.textContent = userData.ai_tokens !== undefined && userData.ai_tokens !== null ? userData.ai_tokens : 50;
-            if (walletEl) walletEl.textContent = (userData.wallet_balance || 0) + ' دج';
+            if (walletEl) walletEl.textContent = (userData.wallet_balance || userData.balance || 0) + ' دج';
         }
     } catch (e) {
         console.error('Error loading user data:', e);
