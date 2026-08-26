@@ -84,12 +84,57 @@
             font-size: .85rem;
         }
         
-        .dot {
-            width: 9px;
-            height: 9px;
-            background: var(--mint);
-            border-radius: 50%;
-            box-shadow: 0 0 0 4px #0f9d8220;
+        .back-platform-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .back-platform-btn:hover {
+            background: #e2e8f0;
+            color: #1e40af;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+
+        .assistant-hidden {
+            display: none !important;
+        }
+
+        #aiHiddenToast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.92rem;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            user-select: none;
+            animation: pulseToast 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseToast {
+            0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4); }
+            50% { transform: translateX(-50%) scale(1.03); box-shadow: 0 15px 40px rgba(124, 58, 237, 0.7); }
         }
         
         main {
@@ -616,15 +661,27 @@
 <body>
 <script>if(!localStorage.getItem("token")){window.location.href="/?login=true";}</script>
 <header>
-    <a class="brand" href="/">
-        <img src="/images/zoomdz-logo.png" alt="ZoomDz">
-        <span>ZoomDz</span>
-    </a>
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <a class="brand" href="/">
+            <img src="/images/zoomdz-logo.png" alt="ZoomDz">
+            <span>ZoomDz</span>
+        </a>
+        <a href="/" class="back-platform-btn" title="الرجوع إلى المنصة الرئيسية">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>الرجوع للمنصة</span>
+        </a>
+    </div>
     <div class="status">
-        <i class="dot"></i>
+        <i class="dot" style="width: 9px; height: 9px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 0 4px #0f9d8220; display: inline-block;"></i>
         <span>Zoomy متاح الآن</span>
     </div>
 </header>
+
+<!-- توست إظهار المعلم الذكي عند الإخفاء -->
+<div id="aiHiddenToast" onclick="toggleAIAssistant()" title="انقر لإظهار المعلم الذكي">
+    <i class="fa-solid fa-robot" style="color: #fef08a; font-size: 1.2rem;"></i>
+    <span>مساعد الذكاء الاصطناعي مخفي. انقر مرتين في أي مكان لإظهاره ✨</span>
+</div>
 
 <main>
     <section class="intro">
@@ -1041,6 +1098,32 @@ async function submit() {
         input.focus();
     }
 }
+
+// 🖱️ إخفاء وإظهار مساعد الذكاء الاصطناعي بالنقر المزدوج على الشاشة
+let isAssistantHidden = false;
+
+function toggleAIAssistant() {
+    isAssistantHidden = !isAssistantHidden;
+    const mainEl = document.querySelector('main');
+    const toastEl = document.getElementById('aiHiddenToast');
+    
+    if (isAssistantHidden) {
+        if (mainEl) mainEl.classList.add('assistant-hidden');
+        if (toastEl) toastEl.style.display = 'flex';
+    } else {
+        if (mainEl) mainEl.classList.remove('assistant-hidden');
+        if (toastEl) toastEl.style.display = 'none';
+    }
+}
+
+document.addEventListener('dblclick', (e) => {
+    // عدم تفعيل الإخفاء عند النقر المزدوج داخل حقول الإدخال أو الأزرار
+    const tag = e.target.tagName ? e.target.tagName.toLowerCase() : '';
+    if (tag === 'input' || tag === 'textarea' || tag === 'button' || e.target.isContentEditable) {
+        return;
+    }
+    toggleAIAssistant();
+});
 </script>
 </body>
 </html>

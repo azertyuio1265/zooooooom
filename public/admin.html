@@ -767,92 +767,134 @@
             margin-bottom: 10px;
         }
         
-        /* ===== RESPONSIVE DESIGN ===== */
+        /* ===== MOBILE RESPONSIVE ENHANCEMENTS ===== */
         @media (max-width: 768px) {
-            .teachers-grid, .requests-grid, .messages-grid, .users-grid {
-                grid-template-columns: 1fr;
+            body {
+                padding-top: 65px;
+                font-size: 14px;
+            }
+
+            .navbar {
+                padding: 10px 12px;
+            }
+
+            .nav-container {
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .release-btn-text {
+                display: none;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.78rem;
+                border-radius: 20px;
+            }
+
+            .teachers-grid, .requests-grid, .messages-grid, .users-grid, .stats-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
             }
             
             .nav-tabs {
                 overflow-x: auto;
-                flex-wrap: nowrap;
+                flex-wrap: nowrap !important;
                 -webkit-overflow-scrolling: touch;
+                padding: 8px 4px;
+                gap: 6px;
+                scrollbar-width: none;
+                margin-bottom: 14px;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none;
             }
             
             .nav-tab {
                 padding: 8px 14px;
-                font-size: 0.75rem;
+                font-size: 0.8rem;
                 white-space: nowrap;
+                flex-shrink: 0;
+                border-radius: 20px;
             }
             
             .container {
-                padding: 0 12px;
+                padding: 0 10px;
+                margin: 10px auto;
             }
-            
-            body {
-                overflow-x: hidden;
+
+            .card {
+                padding: 16px !important;
+                border-radius: 12px !important;
+            }
+
+            table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+
+            th, td {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
+
+            .modal {
+                width: 95vw !important;
+                max-width: 95vw !important;
+                border-radius: 14px !important;
+                padding: 12px !important;
+            }
+
+            .modal-body {
+                padding: 12px !important;
+            }
+
+            .button-group {
+                gap: 6px;
+            }
+
+            .btn-approve, .btn-reject, .btn-delete, .btn-ban, .btn-unban, .btn-small, .btn-save, .btn-cancel {
+                padding: 8px 12px;
+                font-size: 0.78rem;
             }
         }
         
         @media (max-width: 480px) {
-            .navbar {
-                padding: 8px 12px;
+            .logo span {
+                display: none;
             }
-            
-            .nav-container {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            
-            .logo {
-                font-size: 1.2rem;
-            }
-            
-            .logout-btn {
-                padding: 6px 12px;
+
+            .nav-tab {
+                padding: 7px 12px;
                 font-size: 0.75rem;
             }
-            
-            .container {
-                margin: 10px auto;
-                padding: 0 8px;
-            }
-            
+
             .teacher-card, .request-card, .message-card, .user-card {
                 padding: 12px;
             }
-            
-            .button-group {
-                gap: 4px;
-            }
-            
-            .btn-approve, .btn-reject, .btn-delete, .btn-ban, .btn-unban, .btn-small {
-                padding: 6px 12px;
-                font-size: 0.7rem;
-            }
-            
-            .teacher-avatar {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .modal {
-                width: 95%;
-                max-width: 450px;
-            }
         }
     </style>
-<style>@media (max-width: 600px) { body { font-size: 14px; } .container, .main-container { padding: 10px; } .admin-tab { width: 100%; display: block; margin-bottom: 5px; } }</style>
+    <style>@media (max-width: 600px) { body { font-size: 14px; } .container, .main-container { padding: 8px; } }</style>
 </head>
 <body>
     <div class="navbar">
         <div class="nav-container">
-            <div class="logo" onclick="location.reload()"><i class="fas fa-chalkboard-user"></i> لوحة المدير</div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="triggerNewReleaseModal()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 8px rgba(16,185,129,0.3); font-size: 0.85rem; transition: 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                    <i class="fas fa-rocket"></i> إطلاق إشعار إصدار جديد
+            <div class="logo" onclick="location.reload()"><i class="fas fa-chalkboard-user"></i> <span>لوحة المدير</span></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="triggerNewReleaseModal()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Cairo', sans-serif; box-shadow: 0 2px 8px rgba(16,185,129,0.3); font-size: 0.82rem; transition: 0.2s;">
+                    <i class="fas fa-rocket"></i> <span class="release-btn-text">إطلاق إشعار إصدار جديد</span>
                 </button>
-                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span class="release-btn-text">خروج</span></button>
             </div>
         </div>
     </div>
