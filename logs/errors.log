@@ -258,3 +258,1033 @@
 [2026-08-25 16:20:29.025] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
 [2026-08-25 20:19:01.478] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
 [2026-08-25 20:19:01.568] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 04:44:51.069] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-26 04:44:51.187] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 04:44:51.698] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 04:44:52.359] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 04:44:52.908] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 04:44:53.468] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 04:44:53.974] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 04:45:05.634] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.147.41"
+    }
+[2026-08-26 04:45:06.000] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.199.247"
+    }
+[2026-08-26 04:45:06.813] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.255.140"
+    }
+[2026-08-26 04:45:06.835] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.102.71"
+    }
+[2026-08-26 04:45:06.843] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.96.72"
+    }
+[2026-08-26 04:45:06.844] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.0.196"
+    }
+[2026-08-26 04:45:06.906] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.149.148"
+    }
+[2026-08-26 04:45:07.196] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.114.242"
+    }
+[2026-08-26 04:45:07.198] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.102.71"
+    }
+[2026-08-26 04:45:07.223] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.149.148"
+    }
+[2026-08-26 04:45:07.243] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.142.33"
+    }
+[2026-08-26 04:45:07.273] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.114.242"
+    }
+[2026-08-26 04:45:08.608] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.149.148"
+    }
+[2026-08-26 04:45:08.611] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.247.18"
+    }
+[2026-08-26 04:45:08.763] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.763] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.778] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.778] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.781] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.781] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.787] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.787] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.788] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.788] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.789] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.789] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.792] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.792] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.793] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.793] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.797] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.797] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:08.797] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:08.797] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.106] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.106] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.111] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.111] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.113] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.113] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.122] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.122] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.127] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.128] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.130] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.130] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.131] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.131] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.149] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.149] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.183] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.183] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.197] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:45:09.197] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:45:09.219] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.69.197"
+    }
+[2026-08-26 04:45:09.223] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.176.161"
+    }
+[2026-08-26 04:45:09.236] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.99.97"
+    }
+[2026-08-26 04:45:11.256] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.112.75"
+    }
+[2026-08-26 04:45:11.260] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.51.4"
+    }
+[2026-08-26 04:45:11.263] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.225.162"
+    }
+[2026-08-26 04:53:27.574] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.199.247"
+    }
+[2026-08-26 04:53:27.581] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.69.197"
+    }
+[2026-08-26 04:53:27.925] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.203.131"
+    }
+[2026-08-26 04:53:28.549] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.45.175"
+    }
+[2026-08-26 04:53:28.549] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.181.136"
+    }
+[2026-08-26 04:53:28.645] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:28.646] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:28.648] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:28.648] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:28.734] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:28.734] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:28.813] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.212.160"
+    }
+[2026-08-26 04:53:28.971] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:28.972] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:29.075] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:29.076] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:29.438] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.177.67"
+    }
+[2026-08-26 04:53:30.183] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.183] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.235] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.235] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.320] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.321] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.371] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.371] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.505] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.506] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.551] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.551] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:53:30.665] [WARN] CORS origin rejected
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedOrigins": [
+        "https://zoomdz.com",
+        "https://www.zoomdz.com",
+        "http://zoomdz.com",
+        "http://www.zoomdz.com",
+        "https://zooooooom-mown.vercel.app",
+        "https://chatvidio.vercel.app",
+        "https://chatvidio.onrender.com",
+        "https://chatvidio-git-*.vercel.app",
+        "https://chatvidio-*.vercel.app",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002"
+      ],
+      "checkPassed": false
+    }
+[2026-08-26 04:53:30.665] [WARN] CORS: Origin rejected but allowing (configured to warn)
+  Details: {
+      "origin": "https://new-chat-h1k.v0.build",
+      "allowedCount": 13
+    }
+[2026-08-26 04:59:02.117] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.39.85"
+    }
+[2026-08-26 04:59:02.470] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.39.85"
+    }
+[2026-08-26 04:59:02.471] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.39.85"
+    }
+[2026-08-26 04:59:02.473] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.39.85"
+    }
+[2026-08-26 04:59:02.474] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.39.85"
+    }
+[2026-08-26 04:59:02.475] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.39.85"
+    }
