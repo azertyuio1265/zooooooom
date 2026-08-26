@@ -1340,3 +1340,157 @@
     }
 [2026-08-26 05:19:42.700] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
 [2026-08-26 05:19:42.793] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 05:19:59.188] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-26 05:19:59.277] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 06:15:41.245] [WARN] [AI Studio] Supabase credentials missing — using mock client in utils/db.js
+[2026-08-26 06:15:41.506] [WARN] ⚠️ تحذير: لم يتم العثور على BREVO_API_KEY أو RESEND_API_KEY. يرجى ضبط المفاتيح في متغيرات البيئة.
+[2026-08-26 06:15:42.311] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 06:15:42.766] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 06:15:43.326] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 06:15:43.807] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 06:15:44.418] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/json/version",
+      "ip": "127.0.0.1"
+    }
+[2026-08-26 06:15:55.616] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.195.1"
+    }
+[2026-08-26 06:15:59.361] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.93.80"
+    }
+[2026-08-26 06:15:59.680] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.76.199"
+    }
+[2026-08-26 06:15:59.691] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.149.244"
+    }
+[2026-08-26 06:15:59.803] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.251.108"
+    }
+[2026-08-26 06:15:59.817] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.233.227"
+    }
+[2026-08-26 06:16:00.065] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.48.198"
+    }
+[2026-08-26 06:16:00.267] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.164.45"
+    }
+[2026-08-26 06:16:00.777] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.168.38"
+    }
+[2026-08-26 06:16:02.905] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.168.38"
+    }
+[2026-08-26 06:16:02.906] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.84.9"
+    }
+[2026-08-26 06:16:02.907] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.119.213"
+    }
+[2026-08-26 06:16:02.908] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.210.43"
+    }
+[2026-08-26 06:21:50.061] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.266] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_character1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.270] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/teacher_character1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.274] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/admin_character1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.275] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.381] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_hero1.jpg",
+      "ip": "10.128.240.167"
+    }
+[2026-08-26 06:21:50.684] [WARN] مسار غير موجود
+  Details: {
+      "method": "GET",
+      "url": "/images/student_lab1.jpg",
+      "ip": "10.128.240.167"
+    }
