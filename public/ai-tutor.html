@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="/js/zoomy-assistant-widget.js"></script>
 
     <style>
         :root {
@@ -677,10 +678,17 @@
     </div>
 </header>
 
-<!-- توست إظهار المعلم الذكي عند الإخفاء -->
-<div id="aiHiddenToast" onclick="toggleAIAssistant()" title="انقر لإظهار المعلم الذكي">
-    <i class="fa-solid fa-robot" style="color: #fef08a; font-size: 1.2rem;"></i>
-    <span>مساعد الذكاء الاصطناعي مخفي. انقر مرتين في أي مكان لإظهاره ✨</span>
+<!-- بنر تنبيه عند إضافة معلم الذكاء الاصطناعي لسلة المهملات -->
+<div id="aiTutorHiddenBanner" style="display: none; max-width: 650px; margin: 50px auto 30px; padding: 28px; background: #ffffff; border-radius: 24px; box-shadow: 0 15px 45px rgba(0,0,0,0.08); text-align: center; border: 1.5px solid #e2e8f0;">
+    <div style="width: 64px; height: 64px; background: #fef2f2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 16px; border: 1px solid #fca5a5;">
+        <i class="fas fa-trash-alt"></i>
+    </div>
+    <h3 style="margin: 0 0 10px; color: #0f172a; font-family: 'Cairo', sans-serif; font-size: 1.25rem;">معلم الذكاء الاصطناعي (Zoomy) في سلة المهملات حالياً 🗑️</h3>
+    <p style="color: #64748b; font-size: 0.92rem; margin-bottom: 22px; line-height: 1.6;">لقد قمت بنقل معلم الذكاء الاصطناعي إلى سلة المهملات. يمكنك إعادته وإظهاره فوراً في أي وقت بالنقر على الزر أدناه أو من خلال إعدادات الملف الشخصي.</p>
+    <button onclick="window.toggleAiAssistantSetting(true)" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; padding: 12px 28px; border-radius: 30px; font-weight: 800; font-size: 0.95rem; cursor: pointer; font-family: 'Cairo', sans-serif; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35); display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fas fa-eye"></i>
+        <span>إعادة إظهار معلم الذكاء الاصطناعي ✨</span>
+    </button>
 </div>
 
 <main>
@@ -1098,32 +1106,6 @@ async function submit() {
         input.focus();
     }
 }
-
-// 🖱️ إخفاء وإظهار مساعد الذكاء الاصطناعي بالنقر المزدوج على الشاشة
-let isAssistantHidden = false;
-
-function toggleAIAssistant() {
-    isAssistantHidden = !isAssistantHidden;
-    const mainEl = document.querySelector('main');
-    const toastEl = document.getElementById('aiHiddenToast');
-    
-    if (isAssistantHidden) {
-        if (mainEl) mainEl.classList.add('assistant-hidden');
-        if (toastEl) toastEl.style.display = 'flex';
-    } else {
-        if (mainEl) mainEl.classList.remove('assistant-hidden');
-        if (toastEl) toastEl.style.display = 'none';
-    }
-}
-
-document.addEventListener('dblclick', (e) => {
-    // عدم تفعيل الإخفاء عند النقر المزدوج داخل حقول الإدخال أو الأزرار
-    const tag = e.target.tagName ? e.target.tagName.toLowerCase() : '';
-    if (tag === 'input' || tag === 'textarea' || tag === 'button' || e.target.isContentEditable) {
-        return;
-    }
-    toggleAIAssistant();
-});
 </script>
 </body>
 </html>

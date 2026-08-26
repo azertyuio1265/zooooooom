@@ -71,7 +71,15 @@
                 }, 1200);
             }
 
-            return originalFetch.apply(this, arguments);
+            try {
+                return await originalFetch.apply(this, arguments);
+            } catch (err) {
+                // التقاط أخطاء انقطاع الاتصال المؤقت ومنع الانهيار
+                if (err && (err.name === 'TypeError' || err.message === 'Failed to fetch')) {
+                    console.warn('📡 [Network] تعذر الاتصال بالخادم مؤقتاً، يرجى التحقق من اتصال الإنترنت.');
+                }
+                throw err;
+            }
         };
     }
 })();

@@ -20,6 +20,7 @@
     </script>
     <script src="/js/anti-rapid-click.js"></script>
     <script src="/js/site-branding.js"></script>
+    <script src="/js/zoomy-assistant-widget.js"></script>
     
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
@@ -3998,6 +3999,28 @@
             <p style="font-size: 0.7rem; color: var(--gray-400); margin-top: 4px;">
                 <i class="fas fa-info-circle"></i> سيتم درس الأساتذة المتوافقين مع مستواك الدراسي
             </p>
+        </div>
+
+        <!-- إعدادات إظهار المعلم الذكي -->
+        <div style="margin: 16px 0; padding: 14px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <strong style="display: block; font-size: 0.88rem; color: #0f172a; font-family: 'Cairo', sans-serif;">معلم الذكاء الاصطناعي (Zoomy)</strong>
+                    <small style="color: #64748b; font-size: 0.78rem; display: block; font-family: 'Cairo', sans-serif;">إظهار أو إخفاء أيقونة المساعد في الواجهة</small>
+                </div>
+            </div>
+            <label style="position: relative; display: inline-block; width: 46px; height: 24px; cursor: pointer;">
+                <input type="checkbox" class="toggleAiAssistantSwitch" onchange="window.toggleAiAssistantSetting(this.checked)" style="opacity: 0; width: 0; height: 0;" checked>
+                <span class="ai-toggle-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px;"></span>
+                <style>
+                    .toggleAiAssistantSwitch:checked + .ai-toggle-slider { background-color: #10b981; }
+                    .ai-toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+                    .toggleAiAssistantSwitch:checked + .ai-toggle-slider:before { transform: translateX(22px); }
+                </style>
+            </label>
         </div>
 
         <p style="font-size:0.7rem; color:var(--gray-400); margin-top:4px;">
