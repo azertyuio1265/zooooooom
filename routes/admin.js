@@ -255,7 +255,7 @@ router.get('/pending-teachers', authenticate, authorize(['admin']), async (req, 
         let { data, error } = await supabase
             .from('teachers')
             .select('*')
-            .eq('status', 'pending')
+            .or('status.eq.pending,and(is_certified.eq.false,id_image.not.is.null),and(is_certified.eq.false,diploma_image.not.is.null)')
             .order('created_at', { ascending: false });
 
         if (error) {

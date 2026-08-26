@@ -314,7 +314,7 @@ router.get('/', async (req, res) => {
             try {
                 const { data: teachersData } = await supabase
                     .from('teachers')
-                    .select('id, full_name, specialization, profile_image, profile_url, bio')
+                    .select('id, full_name, specialization, profile_image, profile_url, bio, is_certified, status')
                     .in('id', teacherIds);
                 
                 if (teachersData) {
@@ -454,6 +454,7 @@ router.get('/', async (req, res) => {
                 teacher_name: post.teachers?.full_name || 'أستاذ',
                 teacher_specialization: post.teachers?.specialization || 'مدرس',
                 teacher_profile_image: teacherImg,
+                is_certified: Boolean(post.teachers?.is_certified === true || post.teachers?.status === 'certified'),
                 likes_count: likesCount || 0,
                 comments_count: commentsCount || 0,
                 views_count: postViews,
@@ -777,6 +778,7 @@ router.get('/comments/:post_id', async (req, res) => {
             let authorImage = '/images/default-avatar.svg';
             let authorRole = c.user_type || (c.student_id ? 'student' : (c.teacher_id ? 'teacher' : 'student'));
 
+            let authorIsCertified = false;
             if (c.student_id || c.user_type === 'student') {
                 const sId = c.student_id || c.user_id;
                 if (sId) {
@@ -795,6 +797,7 @@ router.get('/comments/:post_id', async (req, res) => {
                         authorName = teacher.full_name || teacher.name || 'أستاذ';
                         authorImage = teacher.profile_url || (teacher.profile_image ? getPublicImageUrl('profiles', 'teachers', teacher.profile_image) : null) || authorImage;
                         authorRole = 'teacher';
+                        authorIsCertified = Boolean(teacher.is_certified === true || teacher.status === 'certified');
                     }
                 }
             }
@@ -808,6 +811,7 @@ router.get('/comments/:post_id', async (req, res) => {
                 author_name: authorName,
                 author_image: authorImage,
                 author_role: authorRole,
+                author_is_certified: authorIsCertified,
                 user_id: c.user_id || c.student_id || c.teacher_id,
                 user_type: authorRole
             };

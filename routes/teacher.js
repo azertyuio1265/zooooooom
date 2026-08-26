@@ -1648,4 +1648,87 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
     }
 });
 
+// ============================================================
+// ✅ طلب ترقية الحساب إلى أستاذ معتمد (رفع بطاقة الهوية والشهادة)
+// ============================================================
+router.post('/request-upgrade', authenticate, authorize(['teacher']), upload.fields([
+    { name: 'diploma_image', maxCount: 1 },
+    { name: 'id_image', maxCount: 1 }
+]), validateUploadedFiles, async (req, res) => {
+    try {
+        const teacher_id = req.user.userId;
+        const teacher = await getOne('teachers', 'id', teacher_id);
+        if (!teacher) {
+            return res.status(404).json({ success: false, error: 'حساب الأستاذ غير موجود' });
+        }
+
+        if (teacher.is_certified === true) {
+            return res.status(400).json({ success: false, error: 'حسابك معتمد بالفعل ومزود بالشارة الذهبية!' });
+        }
+
+        let diploma_image = teacher.diploma_image;
+        let id_image = teacher.id_image;
+        let newDocsUploaded = false;
+
+        if (req.files && req.files['diploma_image'] && req.files['diploma_image'][0]) {
+            const uploaded = await uploadToSupabase(req.files['diploma_image'][0], 'diplomas', teacher.diploma_image);
+            if (uploaded) {
+                diploma_image = uploaded.url;
+                newDocsUploaded = true;
+            }
+        }
+
+        if (req.files && req.files['id_image'] && req.files['id_image'][0]) {
+            const uploaded = await uploadToSupabase(req.files['id_image'][0], 'ids', teacher.id_image);
+            if (uploaded) {
+                id_image = uploaded.url;
+                newDocsUploaded = true;
+            }
+        }
+
+        if (!newDocsUploaded) {
+            return res.status(400).json({ success: false, error: 'يرجى اختيار صورة بطاقة الهوية الوطنية أو صورة الشهادة والدبلوم لتقديم طلب الترقية' });
+        }
+
+        const updateData = {
+            diploma_image,
+            id_image,
+            updated_at: new Date().toISOString()
+        };
+
+        const updatedTeacher = await update('teachers', teacher_id, updateData);
+
+        // إرسال إشعار للمدير
+        try {
+            await insert('notifications', {
+                user_id: 1,
+                user_type: 'admin',
+                title: '📜 طلب ترقية إلى أستاذ معتمد',
+                message: `قام الأستاذ ${teacher.full_name} بتقديم طلب ترقية ورفع وثائقه للحصول على الشارة الذهبية 👑.`,
+                is_read: false,
+                created_at: new Date().toISOString()
+            });
+        } catch (notifErr) {
+            logger.error('⚠️ خطأ في إرسال إشعار الترقية للمدير:', notifErr.message);
+        }
+
+        const processed = processUserProfile({
+            ...updatedTeacher,
+            role: 'teacher',
+            status: 'approved',
+            is_certified: Boolean(updatedTeacher.is_certified)
+        }, 'teacher');
+
+        res.json({
+            success: true,
+            message: '🚀 تم إرسال طلب الترقية ورفع الوثائق بنجاح! سيتم مراجعتها من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
+            user: processed
+        });
+
+    } catch (error) {
+        logger.error('❌ خطأ في طلب ترقية الأستاذ:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;

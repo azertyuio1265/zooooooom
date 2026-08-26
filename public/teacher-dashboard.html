@@ -3432,8 +3432,11 @@
             </button>
         </div>
 
-        <div class="nav-profile" onclick="toggleProfileDropdown()" id="profileBtn">
-            <img id="navProfileImg" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+        <div class="nav-profile" onclick="toggleProfileDropdown()" id="profileBtn" style="position: relative;">
+            <div style="position: relative; display: inline-flex; align-items: center;">
+                <img id="navProfileImg" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+                <span id="navProfileBadge"></span>
+            </div>
             <span class="profile-name" id="navProfileName">أستاذ</span>
             <i class="fas fa-chevron-down profile-chevron"></i>
         </div>
@@ -4568,6 +4571,70 @@
         <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 16px; border-top: 1px solid var(--gray-200); padding-top: 12px;">
             <button type="button" class="cancel-btn" onclick="closeModal()" style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--gray-300); background: #f1f5f9; cursor: pointer; font-weight: 700; color: var(--gray-700);">إلغاء</button>
             <button id="btnSubmitTeacherProfile" type="button" class="btn-primary" onclick="submitTeacherProfile()" style="flex: 1; justify-content: center; background: var(--gradient-main); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> إرسال الوثائق للمراجعة</button>
+        </div>
+    </div>
+</div>
+
+<!-- UPGRADE ACCOUNT MODAL (ترقية الحساب إلى أستاذ معتمد) -->
+<div id="upgradeModal" class="modal" style="display: none;">
+    <div class="modal-content" style="position: relative; max-width: 650px; width: 92%; margin: 20px auto; background: white; border-radius: 18px; padding: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; scroll-behavior: smooth;">
+        <div class="modal-header" style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; border-bottom: 2px solid #fef3c7; padding-bottom: 12px;">
+            <div>
+                <h3 style="margin: 0; font-size: 1.25rem; color: #b45309; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-crown" style="color: #f59e0b;"></i> ترقية الحساب إلى أستاذ معتمد (الشارة الذهبية)
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--gray-600); margin: 4px 0 0 0;">قدم وثائقك الرسمية لتحصل على الاعتماد الذهبي وكافة ميزات الحساب المعتمد</p>
+            </div>
+            <button class="close-modal" onclick="closeUpgradeModal()" title="إغلاق" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--gray-500); line-height: 1; padding: 0 4px;">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- FEATURES BOX -->
+            <div style="background: linear-gradient(135deg, #fffbe3, #fef3c7); border: 1.5px solid #fde68a; border-radius: 14px; padding: 18px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);">
+                <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: #92400e; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-gem" style="color: #f59e0b;"></i> الميزات الحصرية للحساب المعتمد (👑):
+                </h4>
+                <ul style="margin: 0; padding-right: 18px; color: #78350f; font-size: 0.86rem; line-height: 1.7; font-weight: 700;">
+                    <li style="margin-bottom: 6px;"><strong>شارة الاعتماد الذهبية (👑):</strong> ظهور شارة التاج الذهبي بجانب بروفايلك واسمك في جميع أنحاء المنصة والمنشورات.</li>
+                    <li style="margin-bottom: 6px;"><strong>أولوية الصدارة والظهور:</strong> تصدر نتائج البحث وقوائم الأساتذة المقترحين والبارزين للطلاب وأولياء الأمور.</li>
+                    <li style="margin-bottom: 6px;"><strong>زيادة الحجوزات والمتابعين:</strong> بناء مصداقية وثقة عالية جداً تجذب أكبر عدد من طلبات الدروس والاستفسارات.</li>
+                    <li><strong>امتيازات بث حية ودورات:</strong> إمكانية إنشاء بثوث مباشرة تفاعلية ونشر الدورات والحلول دون قيود.</li>
+                </ul>
+            </div>
+
+            <!-- FORM FOR DOCUMENTS -->
+            <form id="upgradeForm" onsubmit="submitUpgradeRequest(event)" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">
+                <h4 style="margin: 0 0 14px 0; font-size: 0.95rem; color: var(--gray-800); font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-file-upload" style="color: var(--primary);"></i> نموذج تقديم الوثائق الرسمية للترقية:
+                </h4>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
+                        <i class="fas fa-id-card" style="color: var(--primary);"></i> صورة بطاقة الهوية الوطنية / رخصة السياقة <span style="color: red;">*</span>
+                    </label>
+                    <input type="file" id="upgradeIdImage" accept="image/*,.pdf" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-300); background: white;">
+                    <span style="font-size: 0.72rem; color: var(--gray-500); display: block; margin-top: 4px;">واضحة ومقروءة بصيغة (JPG, PNG, PDF)</span>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
+                        <i class="fas fa-graduation-cap" style="color: var(--primary);"></i> صورة الشهادة أو الدبلوم الجامعي <span style="color: red;">*</span>
+                    </label>
+                    <input type="file" id="upgradeDiplomaImage" accept="image/*,.pdf" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-300); background: white;">
+                    <span style="font-size: 0.72rem; color: var(--gray-500); display: block; margin-top: 4px;">دبلوم الليسانس، الماستر، أوتأهيل تعليمي معتمد</span>
+                </div>
+
+                <p style="font-size: 0.78rem; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-weight: 700; line-height: 1.5;">
+                    🔒 <strong>سرية وحماية البيانات:</strong> يتم مراجعة وثائقك بأمان من قِبل المشرفين لحماية خصوصيتك ثم يتم اعتماد حسابك وتفعيل الشارة الذهبية.
+                </p>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="closeUpgradeModal()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 700; font-size: 0.88rem;">إلغاء</button>
+                    <button type="submit" id="submitUpgradeBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 10px 26px; border-radius: 25px; cursor: pointer; font-weight: 800; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-paper-plane"></i> إرسال طلب الترقية للاعتماد 🚀
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -6475,6 +6542,105 @@
     window.openCompleteProfileModal = openCompleteProfileModal;
     window.showProfileCompletionModal = openCompleteProfileModal;
 
+    function openUpgradeModal() {
+        if (checkGuestAction()) return;
+        const modal = document.getElementById('upgradeModal');
+        if (modal) modal.style.display = 'block';
+    }
+    window.openUpgradeModal = openUpgradeModal;
+
+    function closeUpgradeModal() {
+        const modal = document.getElementById('upgradeModal');
+        if (modal) modal.style.display = 'none';
+    }
+    window.closeUpgradeModal = closeUpgradeModal;
+
+    async function submitUpgradeRequest(event) {
+        if (event) event.preventDefault();
+        if (checkGuestAction()) return;
+
+        const idInput = document.getElementById('upgradeIdImage');
+        const diplomaInput = document.getElementById('upgradeDiplomaImage');
+
+        const idFile = idInput && idInput.files ? idInput.files[0] : null;
+        const diplomaFile = diplomaInput && diplomaInput.files ? diplomaInput.files[0] : null;
+
+        if (!idFile && !diplomaFile) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'يرجى اختيار الوثائق',
+                    text: 'يرجى اختيار صورة بطاقة الهوية الوطنية أو صورة الشهادة والدبلوم لتقديم طلب الترقية.',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#2563eb'
+                });
+            } else {
+                showToast('⚠️ يرجى اختيار صورة بطاقة الهوية الوطنية أو الشهادة والدبلوم للترقية', 'error');
+            }
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitUpgradeBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري رفع الوثائق وإرسال الطلب...';
+        }
+
+        try {
+            const formData = new FormData();
+            if (idFile) formData.append('id_image', idFile);
+            if (diplomaFile) formData.append('diploma_image', diplomaFile);
+
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/teacher/request-upgrade', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                if (data.user) {
+                    userData = data.user;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                } else if (userData) {
+                    userData.id_image = 'uploaded';
+                    userData.diploma_image = 'uploaded';
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                }
+
+                closeUpgradeModal();
+                updateProfileForPending();
+                updateUI();
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم إرسال طلب الترقية بنجاح! 🚀',
+                        text: 'سيتم مراجعة وثائقك من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
+                        confirmButtonText: 'ممتاز',
+                        confirmButtonColor: '#f59e0b'
+                    });
+                } else {
+                    showToast('🚀 تم إرسال طلب الترقية ورفع الوثائق بنجاح! سيتم مراجعتها لمنحك الشارة الذهبية.', 'success');
+                }
+            } else {
+                showToast('❌ ' + (data.error || 'فشل إرسال طلب الترقية'), 'error');
+            }
+        } catch (err) {
+            console.error('Error submitting upgrade request:', err);
+            showToast('❌ حدث خطأ غير متوقع أثناء رفع ملفات الترقية', 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال طلب الترقية للاعتماد 🚀';
+            }
+        }
+    }
+    window.submitUpgradeRequest = submitUpgradeRequest;
+
     async function submitTeacherProfile() {
         if (checkGuestAction()) return;
         if (!teacherId && userData && userData.id) {
@@ -6692,23 +6858,19 @@
 
         const isApproved = userData.status === 'approved';
         const isRejected = userData.status === 'rejected';
-        const needsCompletion = userData.requires_profile_completion === true || !userData.profile_completion;
+        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
+        const hasUpgradeDocs = Boolean((userData.id_image || userData.diploma_image) && !isCertified);
 
         let statusText = '';
         let statusColor = '';
-
-        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
         if (isCertified) {
             statusText = '👑 أستاذ معتمد (شارة ذهبية)';
             statusColor = '#d97706';
-        } else if (isApproved) {
-            statusText = '✅ أستاذ موثق';
+        } else if (hasUpgradeDocs) {
+            statusText = '🔵 أستاذ موثق - طلب الترقية قيد المراجعة ⏳';
             statusColor = '#2563eb';
-        } else if (isRejected) {
-            statusText = '❌ تم الرفض';
-            statusColor = 'var(--danger)';
         } else {
-            statusText = '✅ أستاذ موثق';
+            statusText = '🔵 أستاذ موثق (شارة زرقاء)';
             statusColor = '#2563eb';
         }
 
@@ -6721,43 +6883,42 @@
                         <button onclick="openCompleteProfileModal()" style="background: #ef4444; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
                             <i class="fas fa-redo"></i> تحديث الوثائق وإعادة إرسال الطلب
                         </button>
-                        <button onclick="openSupportModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 10px 24px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fab fa-telegram-plane"></i> هل واجهت مشكلة؟
-                        </button>
                     </div>
-                </div>
-            `;
-        } else if (needsCompletion) {
+                </div>`;
+        } else if (isCertified) {
             warningBoxHtml = `
-                <div style="background: #fef2f2; border: 1px solid #fee2e2; border-radius: 12px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; color: #b91c1c; font-weight: 800; text-align: center; font-size: 0.95rem; line-height: 1.6; box-shadow: var(--shadow);">
-                ⚠️ يلزم رفع الدبلوم وبطاقة الهوية لإرسال حسابك للتحقق منه
-                    <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="openCompleteProfileModal()" style="background: #ef4444; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">
-                            <i class="fas fa-file-upload"></i> إكمال الملف الشخصي والوثائق الآن
-                        </button>
-                        <button onclick="openSupportModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 8px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fab fa-telegram-plane"></i> هل واجهت مشكلة؟
-                        </button>
-                    </div>
-                </div>
-            `;
+                <div style="background: linear-gradient(135deg, #fffbe3, #fef3c7); border: 1.5px solid #fde68a; border-radius: 14px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; color: #92400e; font-weight: 800; text-align: center; font-size: 0.92rem; line-height: 1.6; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.12);">
+                    🎉 تهانينا! حسابك معتمد بالكامل وتتحصل على الشارة الذهبية وكافة امتيازات وأولوية الظهور في نتائج البحث.
+                </div>`;
+        } else if (hasUpgradeDocs) {
+            warningBoxHtml = `
+                <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; color: #1e40af; font-weight: 800; text-align: center; font-size: 0.92rem; line-height: 1.6; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.12);">
+                    ⏳ تم تسليم وثائق الهوية والشهادة بنجاح. طلب الترقية إلى أستاذ معتمد (شارة ذهبية) قيد المراجعة حالياً من قِبل إدارة المنصة.
+                </div>`;
         } else {
             warningBoxHtml = `
-                <div style="background: #fffbebfb; border: 1px solid #fef3c7; border-radius: 12px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; color: #b45309; font-weight: 700; text-align: center; font-size: 0.9rem; line-height: 1.5; box-shadow: var(--shadow);">
-                    ⏳ تم إرسال المعلومات والوثائق بنجاح. حسابك الآن قيد التحقق من قبل إدارة المنصة وسيتم تفعيله قريباً.
-                    <div style="margin-top: 12px;">
-                        <button onclick="openSupportModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 8px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fab fa-telegram-plane"></i> تواصل لتسريع التفعيل أو الاستفسار
-                        </button>
+                <div style="background: linear-gradient(135deg, #fffbe3, #fef3c7); border: 1.5px solid #fde68a; border-radius: 14px; padding: 18px; margin: 0 auto 20px auto; max-width: 600px; color: #92400e; font-weight: 800; text-align: center; font-size: 0.92rem; line-height: 1.6; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.12);">
+                    <div style="font-size: 1.05rem; margin-bottom: 6px;">👑 ترقية الحساب إلى أستاذ معتمد (شارة ذهبية)</div>
+                    <div style="font-size: 0.84rem; color: #78350f; font-weight: 600; margin-bottom: 12px;">
+                        حسابك حالياً <strong>أستاذ موثق 🔵</strong>. قدم وثائقك الرسمية للترقية والحصول على الشارة الذهبية وأولوية الصدارة في نتائج البحث.
                     </div>
-                </div>
-            `;
+                    <button onclick="openUpgradeModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 10px 24px; border-radius: 25px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <i class="fas fa-crown"></i> طلب الترقية إلى أستاذ معتمد 👑
+                    </button>
+                </div>`;
         }
+
+        const avatarBadgeHtml = isCertified
+            ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 4px; right: 4px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; border: 3px solid white; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.5); z-index: 2;"><i class="fas fa-crown"></i></span>'
+            : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: 4px; right: 4px; background: #2563eb; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; border: 3px solid white; box-shadow: 0 2px 5px rgba(37, 99, 235, 0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
 
         profileInfo.innerHTML = `
             <div class="profile-display">
                 ${warningBoxHtml}
-                <img src="${userImage}" data-original-url="${userImage}" alt="صورة الملف الشخصي" class="profile-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+                <div style="position: relative; display: inline-block; margin-bottom: 10px;">
+                    <img src="${userImage}" data-original-url="${userImage}" alt="صورة الملف الشخصي" class="profile-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="border: ${isCertified ? '3px solid #f59e0b' : '3px solid #2563eb'};">
+                    ${avatarBadgeHtml}
+                </div>
                 <div class="profile-name">${escapeHtml(userData.full_name || '')}</div>
                 <div class="profile-specialty"><i class="fas fa-book" style="color:var(--primary);"></i> ${escapeHtml(userData.specialization || 'تخصص غير محدد')}</div>
                 <div class="profile-bio">${escapeHtml(userData.bio || 'لا توجد نبذة تعريفية')}</div>
@@ -6765,7 +6926,7 @@
                     <div class="profile-info-item"><div class="label">📧 البريد الإلكتروني</div><div class="value">${escapeHtml(userData.email || 'غير محدد')}</div></div>
                     <div class="profile-info-item"><div class="label">📞 الهاتف</div><div class="value">${escapeHtml(userData.phone || 'غير محدد')}</div></div>
                     <div class="profile-info-item"><div class="label">💼 الخبرة</div><div class="value">${escapeHtml(userData.experience || '0')} سنة</div></div>
-                    <div class="profile-info-item"><div class="label">📊 الحالة</div><div class="value" style="color: ${statusColor};">${statusText}</div></div>
+                    <div class="profile-info-item"><div class="label">📊 الحالة</div><div class="value" style="color: ${statusColor}; font-weight: 800;">${statusText}</div></div>
                     <div class="profile-info-item" style="border-color: var(--gold);"><div class="label">🎓 المستوى الدراسي</div><div class="value" style="color: var(--gold-dark); font-weight: 800;">${userData.teaching_level ? escapeHtml(userData.teaching_level) : '<span style="font-size: 0.7rem; color: var(--danger); display: block;">⚠️ غير محدد</span>'}</div></div>
                 </div>
                 <div class="social-links-section"><div class="social-title"><i class="fas fa-share-alt"></i>روابط التواصل الاجتماعي</div>${renderSocialLinks(userData)}</div>
@@ -6773,6 +6934,7 @@
                     <button onclick="showEditProfileModal()" style="background: var(--gradient-main); color: white; border: none; padding: 10px 30px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(15,92,191,0.25); display: inline-flex; align-items: center; gap: 10px;">
                         <i class="fas fa-edit"></i> تعديل الملف الشخصي وإضافة الروابط
                     </button>
+                </div>
                 <p style="color: var(--gray-400); margin-top: 16px; font-size: 0.7rem;"><i class="fas fa-lock"></i> لا يمكن تعديل المعلومات الشخصية (الاسم، التخصص، الخبرة، المستوى الدراسي) إلا عبر الإدارة</p>
             </div>
         `;
@@ -6831,6 +6993,33 @@ function updateUI() {
         const userImage = getValidImageUrl(userData.profile_image, userName, 120);
         document.getElementById('navProfileName').textContent = userName.split(' ')[0];
         document.getElementById('navProfileImg').src = userImage;
+
+        const isCert = Boolean(userData.is_certified === true || userData.status === 'certified');
+        const navBadge = document.getElementById('navProfileBadge');
+        if (navBadge) {
+            if (isCert) {
+                navBadge.style.cssText = 'position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.45rem; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(217, 119, 6, 0.4); z-index: 2;';
+                navBadge.innerHTML = '<i class="fas fa-crown"></i>';
+                navBadge.title = 'أستاذ معتمد (شارة ذهبية) 👑';
+            } else {
+                navBadge.style.cssText = 'position: absolute; bottom: -2px; right: -2px; background: #2563eb; color: white; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.4rem; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(37, 99, 235, 0.4); z-index: 2;';
+                navBadge.innerHTML = '<i class="fas fa-check"></i>';
+                navBadge.title = 'أستاذ موثق (شارة زرقاء) 🔵';
+            }
+        }
+
+        const drawerBadge = document.getElementById('drawerAvatarBadge');
+        if (drawerBadge) {
+            if (isCert) {
+                drawerBadge.style.cssText = 'position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.4); z-index: 2;';
+                drawerBadge.innerHTML = '<i class="fas fa-crown"></i>';
+                drawerBadge.title = 'أستاذ معتمد (شارة ذهبية) 👑';
+            } else {
+                drawerBadge.style.cssText = 'position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; border: 2px solid white; box-shadow: 0 2px 3px rgba(37, 99, 235, 0.4); z-index: 2;';
+                drawerBadge.innerHTML = '<i class="fas fa-check"></i>';
+                drawerBadge.title = 'أستاذ موثق (شارة زرقاء) 🔵';
+            }
+        }
 
         const drawerName = document.getElementById('drawerName');
         if (drawerName) drawerName.textContent = userName;
@@ -9731,15 +9920,24 @@ function updateUI() {
             <div class="post-card" id="post-card-${post.id}" style="background: white; border-radius: 20px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; transition: transform 0.2s ease;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
                     <div style="display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="showTeacherProfileFromPost(${post.teacher_id})" title="درس الملف الشخصي">
-                        <div style="position: relative;">
+                        ${(() => {
+        const isPostCertified = Boolean(post.is_certified === true || post.teacher_is_certified === true || post.status === 'certified');
+        const postAvatarBadgeHtml = isPostCertified
+            ? '<span title="أستاذ معتمد 👑" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid white; box-shadow: 0 2px 5px rgba(217, 119, 6, 0.4); z-index: 2;"><i class="fas fa-crown"></i></span>'
+            : '<span title="أستاذ موثق 🔵" style="position: absolute; bottom: -2px; right: -2px; background: #2563eb; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
+        const postNameBadgeIcon = isPostCertified
+            ? '<i class="fas fa-crown" style="font-size: 0.85rem; color: #f59e0b;" title="أستاذ معتمد (شارة ذهبية)"></i>'
+            : '<i class="fas fa-check-circle" style="font-size: 0.85rem; color: #2563eb;" title="أستاذ موثق (شارة زرقاء)"></i>';
+        return `<div style="position: relative;">
                             <img src="${escapeHtml(authorImg)}" alt="avatar" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 0 0 2px #e2e8f0;" referrerpolicy="no-referrer" onerror="this.src='/images/default-avatar.svg'">
-                            <div style="position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; background: #22c55e; border: 2px solid white; border-radius: 50%;"></div>
+                            ${postAvatarBadgeHtml}
                         </div>
                         <div>
                             <div style="font-weight: 800; font-size: 1.05rem; color: #111827; display: flex; align-items: center; gap: 6px;">
                                 <span>${escapeHtml(post.teacher_name || 'أستاذ')}</span>
-                                <i class="fas fa-certificate" style="font-size: 0.75rem; color: var(--primary);"></i>
-                            </div>
+                                ${postNameBadgeIcon}
+                            </div>`;
+    })()}
                             <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">${escapeHtml(post.teacher_specialization || 'مدرس')} • <span style="color: #94a3b8; font-weight: 400;">${postDate}</span></div>
                         </div>
                     </div>
@@ -11833,7 +12031,10 @@ function updateUI() {
     </div>
     <div class="mobile-drawer-body">
         <div class="mobile-drawer-user">
-            <img id="drawerAvatar" class="mobile-drawer-avatar" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+            <div style="position: relative; display: inline-block;">
+    <img id="drawerAvatar" class="mobile-drawer-avatar" src="/images/default-avatar.svg" alt="صورة" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+    <span id="drawerAvatarBadge"></span>
+</div>
             <div style="flex:1;">
                 <div id="drawerName" style="font-weight:800; font-size:1rem;">أستاذ</div>
                 <div id="drawerEmail" style="font-size:0.75rem; opacity:0.85;">...</div>
