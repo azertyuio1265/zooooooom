@@ -749,7 +749,7 @@ app.post('/api/mystery-box/claim', async (req, res) => {
                 amount: reward,
                 type: 'referral_gift',
                 status: 'completed',
-                description: `مكافأة إحالة ��ن صندوق الهدايا - ${reward} دج`,
+                description: `مكافأة إحالة ����ن صندوق الهدايا - ${reward} دج`,
                 created_at: new Date().toISOString()
             });
 
@@ -3863,7 +3863,7 @@ app.use('/api', authRoutes);
 // ✅ 3. مسارات الإدارة (تحتاج مصادقة إدارية)
 app.use('/api/admin', adminRoutes);
 
-// ✅ 4. مسارات الأستاذ ��ا��طالب (ت��ت��ج مصادقة)
+// ✅ 4. مسارات الأ��تاذ ��ا��طالب (ت��ت��ج مصادقة)
 app.use('/api/teacher', authenticate, teacherRoutes);
 app.use('/api/student', authenticate, studentRoutes);
 
@@ -4097,7 +4097,7 @@ end;
 
 | المحور المعرفي | القاعدة أو الأساس النظري | طريقة التطبيق والتحليل |
 | :--- | :--- | :--- |
-| **المفاهيم الجوهرية** | التعريف الدقيق والمصطلحات | الحفظ الواعي والفهم العميق |
+| **المفاهيم الجوهرية** | التعريف الدقيق والمصطلحات | الحفظ الواعي وال��هم العميق |
 | **العلاقات والقوانين** | النظريات المثبتة علمياً | التوظيف الرياضي أو المنطقي |
 | **الوضعيات التطبيقية** | تحليل المعطيات واستخراج المطلوب | الربط المنهجي السليم |
 
@@ -4270,7 +4270,10 @@ app.post('/api/ai/chat', async (req, res) => {
             last.parts.push({ inlineData: { mimeType, data } });
         }
         const response = await ai.models.generateContent({ model: 'gemini-3.6-flash', contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] });
-        return res.json({ success: true, message: (typeof response.text === 'function' ? response.text() : response.text) || 'لم أستطع توليد إجابة الآن.' });
+        const messageText = typeof response.text === 'function'
+            ? await response.text()
+            : response.text || response.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('');
+        return res.json({ success: true, message: messageText || 'لم أستطع توليد إجابة الآن.' });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);
         return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي. حاول مرة أخرى.' });
