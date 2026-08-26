@@ -795,15 +795,21 @@ async function loadStudentData() {
         const authRes = await response.json();
         const userData = authRes.user || {};
         const role = authRes.role || userData.role || 'student';
+        userData.role = role;
         studentData = userData;
         
         // عرض النقاط والرصيد في الواجهة حسب نوع الحساب
         const tokensEl = document.querySelector('#tokensCount');
         const walletEl = document.querySelector('#modalWalletBalance');
+        const buyBtn = document.querySelector('#buyTokensBtn');
 
         if (role === 'teacher') {
             if (tokensEl) tokensEl.textContent = 'غير محدود ♾️';
             if (walletEl) walletEl.textContent = (userData.balance || userData.wallet_balance || 0) + ' دج';
+            if (buyBtn) {
+                buyBtn.innerHTML = '<i class="fa-solid fa-crown" style="color: #fef08a;"></i> <span>حساب أستاذ 👑</span>';
+                buyBtn.style.background = 'linear-gradient(135deg, #7c3aed, #4f46e5)';
+            }
         } else {
             if (tokensEl) tokensEl.textContent = userData.ai_tokens !== undefined && userData.ai_tokens !== null ? userData.ai_tokens : 50;
             if (walletEl) walletEl.textContent = (userData.wallet_balance || 0) + ' دج';
@@ -826,6 +832,10 @@ function selectPackage(packageId) {
 
 // فتح وإغلاق المودال لشحن النقاط
 buyTokensBtn.onclick = () => {
+    if (studentData && studentData.role === 'teacher') {
+        alert('بصفتك أستاذ في المنصة، فأنت تتمتع باستعمال غير محدود ومجاني للمعلم الذكي! 👑');
+        return;
+    }
     document.querySelector('#modalWalletBalance').textContent = (studentData ? studentData.wallet_balance || 0 : 0) + ' دج';
     buyTokensModal.style.display = 'flex';
 };
@@ -834,6 +844,11 @@ window.onclick = (e) => { if (e.target === buyTokensModal) buyTokensModal.style.
 
 // تأكيد عملية الشراء
 confirmPurchaseBtn.onclick = async () => {
+    if (studentData && studentData.role === 'teacher') {
+        alert('بصفتك أستاذ، لديك استخدام غير محدود مجاناً.');
+        buyTokensModal.style.display = 'none';
+        return;
+    }
     confirmPurchaseBtn.disabled = true;
     confirmPurchaseBtn.textContent = 'جاري المعالجة والشحن...';
     try {
