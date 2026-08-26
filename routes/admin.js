@@ -154,7 +154,7 @@ router.get('/admin-counts', authenticate, authorize(['admin']), async (req, res)
             .from('teachers')
             .select('id')
             .eq('is_certified', false)
-            .or('id_image.not.is.null,diploma_image.not.is.null,certificate_image.not.is.null,id_card_image.not.is.null');
+            .or('id_image.not.is.null,diploma_image.not.is.null');
 
         // Pending courses
         const { count: pendingCoursesCount } = await supabase
@@ -263,7 +263,7 @@ router.get('/upgrade-requests', authenticate, authorize(['admin']), async (req, 
             .from('teachers')
             .select('*')
             .eq('is_certified', false)
-            .or('id_image.not.is.null,diploma_image.not.is.null,certificate_image.not.is.null,id_card_image.not.is.null')
+            .or('id_image.not.is.null,diploma_image.not.is.null')
             .order('created_at', { ascending: false });
 
         if (error) throw error;
