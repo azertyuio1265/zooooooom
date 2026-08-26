@@ -522,7 +522,13 @@
             </div>
         </div>
     `;
-    document.body.appendChild(widgetContainer);
+    if (document.body) {
+        document.body.appendChild(widgetContainer);
+    } else {
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.appendChild(widgetContainer);
+        });
+    }
 
     // Elements
     const floatBtn = document.getElementById('zoomdz-ai-float-btn');
