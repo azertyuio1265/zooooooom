@@ -6745,11 +6745,22 @@
 
     function updateUpgradeButtonsVisibility() {
         if (!userData) return;
+        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
         const isVerified = Boolean(userData.email_verified || userData.status === 'approved');
-        document.querySelectorAll('.nav-upgrade-btn, .sidebar-upgrade-btn, .mobile-drawer-upgrade-item, .dropdown-upgrade-item').forEach(el => {
-            el.style.display = isVerified ? 'inline-flex' : 'none';
+        const shouldShow = isVerified && !isCertified;
+        
+        document.querySelectorAll('.nav-upgrade-btn, .sidebar-upgrade-btn, .mobile-drawer-upgrade-item, .dropdown-upgrade-item, #teacherUpgradeBanner').forEach(el => {
+            if (!el) return;
+            if (!shouldShow) {
+                el.style.display = 'none';
+            } else {
+                if (el.id === 'teacherUpgradeBanner' || el.classList.contains('dropdown-item') || el.classList.contains('mobile-drawer-upgrade-item')) {
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'inline-flex';
+                }
+            }
         });
-    });
     }
     window.updateUpgradeButtonsVisibility = updateUpgradeButtonsVisibility;
 
@@ -8341,21 +8352,22 @@ function updateUI() {
         const shouldStart = confirm("⚠️ هل تريد بدء البث المباشر؟");
         if (!shouldStart) return;
 
-        const autoAdmit = confirm("هل تريد إدخال الطلاب تلقائياً؟ (موافق: تلقائي، إلغاء: يدوياً)");
-        if (autoAdmit) {
-            await fetchWithAuth("/api/send-stream-notification", {
-                method: "POST",
-                body: JSON.stringify({ offer_id: offerId })
-            });
-        }
+        const autoAdmit = confirm("سيتم الآن بدء البث. هل تريد إدخال جميع الطلاب المسجلين تلقائياً الآن؟ (موافق: نعم تلقائي، إلغاء: لا، سأقوم بإدخالهم يدوياً)");
+
         try {
             const res = await fetchWithAuth('/api/start-agora-stream', {
                 method: 'POST',
                 body: JSON.stringify({ offer_id: offerId })
             });
             const data = await res.json();
-
             if (data.success) {
+                if (autoAdmit) {
+                    await fetchWithAuth(`/api/stream/add-all-students/${offerId}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ teacher_id: userData ? userData.id : 0 })
+                    });
+                }
+
                 showToast('✅ تم بدء البث بنجاح!', 'success');
                 
                 const token = localStorage.getItem('token');
