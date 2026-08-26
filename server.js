@@ -3991,13 +3991,17 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             });
         }
 
-        const { messages = [], imageBase64, mimeType = 'image/jpeg', education_level = 'غير محدد', model = 'gemini-2.5-flash' } = req.body || {};
+        const { messages = [], imageBase64, mimeType = 'image/jpeg', education_level = 'غير محدد', model = 'gemini-3.6-flash' } = req.body || {};
         
         // رسم خريطة النماذج لضمان استخدام النماذج الحديثة والمدعومة
-        let selectedModel = String(model);
-        const validModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
-        if (!validModels.includes(selectedModel)) {
-            selectedModel = 'gemini-2.5-flash';
+        let selectedModel = 'gemini-3.6-flash';
+        const requestedModel = String(model || '');
+        if (requestedModel === 'gemini-1.5-pro' || requestedModel === 'gemini-3.1-pro-preview') {
+            selectedModel = 'gemini-3.1-pro-preview';
+        } else if (requestedModel === 'gemini-3.7-flash') {
+            selectedModel = 'gemini-3.7-flash';
+        } else {
+            selectedModel = 'gemini-3.6-flash';
         }
 
         const cleanMessages = Array.isArray(messages) ? messages.slice(-20).map(message => ({
