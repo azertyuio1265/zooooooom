@@ -965,7 +965,12 @@
             <div id="pendingTeachers"></div>
         </div>
         <div id="approvedTab" style="display: none;">
-            <input type="text" class="search-box" id="teacherSearch" placeholder="🔍 بحث عن أستاذ بالاسم أو التخصص..." oninput="filterTeachers()">
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap;">
+                <input type="text" class="search-box" id="teacherSearch" placeholder="🔍 بحث عن أستاذ بالاسم أو التخصص..." oninput="filterTeachers()" style="flex: 1; margin-bottom: 0;">
+                <button onclick="certifyAllTeachers()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 11px 20px; border-radius: 10px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35); font-family: 'Cairo', sans-serif;">
+                    <i class="fas fa-crown"></i> جعل جميع الأساتذة معتمدين
+                </button>
+            </div>
             <div id="approvedTeachers"></div>
         </div>
         <div id="studentsTab" style="display: none;">
@@ -4292,6 +4297,32 @@
     }
 }
 window.toggleTeacherCertify = toggleTeacherCertify;
+
+async function certifyAllTeachers() {
+    if (!confirm("👑 هل أنت متأكد من منح الشارة الذهبية وتصنيف جميع الأساتذة كـ \"أستاذ معتمد\" دفعة واحدة؟")) return;
+    try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/admin/certify-all-teachers", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await res.json();
+        if (data.success) {
+            showNotification(data.message || "👑 تم منح جميع الأساتذة الشارة الذهبية بنجاح!", "success");
+            if (typeof loadApprovedTeachers === "function") loadApprovedTeachers();
+            if (typeof loadPendingTeachers === "function") loadPendingTeachers();
+        } else {
+            showNotification(data.error || "حدث خطأ", "error");
+        }
+    } catch(e) {
+        console.error("Error certifying all teachers:", e);
+        showNotification("حدث خطأ في الاتصال بالخادم", "error");
+    }
+}
+window.certifyAllTeachers = certifyAllTeachers;
         function renderTeachers(teachers) {
             const container = document.getElementById('approvedTeachers');
             

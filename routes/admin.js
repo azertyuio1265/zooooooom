@@ -596,6 +596,39 @@ router.post('/toggle-certify-teacher/:id', [
 });
 
 // ============================================================
+// 👑 اعتماد جميع الأساتذة دفعة واحدة
+// ============================================================
+router.post('/certify-all-teachers', [
+    authenticate,
+    authorize(['admin'])
+], async (req, res) => {
+    try {
+        const { error: updateError } = await supabase
+            .from('teachers')
+            .update({ 
+                is_certified: true,
+                status: 'approved',
+                updated_at: new Date().toISOString()
+            })
+            .neq('id', 0);
+
+        if (updateError) {
+            logger.error('❌ خطأ في اعتماد جميع الأساتذة:', updateError);
+            return res.status(500).json({ success: false, error: updateError.message });
+        }
+
+        console.log(`👑 [ADMIN] All teachers updated to certified state.`);
+        res.json({
+            success: true,
+            message: '👑 تم منح جميع الأساتذة الشارة الذهبية (أستاذ معتمد) وتفعيل حساباتهم بنجاح!'
+        });
+    } catch (error) {
+        logger.error('❌ خطأ في اعتماد جميع الأساتذة:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
 // ✅ رفض الأستاذ (مع إرسال بريد رفض)
 // ============================================================
 router.post('/reject-teacher/:id', [
