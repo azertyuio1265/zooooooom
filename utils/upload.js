@@ -1,4 +1,5 @@
 const logger = require('./logger');
+const sharp = require('sharp');
 // ============================================================
 // دوال رفع الملفات
 // ============================================================
@@ -37,7 +38,23 @@ async function uploadToSupabase(file, folder, oldFileName = null) {
             throw new Error('الملف تالف أو غير صحيح');
         }
 
-        const fileExt = path.extname(file.originalname);
+        let fileBuffer = file.buffer;
+        let fileExt = path.extname(file.originalname);
+        let mimeType = file.mimetype;
+
+        if (mimeType && mimeType.startsWith('image/') && mimeType !== 'image/gif') {
+            try {
+                fileBuffer = await sharp(fileBuffer)
+                    .resize({ width: 1200, withoutEnlargement: true })
+                    .jpeg({ quality: 80 })
+                    .toBuffer();
+                fileExt = '.jpg';
+                mimeType = 'image/jpeg';
+            } catch (sharpErr) {
+                logger.warn('⚠️ فشل ضغط الصورة باستخدام sharp، سيتم استخدام الملف الاصلي:', sharpErr.message);
+            }
+        }
+
         const fileName = `${uuidv4()}${fileExt}`;
         const filePath = `${folder}/${fileName}`;
         
@@ -59,8 +76,8 @@ async function uploadToSupabase(file, folder, oldFileName = null) {
             try {
                 const { data, error } = await supabase.storage
                     .from('profiles')
-                    .upload(filePath, file.buffer, {
-                        contentType: file.mimetype,
+                    .upload(filePath, fileBuffer, {
+                        contentType: mimeType,
                         cacheControl: '86400'
                     });
 
@@ -89,7 +106,7 @@ async function uploadToSupabase(file, folder, oldFileName = null) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
             const localFilePath = path.join(uploadDir, fileName);
-            fs.writeFileSync(localFilePath, file.buffer);
+            fs.writeFileSync(localFilePath, fileBuffer);
             
             const publicUrl = `/uploads/${folder}/${fileName}`;
             return {

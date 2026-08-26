@@ -859,6 +859,7 @@
     <div class="container">
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="showTab('pending')"><i class="fas fa-clock"></i> طلبات الأساتذة <span id="pendingCount" class="badge-count" style="display:none"></span></button>
+            <button class="nav-tab" onclick="showTab('upgrade-requests')" style="background: #fffbe3; color: #92400e; border: 1.5px solid #fde68a;"><i class="fas fa-crown" style="color: #d97706;"></i> طلبات الترقية <span id="upgradeRequestsCount" class="badge-count" style="display:none"></span></button>
             <button class="nav-tab" onclick="showTab('approved')"><i class="fas fa-check-circle"></i> الأساتذة</button>
             <button class="nav-tab" onclick="showTab('students')"><i class="fas fa-user-graduate"></i> الطلاب</button>
             <button class="nav-tab" onclick="showTab('banned')" id="bannedTab"><i class="fas fa-ban"></i> المحظورون</button>
@@ -941,6 +942,22 @@
             <div class="card" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                 <h3 style="margin-bottom: 20px; font-weight: 800; color: #0f172a;"><i class="fas fa-list" style="color: #3b82f6;"></i> المقالات المنشورة حالياً</h3>
                 <div id="adminBlogsList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+        </div>
+
+        <div id="upgrade-requestsTab" class="tab-content" style="display:none;">
+            <div class="card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: var(--shadow);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0; font-size: 1.2rem; color: #b45309; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-crown"></i> طلبات ترقية الأساتذة إلى حساب معتمد (الشارة الذهبية)
+                    </h2>
+                    <button onclick="loadUpgradeRequests()" class="btn-primary" style="background: var(--primary); padding: 8px 16px; border-radius: 8px; color: white; border: none; cursor: pointer; font-weight: 700;">
+                        <i class="fas fa-sync-alt"></i> تحديث القائمة
+                    </button>
+                </div>
+                <div id="upgradeRequestsList">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>
+                </div>
             </div>
         </div>
 
@@ -2379,6 +2396,7 @@
 
         function showTab(tab) {
             document.getElementById('pendingTab').style.display = tab === 'pending' ? 'block' : 'none';
+            if (document.getElementById('upgrade-requestsTab')) document.getElementById('upgrade-requestsTab').style.display = tab === 'upgrade-requests' ? 'block' : 'none';
             document.getElementById('approvedTab').style.display = tab === 'approved' ? 'block' : 'none';
             document.getElementById('studentsTab').style.display = tab === 'students' ? 'block' : 'none';
             document.getElementById('bannedTab').style.display = tab === 'banned' ? 'block' : 'none';
@@ -2405,6 +2423,7 @@
             });
             
             if (tab === 'pending') loadPendingTeachers();
+            else if (tab === 'upgrade-requests') loadUpgradeRequests();
             else if (tab === 'doc-reminders') loadDocReminders();
             else if (tab === 'email-reminders') loadEmailReminders();
             else if (tab === 'approved') loadApprovedTeachers();
@@ -4955,6 +4974,7 @@ window.certifyAllTeachers = certifyAllTeachers;
                 };
                 
                 updateBadge('pendingCount', counts.pendingTeachers);
+                updateBadge('upgradeRequestsCount', counts.upgradeRequests);
                 updateBadge('withdrawalsCount', counts.withdrawals);
                 updateBadge('supportCount', counts.support);
                 updateBadge('noDocsCount', counts.noDocs);
@@ -4963,6 +4983,66 @@ window.certifyAllTeachers = certifyAllTeachers;
                 console.error('Error updating counts:', error);
             }
         }
+
+        // ============================================================
+        // 👑 إدارة طلبات الترقية للاعتماد الذهبي
+        // ============================================================
+        async function loadUpgradeRequests() {
+            const container = document.getElementById('upgradeRequestsList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
+            try {
+                const data = await fetchData('/api/admin/upgrade-requests', 'خطأ في جلب طلبات الترقية');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-crown" style="color:#d97706;"></i>لا توجد طلبات ترقية معلقة حالياً</div>';
+                    return;
+                }
+                let html = '<div class="teachers-grid">';
+                for (const t of data) {
+                    const imageUrl = getAdminValidImageUrl(t.profile_image || t.profile_image_url);
+                    html += `
+                        <div class="teacher-card" style="border: 2px solid #f59e0b;">
+                            <img src="${imageUrl}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageError(this);" onclick="showFullImage('${imageUrl}')" style="cursor:pointer; border: 3px solid #f59e0b;">
+                            <h3><i class="fas fa-crown" style="color: #f59e0b;"></i> ${escapeHtml(t.full_name)}</h3>
+                            <p><i class="fas fa-envelope"></i> ${t.email}</p>
+                            <p><i class="fas fa-phone"></i> ${t.phone}</p>
+                            <p><i class="fas fa-book"></i> ${escapeHtml(t.specialization || 'تخصص غير محدد')}</p>
+                            ${renderTeacherDocumentsHtml(t)}
+                            <div class="button-group" style="margin-top: 15px;">
+                                <button class="btn-approve" onclick="approveTeacherUpgrade(${t.id})" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;"><i class="fas fa-crown"></i> قبول الترقية ومنح الشارة الذهبية</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            } catch(e) {
+                container.innerHTML = `<div class="error-state"><i class="fas fa-exclamation-triangle" style="color:#dc2626;"></i>${e.message}</div>`;
+            }
+        }
+
+        async function approveTeacherUpgrade(id) {
+            if (!confirm('👑 هل أنت متأكد من قبول طلب الترقية ومنح الأستاذ الشارة الذهبية؟')) return;
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/admin/approve-upgrade/${id}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showNotification('👑 تم قبول طلب الترقية ومنح الشارة الذهبية بنجاح!', 'success');
+                    loadUpgradeRequests();
+                    updateAdminCounts();
+                } else {
+                    showNotification(data.error || '❌ حدث خطأ', 'error');
+                }
+            } catch(e) {
+                showNotification('❌ حدث خطأ', 'error');
+            }
+        }
+        window.loadUpgradeRequests = loadUpgradeRequests;
+        window.approveTeacherUpgrade = approveTeacherUpgrade;
 
         // ============================================================
         // 📚 إدارة مراجعة الدورات (Pending Courses Review)

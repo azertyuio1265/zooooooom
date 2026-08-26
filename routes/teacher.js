@@ -1649,12 +1649,12 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
 });
 
 // ============================================================
-// ✅ طلب ترقية الحساب إلى أستاذ معتمد (رفع بطاقة الهوية والشهادة)
+// ✅ طلب ترقية الحساب إلى أستاذ معتمد (رفع أو التقاط بطاقة الهوية والشهادة)
 // ============================================================
 router.post('/request-upgrade', authenticate, authorize(['teacher']), upload.fields([
     { name: 'diploma_image', maxCount: 1 },
     { name: 'id_image', maxCount: 1 }
-]), validateUploadedFiles, async (req, res) => {
+]), async (req, res) => {
     try {
         const teacher_id = req.user.userId;
         const teacher = await getOne('teachers', 'id', teacher_id);
@@ -1670,24 +1670,62 @@ router.post('/request-upgrade', authenticate, authorize(['teacher']), upload.fie
         let id_image = teacher.id_image;
         let newDocsUploaded = false;
 
+        // Diploma image (file or base64)
         if (req.files && req.files['diploma_image'] && req.files['diploma_image'][0]) {
             const uploaded = await uploadToSupabase(req.files['diploma_image'][0], 'diplomas', teacher.diploma_image);
             if (uploaded) {
                 diploma_image = uploaded.url;
                 newDocsUploaded = true;
             }
+        } else if (req.body.diploma_image_base64) {
+            try {
+                const base64Data = req.body.diploma_image_base64.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                const mockFile = {
+                    buffer: buffer,
+                    originalname: `diploma_${teacher_id}_${Date.now()}.jpg`,
+                    mimetype: 'image/jpeg',
+                    size: buffer.length
+                };
+                const uploaded = await uploadToSupabase(mockFile, 'diplomas', teacher.diploma_image);
+                if (uploaded) {
+                    diploma_image = uploaded.url;
+                    newDocsUploaded = true;
+                }
+            } catch (imgErr) {
+                logger.error('Error processing diploma base64:', imgErr.message);
+            }
         }
 
+        // ID image (file or base64)
         if (req.files && req.files['id_image'] && req.files['id_image'][0]) {
             const uploaded = await uploadToSupabase(req.files['id_image'][0], 'ids', teacher.id_image);
             if (uploaded) {
                 id_image = uploaded.url;
                 newDocsUploaded = true;
             }
+        } else if (req.body.id_image_base64) {
+            try {
+                const base64Data = req.body.id_image_base64.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+                const mockFile = {
+                    buffer: buffer,
+                    originalname: `id_${teacher_id}_${Date.now()}.jpg`,
+                    mimetype: 'image/jpeg',
+                    size: buffer.length
+                };
+                const uploaded = await uploadToSupabase(mockFile, 'ids', teacher.id_image);
+                if (uploaded) {
+                    id_image = uploaded.url;
+                    newDocsUploaded = true;
+                }
+            } catch (imgErr) {
+                logger.error('Error processing ID base64:', imgErr.message);
+            }
         }
 
         if (!newDocsUploaded) {
-            return res.status(400).json({ success: false, error: 'يرجى اختيار صورة بطاقة الهوية الوطنية أو صورة الشهادة والدبلوم لتقديم طلب الترقية' });
+            return res.status(400).json({ success: false, error: 'يرجى التقاط أو رفع صورة بطاقة الهوية الوطنية وصورة الشهادة والدبلوم لتقديم طلب الترقية' });
         }
 
         const updateData = {
@@ -1704,7 +1742,7 @@ router.post('/request-upgrade', authenticate, authorize(['teacher']), upload.fie
                 user_id: 1,
                 user_type: 'admin',
                 title: '📜 طلب ترقية إلى أستاذ معتمد',
-                message: `قام الأستاذ ${teacher.full_name} بتقديم طلب ترقية ورفع وثائقه للحصول على الشارة الذهبية 👑.`,
+                message: `قام الأستاذ ${teacher.full_name} بتقديم طلب ترقية والتقاط/رفع وثائقه للحصول على الشارة الذهبية 👑.`,
                 is_read: false,
                 created_at: new Date().toISOString()
             });
@@ -1721,7 +1759,7 @@ router.post('/request-upgrade', authenticate, authorize(['teacher']), upload.fie
 
         res.json({
             success: true,
-            message: '🚀 تم إرسال طلب الترقية ورفع الوثائق بنجاح! سيتم مراجعتها من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
+            message: '🚀 تم إرسال طلب الترقية والوثائق بنجاح! سيتم مراجعتها من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
             user: processed
         });
 

@@ -149,6 +149,13 @@ router.get('/admin-counts', authenticate, authorize(['admin']), async (req, res)
             .neq('status', 'approved')
             .or('diploma_image.is.null,id_image.is.null');
 
+        // Upgrade requests (الأساتذة الذين أرسلوا وثائق طلب الترقية وغير معتمدين)
+        const { data: upgradeRequestsData } = await supabase
+            .from('teachers')
+            .select('id')
+            .eq('is_certified', false)
+            .or('id_image.not.is.null,diploma_image.not.is.null,certificate_image.not.is.null,id_card_image.not.is.null');
+
         // Pending courses
         const { count: pendingCoursesCount } = await supabase
             .from('courses')
@@ -160,6 +167,7 @@ router.get('/admin-counts', authenticate, authorize(['admin']), async (req, res)
             withdrawals: withdrawalsCount || 0,
             support: supportCount || 0,
             noDocs: noDocsData ? noDocsData.length : 0,
+            upgradeRequests: upgradeRequestsData ? upgradeRequestsData.length : 0,
             pendingCourses: pendingCoursesCount || 0
         });
     } catch (error) {
@@ -246,8 +254,73 @@ router.get('/students', authenticate, authorize(['admin']), async (req, res) => 
 });
 
 // ============================================================
-// ✅ جلب جميع الأساتذة المعلقين (مع روابط الصور)
+// ✅ جلب طلبات الترقية للأساتذة (الذين لديهم وثائق ترقية وغير معتمدين)
 // ============================================================
+router.get('/upgrade-requests', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        console.log('📥 جلب طلبات ترقية الأساتذة...');
+        const { data, error } = await supabase
+            .from('teachers')
+            .select('*')
+            .eq('is_certified', false)
+            .or('id_image.not.is.null,diploma_image.not.is.null,certificate_image.not.is.null,id_card_image.not.is.null')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        const teachersWithImages = (data || []).map(attachTeacherImageUrls);
+        res.json(teachersWithImages);
+    } catch (error) {
+        logger.error('❌ خطأ في جلب طلبات الترقية:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// ✅ قبول طلب الترقية ومنح الشارة الذهبية
+// ============================================================
+router.post('/approve-upgrade/:id', authenticate, authorize(['admin']), async (req, res) => {
+    try {
+        const teacherId = parseInt(req.params.id);
+        const teacher = await getOne('teachers', 'id', teacherId);
+        if (!teacher) {
+            return res.status(404).json({ success: false, error: 'الأستاذ غير موجود' });
+        }
+
+        try {
+            await deleteTeacherVerificationDocs(teacher);
+        } catch (e) {}
+
+        const { error: updateError } = await supabase
+            .from('teachers')
+            .update({
+                is_certified: true,
+                status: 'approved',
+                rejection_reason: null,
+                diploma_image: null,
+                id_image: null,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', teacherId);
+
+        if (updateError) throw updateError;
+
+        try {
+            await insert('notifications', {
+                user_id: teacherId,
+                user_type: 'teacher',
+                title: '👑 تهانينا! تم قبول طلب الترقية',
+                message: 'تم مراجعة وثائقك واعتماد حسابك بنجاح! تم منحك الشارة الذهبية وكافة ميزات الحساب المعتمد.',
+                is_read: false,
+                created_at: new Date().toISOString()
+            });
+        } catch (e) {}
+
+        res.json({ success: true, message: 'تم قبول طلب الترقية ومنح الشارة الذهبية بنجاح' });
+    } catch (error) {
+        logger.error('Error approving upgrade:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 router.get('/pending-teachers', authenticate, authorize(['admin']), async (req, res) => {
     try {
         console.log('📥 جلب الأساتذة المعلقين...');

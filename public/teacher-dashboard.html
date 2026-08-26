@@ -3444,7 +3444,7 @@
             <i class="fas fa-chevron-down profile-chevron"></i>
         </div>
         <div class="profile-dropdown" id="profileDropdown">
-            <button class="dropdown-item" onclick="openUpgradeModal(); closeAllDropdowns();" style="color: #d97706; font-weight: 800; background: #fffbe3; border-radius: 8px; margin: 2px 0;">
+            <button class="dropdown-item dropdown-upgrade-item" onclick="openUpgradeModal(); closeAllDropdowns();" style="color: #d97706; font-weight: 800; background: #fffbe3; border-radius: 8px; margin: 2px 0;">
                 <i class="fas fa-crown" style="color: #f59e0b;"></i> طلب الترقية (الشارة الذهبية) 👑
             </button>
             <button class="dropdown-item" onclick="showSection('profile'); closeAllDropdowns();">
@@ -4627,34 +4627,60 @@
                 </ul>
             </div>
 
-            <!-- FORM FOR DOCUMENTS -->
+            <!-- FORM FOR DOCUMENTS WITH CAMERA CAPTURE -->
             <form id="upgradeForm" onsubmit="submitUpgradeRequest(event)" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">
                 <h4 style="margin: 0 0 14px 0; font-size: 0.95rem; color: var(--gray-800); font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-file-upload" style="color: var(--primary);"></i> نموذج تقديم الوثائق الرسمية للترقية:
+                    <i class="fas fa-camera" style="color: var(--primary);"></i> التقاط وثائق الترقية بالكاميرا (مضغوطة تلقائياً):
                 </h4>
 
-                <div class="form-group" style="margin-bottom: 16px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
-                        <i class="fas fa-id-card" style="color: var(--primary);"></i> صورة بطاقة الهوية الوطنية / رخصة السياقة <span style="color: red;">*</span>
-                    </label>
-                    <input type="file" id="upgradeIdImage" accept="image/*,.pdf" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-300); background: white;">
-                    <span style="font-size: 0.72rem; color: var(--gray-500); display: block; margin-top: 4px;">واضحة ومقروءة بصيغة (JPG, PNG, PDF)</span>
+                <!-- Live Camera Video & Canvas -->
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <video id="upgradeCameraVideo" autoplay playsinline style="width: 100%; max-height: 220px; border-radius: 10px; background: #000; object-fit: cover; display: none; margin-bottom: 10px; border: 2px solid var(--primary);"></video>
+                    <canvas id="upgradeCanvas" style="display: none;"></canvas>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
+                <!-- ID Card Section -->
+                <div class="form-group" style="margin-bottom: 16px; background: white; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
+                        <i class="fas fa-id-card" style="color: var(--primary);"></i> صورة بطاقة الهوية الوطنية / رخصة السياقة <span style="color: red;">*</span>
+                    </label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <button type="button" onclick="startCameraForUpgrade('id')" style="background: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-video"></i> تشغيل الكاميرا للهوية
+                        </button>
+                        <button type="button" onclick="captureUpgradeImage('id')" style="background: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-camera-retro"></i> التقاط وضغط صورة الهوية
+                        </button>
+                    </div>
+                    <div>
+                        <img id="idPreviewImg" style="max-height: 110px; border-radius: 8px; display: none; border: 1.5px solid #cbd5e1; object-fit: cover;" alt="معاينة الهوية" />
+                    </div>
+                </div>
+
+                <!-- Diploma Section -->
+                <div class="form-group" style="margin-bottom: 20px; background: white; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.88rem; color: var(--gray-800);">
                         <i class="fas fa-graduation-cap" style="color: var(--primary);"></i> صورة الشهادة أو الدبلوم الجامعي <span style="color: red;">*</span>
                     </label>
-                    <input type="file" id="upgradeDiplomaImage" accept="image/*,.pdf" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-300); background: white;">
-                    <span style="font-size: 0.72rem; color: var(--gray-500); display: block; margin-top: 4px;">دبلوم الليسانس، الماستر، أوتأهيل تعليمي معتمد</span>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <button type="button" onclick="startCameraForUpgrade('diploma')" style="background: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-video"></i> تشغيل الكاميرا للشهادة
+                        </button>
+                        <button type="button" onclick="captureUpgradeImage('diploma')" style="background: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-camera-retro"></i> التقاط وضغط صورة الشهادة
+                        </button>
+                    </div>
+                    <div>
+                        <img id="diplomaPreviewImg" style="max-height: 110px; border-radius: 8px; display: none; border: 1.5px solid #cbd5e1; object-fit: cover;" alt="معاينة الشهادة" />
+                    </div>
                 </div>
 
                 <p style="font-size: 0.78rem; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-weight: 700; line-height: 1.5;">
-                    🔒 <strong>سرية وحماية البيانات:</strong> يتم مراجعة وثائقك بأمان من قِبل المشرفين لحماية خصوصيتك ثم يتم اعتماد حسابك وتفعيل الشارة الذهبية.
+                    🔒 <strong>سرية وضغط البيانات:</strong> يتم ضغط الصور تلقائياً لضمان تخزينها وسرعتها بكفاءة عالية وأمان تام من قِبل المشرفين لتفعيل شارة الاعتماد الذهبية.
                 </p>
 
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                    <button type="button" onclick="closeUpgradeModal()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 700; font-size: 0.88rem;">إلغاء</button>
+                    <button type="button" onclick="closeUpgradeModal(); stopUpgradeCamera();" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 700; font-size: 0.88rem;">إلغاء</button>
                     <button type="submit" id="submitUpgradeBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 10px 26px; border-radius: 25px; cursor: pointer; font-weight: 800; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); display: inline-flex; align-items: center; gap: 8px;">
                         <i class="fas fa-paper-plane"></i> إرسال طلب الترقية للاعتماد 🚀
                     </button>
@@ -6567,6 +6593,76 @@
     window.openCompleteProfileModal = openCompleteProfileModal;
     window.showProfileCompletionModal = openCompleteProfileModal;
 
+    let upgradeStream = null;
+    let capturedIdImageBase64 = null;
+    let capturedDiplomaImageBase64 = null;
+
+    async function startCameraForUpgrade(type) {
+        const video = document.getElementById('upgradeCameraVideo');
+        if (!video) return;
+        try {
+            if (upgradeStream) {
+                upgradeStream.getTracks().forEach(t => t.stop());
+            }
+            upgradeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = upgradeStream;
+            video.style.display = 'block';
+            showNotification(`📷 تم تشغيل الكاميرا. وجه الكاميرا نحو ${type === 'id' ? 'بطاقة الهوية الوطنية' : 'الشهادة أو الدبلوم'} ثم اضغط زر التقاط وضغط الصورة.`, 'info');
+        } catch (err) {
+            console.error('Camera error:', err);
+            showNotification('❌ تعذر تشغيل الكاميرا. يرجى السماح بالوصول للكاميرا من المتصفح.', 'error');
+        }
+    }
+    window.startCameraForUpgrade = startCameraForUpgrade;
+
+    function captureUpgradeImage(type) {
+        const video = document.getElementById('upgradeCameraVideo');
+        const canvas = document.getElementById('upgradeCanvas');
+        if (!video || !canvas || video.style.display === 'none') {
+            showNotification('⚠️ يرجى تشغيل الكاميرا أولاً قبل الالتقاط', 'warning');
+            return;
+        }
+        const width = video.videoWidth || 640;
+        const height = video.videoHeight || 480;
+        canvas.width = Math.min(width, 1000);
+        canvas.height = Math.round((canvas.width * height) / width);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+        if (type === 'id') {
+            capturedIdImageBase64 = compressedDataUrl;
+            const preview = document.getElementById('idPreviewImg');
+            if (preview) {
+                preview.src = compressedDataUrl;
+                preview.style.display = 'block';
+            }
+            showNotification('✅ تم التقاط وضغط صورة بطاقة الهوية بنجاح', 'success');
+        } else if (type === 'diploma') {
+            capturedDiplomaImageBase64 = compressedDataUrl;
+            const preview = document.getElementById('diplomaPreviewImg');
+            if (preview) {
+                preview.src = compressedDataUrl;
+                preview.style.display = 'block';
+            }
+            showNotification('✅ تم التقاط وضغط صورة الشهادة بنجاح', 'success');
+        }
+
+        stopUpgradeCamera();
+    }
+    window.captureUpgradeImage = captureUpgradeImage;
+
+    function stopUpgradeCamera() {
+        if (upgradeStream) {
+            upgradeStream.getTracks().forEach(t => t.stop());
+            upgradeStream = null;
+        }
+        const video = document.getElementById('upgradeCameraVideo');
+        if (video) video.style.display = 'none';
+    }
+    window.stopUpgradeCamera = stopUpgradeCamera;
+
     function openUpgradeModal() {
         if (checkGuestAction()) return;
         const modal = document.getElementById('upgradeModal');
@@ -6575,6 +6671,7 @@
     window.openUpgradeModal = openUpgradeModal;
 
     function closeUpgradeModal() {
+        stopUpgradeCamera();
         const modal = document.getElementById('upgradeModal');
         if (modal) modal.style.display = 'none';
     }
@@ -6584,45 +6681,30 @@
         if (event) event.preventDefault();
         if (checkGuestAction()) return;
 
-        const idInput = document.getElementById('upgradeIdImage');
-        const diplomaInput = document.getElementById('upgradeDiplomaImage');
-
-        const idFile = idInput && idInput.files ? idInput.files[0] : null;
-        const diplomaFile = diplomaInput && diplomaInput.files ? diplomaInput.files[0] : null;
-
-        if (!idFile && !diplomaFile) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'يرجى اختيار الوثائق',
-                    text: 'يرجى اختيار صورة بطاقة الهوية الوطنية أو صورة الشهادة والدبلوم لتقديم طلب الترقية.',
-                    confirmButtonText: 'حسناً',
-                    confirmButtonColor: '#2563eb'
-                });
-            } else {
-                showToast('⚠️ يرجى اختيار صورة بطاقة الهوية الوطنية أو الشهادة والدبلوم للترقية', 'error');
-            }
+        if (!capturedIdImageBase64 && !capturedDiplomaImageBase64) {
+            showNotification('⚠️ يرجى التقاط صورة بطاقة الهوية الوطنية وصورة الشهادة أو الدبلوم عبر الكاميرا قبل الإرسال', 'error');
             return;
         }
 
+        stopUpgradeCamera();
         const submitBtn = document.getElementById('submitUpgradeBtn');
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري رفع الوثائق وإرسال الطلب...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة وإرسال الوثائق...';
         }
 
         try {
-            const formData = new FormData();
-            if (idFile) formData.append('id_image', idFile);
-            if (diplomaFile) formData.append('diploma_image', diplomaFile);
-
             const token = localStorage.getItem('token');
             const res = await fetch('/api/teacher/request-upgrade', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: formData
+                body: JSON.stringify({
+                    id_image_base64: capturedIdImageBase64,
+                    diploma_image_base64: capturedDiplomaImageBase64
+                })
             });
 
             const data = await res.json();
@@ -6630,12 +6712,7 @@
                 if (data.user) {
                     userData = data.user;
                     localStorage.setItem('userData', JSON.stringify(userData));
-                } else if (userData) {
-                    userData.id_image = 'uploaded';
-                    userData.diploma_image = 'uploaded';
-                    localStorage.setItem('userData', JSON.stringify(userData));
                 }
-
                 closeUpgradeModal();
                 updateProfileForPending();
                 updateUI();
@@ -6644,19 +6721,19 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'تم إرسال طلب الترقية بنجاح! 🚀',
-                        text: 'سيتم مراجعة وثائقك من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
+                        text: data.message || 'سيتم مراجعة وثائقك من قِبل إدارة المنصة لمنحك الشارة الذهبية (أستاذ معتمد).',
                         confirmButtonText: 'ممتاز',
                         confirmButtonColor: '#f59e0b'
                     });
                 } else {
-                    showToast('🚀 تم إرسال طلب الترقية ورفع الوثائق بنجاح! سيتم مراجعتها لمنحك الشارة الذهبية.', 'success');
+                    showNotification(data.message || '✅ تم إرسال طلب الترقية بنجاح', 'success');
                 }
             } else {
-                showToast('❌ ' + (data.error || 'فشل إرسال طلب الترقية'), 'error');
+                showNotification(data.error || '❌ حدث خطأ', 'error');
             }
         } catch (err) {
             console.error('Error submitting upgrade request:', err);
-            showToast('❌ حدث خطأ غير متوقع أثناء رفع ملفات الترقية', 'error');
+            showNotification('❌ حدث خطأ في الاتصال بالخادم', 'error');
         } finally {
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -6665,6 +6742,18 @@
         }
     }
     window.submitUpgradeRequest = submitUpgradeRequest;
+
+    function updateUpgradeButtonsVisibility() {
+        if (!userData) return;
+        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
+        const isVerified = Boolean(userData.email_verified || userData.status === 'approved');
+        const shouldShow = isVerified && !isCertified;
+
+        document.querySelectorAll('.nav-upgrade-btn, .sidebar-upgrade-btn, .mobile-drawer-upgrade-item, .dropdown-upgrade-item').forEach(el => {
+            el.style.display = shouldShow ? 'inline-flex' : 'none';
+        });
+    }
+    window.updateUpgradeButtonsVisibility = updateUpgradeButtonsVisibility;
 
     async function submitTeacherProfile() {
         if (checkGuestAction()) return;
@@ -7014,6 +7103,7 @@ function updateUI() {
         }
 
         if (!userData) return;
+        updateUpgradeButtonsVisibility();
         const userName = userData.full_name || 'أستاذ';
         const userImage = getValidImageUrl(userData.profile_image, userName, 120);
         document.getElementById('navProfileName').textContent = userName.split(' ')[0];
@@ -12083,7 +12173,7 @@ function updateUI() {
             </button>
         </div>
 
-        <div class="mobile-drawer-menu-item" onclick="openUpgradeModal(); closeMobileDrawer();" style="background: linear-gradient(135deg, #fffbe3, #fef3c7); border: 1px solid #fde68a; color: #92400e; font-weight: 800;">
+        <div class="mobile-drawer-menu-item mobile-drawer-upgrade-item" onclick="openUpgradeModal(); closeMobileDrawer();" style="background: linear-gradient(135deg, #fffbe3, #fef3c7); border: 1px solid #fde68a; color: #92400e; font-weight: 800;">
             <div class="item-content">
                 <i class="fas fa-crown" style="color:#f59e0b;"></i>
                 <span>طلب الترقية (الشارة الذهبية) 👑</span>
