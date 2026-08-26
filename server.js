@@ -749,7 +749,7 @@ app.post('/api/mystery-box/claim', async (req, res) => {
                 amount: reward,
                 type: 'referral_gift',
                 status: 'completed',
-                description: `مكافأة إحالة من صندوق الهدايا - ${reward} دج`,
+                description: `مكافأة إحالة ��ن صندوق الهدايا - ${reward} دج`,
                 created_at: new Date().toISOString()
             });
 
@@ -2374,7 +2374,7 @@ function generateTeacherZoomPage(offer, teacher, token) {
 
         // بدء الموقت فقط بعد إضافة الطلبة (هنا يبدأ في حالة التوقف مؤقتاً بانتظار إضافة الطلاب)
         if (streamRemainingSeconds <= 0) {
-            alert('🎉 ته����ن��نا تم اكتمال البث وحصلت على عوائدك');
+            alert('��� ته����ن��نا تم اكتمال البث وحصلت على عوائدك');
             window.location.href = '/teacher-dashboard.html';
         } else {
             isTimerPaused = true;
@@ -3863,7 +3863,7 @@ app.use('/api', authRoutes);
 // ✅ 3. مسارات الإدارة (تحتاج مصادقة إدارية)
 app.use('/api/admin', adminRoutes);
 
-// ✅ 4. مسارات الأستاذ وا��طالب (ت��ت��ج مصادقة)
+// ✅ 4. مسارات الأستاذ ��ا��طالب (ت��ت��ج مصادقة)
 app.use('/api/teacher', authenticate, teacherRoutes);
 app.use('/api/student', authenticate, studentRoutes);
 
@@ -3918,7 +3918,7 @@ app.post('/api/ai/summarize', async (req, res) => {
             const { generateText } = await import('ai');
             const prompt = `أنت بروفيسور وعالم تربوي وأستاذ أطروحات متميز، خبير في المناهج الرسمية والبرامج التعليمية الجزائرية.
 الطالب يدخل المستوى: ${levelText}، الشعبة أو التخصص: ${specialty || 'غير محدد'}، والمادة: ${subject}.
-قبل الكتابة استخدم Google Search للعثور على مصادر موثوقة وحديثة تخص هذا الدرس والمستوى، ثم تحقّق من توافقها. لا تخمّن ولا تنشئ معلومات عامة غير مستندة إلى المصادر. اذكر في نهاية الشرح المصادر التي اعتمدت عليها بروابطها إن توفرت.
+قبل الكتابة استخدم Google Search للعثور على ��صادر موثوقة وحديثة تخص هذا الدرس والمستوى، ثم تحقّق من توافقها. لا تخمّن ولا تنشئ معلومات عامة غير مستندة إلى المصادر. اذكر في نهاية الشرح المصادر التي اعتمدت عليها بروابطها إن توفرت.
 المطلوب منك كتابة **شرح فعلي دقيق ومبسّط** لدرس: "${cleanLesson}".
 
 تعليمات صارمة لا تقبل التراجع لضمان فهم الطالب فهماً تاماً وعميقاً ومبسطاً:
@@ -4213,7 +4213,7 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
                 });
             }
 
-            const text = response.text();
+            const text = (typeof response.text === 'function' ? response.text() : response.text);
             try {
                 data = JSON.parse(text);
             } catch (jsonErr) {
@@ -4263,14 +4263,14 @@ app.post('/api/ai/chat', async (req, res) => {
         if (!process.env.GEMINI_API_KEY) return res.status(503).json({ success: false, error: 'محرك الذكاء الاصطناعي غير مضبوط حالياً.' });
         const { GoogleGenAI } = require('@google/genai');
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود لمنصة ZoomDz. ساعد الطالب في أي موضوع، واشرح بالفصحى المبسطة المناسبة لمستواه (${education_level}). لا تخترع معلومات، واطلب توضيحاً عند الحاجة. عند حل مسألة: اذكر المعطيات ثم المنهجية ثم الحل خطوة بخطوة ثم تحققاً مختصراً. استخدم Markdown وLaTeX بين $$ للمعادلات. إذا أرسل الطالب صورة فحلل محتواها واذكر ما تراه بوضوح، وإذا لم تكن تعليمية فاطلب منه صورة أوضح. اجعل إجابتك عملية ومشجعة دون مبالغة.`;
+        const prompt = `أنت معلم ذكاء اصطناعي عربي ودود لمنصة ZoomDz. ساعد الطالب في أي موضوع، واشرح بالفصحى المبسطة المناسبة لمستواه (${education_level}). لا تخترع معلومات، واطلب توضيحاً عند الحاجة. عند حل مسألة: اذكر الم��طيات ثم المنهجية ثم الحل خطوة بخطوة ثم تحققاً مختصراً. استخدم Markdown وLaTeX بين $$ للمعادلات. إذا أرسل الطالب صورة فحلل محتواها واذكر ما تراه بوضوح، وإذا لم تكن تعليمية فاطلب منه صورة أوضح. اجعل إجابتك عملية ومشجعة دون مبالغة.`;
         const last = cleanMessages[cleanMessages.length - 1] || { role: 'user', parts: [{ text: 'حلل الصورة المرفقة وقدم المساعدة.' }] };
         if (imageBase64) {
             const data = String(imageBase64).replace(/^data:[^;]+;base64,/, '');
             last.parts.push({ inlineData: { mimeType, data } });
         }
         const response = await ai.models.generateContent({ model: 'gemini-3.6-flash', contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] });
-        return res.json({ success: true, message: response.text() || 'لم أستطع توليد إجابة الآن.' });
+        return res.json({ success: true, message: (typeof response.text === 'function' ? response.text() : response.text) || 'لم أستطع توليد إجابة الآن.' });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);
         return res.status(502).json({ success: false, error: 'تعذر الاتصال بالمعلم الذكي. حاول مرة أخرى.' });
@@ -4302,7 +4302,7 @@ app.post('/api/ai/solve-image', async (req, res) => {
             return res.json({
                 success: false,
                 noExercise: true,
-                message: 'الصورة غير واضحة أو تالفة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
+                message: 'الصور�� غير واضحة أو تالفة. يرجى التقاط أو رفع صورة واضحة لنص تمرين أو مسألة مدرسية.'
             });
         }
 
@@ -4313,7 +4313,7 @@ app.post('/api/ai/solve-image', async (req, res) => {
                 const { GoogleGenAI } = require('@google/genai');
                 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-                const prompt = `أنت مصحح ومحلل أكاديمي فائق الدقة لمنصة ZoomDz التعليمية للطور (${levelText}).
+                const prompt = `أنت مصحح ومحلل أكاديمي فائق الدقة لمنصة ZoomDz التعليمية للطو�� (${levelText}).
 مهمتك الصارمة الأولى هي فحص وتصنيف الصورة المرفقة قبل أي شيء:
 
 1. تصنيف محتوى الصورة:
@@ -4500,7 +4500,7 @@ app.post('/api/ai/exercise-variation', async (req, res) => {
             });
         }
 
-        const exerciseMarkdown = response.text() || '';
+        const exerciseMarkdown = (typeof response.text === 'function' ? response.text() : response.text) || '';
 
         res.json({
             success: true,
@@ -4678,7 +4678,7 @@ app.get('/api/teacher/balance/:teacherId', authenticate, authorize(['teacher']),
                 .order('created_at', { ascending: false });
 
             if (sessionsError) {
-                console.error('❌ خطأ في جلب جلسات الأستاذ:', sessionsError);
+                console.error('❌ خطأ في جلب جل��ات الأستاذ:', sessionsError);
             } else if (sessions) {
                 allSessions = sessions.map(s => {
                     const offer = offersMap.get(s.offer_id);
@@ -4797,7 +4797,7 @@ app.get('/api/teacher/offers/:teacherId', authenticate, authorize(['teacher']), 
         });
         res.json(syncedOffers);
     } catch (error) {
-        console.error('❌ خطأ في جلب دروس الأستاذ:', error.message);
+        console.error('❌ خطأ في جلب دروس ا��أستاذ:', error.message);
         res.status(500).json({ success: false, error: 'حدث خطأ في الخادم' });
     }
 });
