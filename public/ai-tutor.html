@@ -774,28 +774,42 @@ const token = localStorage.getItem('token');
 
 // 🔒 حماية الصفحة والتحقق من تسجيل الدخول
 if (!token || token === 'guest_token') {
-    alert('عذراً، يجب تسجيل الدخول بحساب طالب للوصول إلى لوحة Zoomy.');
+    alert('عذراً، يجب تسجيل الدخول بحسابك لاستخدام معلم الذكاء الاصطناعي.');
     window.location.href = '/?login=true';
 }
 
-// جلب معلومات الطالب والنقاط المتاحة
+// جلب معلومات المستخدم والنقاط المتاحة (طالب أو أستاذ)
 async function loadStudentData() {
     try {
-        const response = await fetch('/api/student/me', {
+        const response = await fetch('/api/auth/me', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) {
-            throw new Error('انتهت الجلسة');
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/?login=true';
+                return;
+            }
+            throw new Error('تعذر جلب بيانات المستخدم');
         }
-        studentData = await response.json();
+        const authRes = await response.json();
+        const userData = authRes.user || {};
+        const role = authRes.role || userData.role || 'student';
+        studentData = userData;
         
-        // عرض النقاط في الواجهة
-        document.querySelector('#tokensCount').textContent = studentData.ai_tokens !== undefined && studentData.ai_tokens !== null ? studentData.ai_tokens : 50;
-        document.querySelector('#modalWalletBalance').textContent = (studentData.wallet_balance || 0) + ' دج';
+        // عرض النقاط والرصيد في الواجهة حسب نوع الحساب
+        const tokensEl = document.querySelector('#tokensCount');
+        const walletEl = document.querySelector('#modalWalletBalance');
+
+        if (role === 'teacher') {
+            if (tokensEl) tokensEl.textContent = 'غير محدود ♾️';
+            if (walletEl) walletEl.textContent = (userData.balance || userData.wallet_balance || 0) + ' دج';
+        } else {
+            if (tokensEl) tokensEl.textContent = userData.ai_tokens !== undefined && userData.ai_tokens !== null ? userData.ai_tokens : 50;
+            if (walletEl) walletEl.textContent = (userData.wallet_balance || 0) + ' دج';
+        }
     } catch (e) {
-        console.error('Error loading student data:', e);
-        localStorage.removeItem('token');
-        window.location.href = '/?login=true';
+        console.error('Error loading user data:', e);
     }
 }
 

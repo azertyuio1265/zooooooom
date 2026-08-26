@@ -8356,10 +8356,8 @@ function updateUI() {
 
     async function startStreamNow(offerId) {
         if (checkGuestAction()) return;
-        const shouldStart = confirm("⚠️ هل تريد بدء البث المباشر؟");
+        const shouldStart = confirm("⚠️ هل تريد بدء البث المباشر لهذه الغرفة الآن؟");
         if (!shouldStart) return;
-
-        const autoAdmit = confirm("سيتم الآن بدء البث. هل تريد إدخال جميع الطلاب المسجلين تلقائياً الآن؟ (موافق: نعم تلقائي، إلغاء: لا، سأقوم بإدخالهم يدوياً)");
 
         try {
             const res = await fetchWithAuth('/api/start-agora-stream', {
@@ -8368,14 +8366,7 @@ function updateUI() {
             });
             const data = await res.json();
             if (data.success) {
-                if (autoAdmit) {
-                    await fetchWithAuth(`/api/stream/add-all-students/${offerId}`, {
-                        method: 'POST',
-                        body: JSON.stringify({ teacher_id: userData ? userData.id : 0 })
-                    });
-                }
-
-                showToast('✅ تم بدء البث بنجاح!', 'success');
+                showToast('✅ تم فتح شاشة البث بنجاح! اضغط على "👈 انقر هنا لإدخال الطلاب وبدء البث" لإتاحة الحضور للطلاب.', 'success');
                 
                 const token = localStorage.getItem('token');
                 const teacherAgoraUrl = `/api/teacher-agora/${offerId}?token=${token}`;

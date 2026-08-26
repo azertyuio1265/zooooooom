@@ -2125,7 +2125,18 @@ function generateTeacherZoomPage(offer, teacher, token) {
             .controls-bar { height: auto; min-height: 44px; gap: 6px; padding: 4px 8px; flex-wrap: wrap; }
             .ctrl-btn { width: 36px; height: 36px; font-size: 14px; }
             .ctrl-btn.end { width: auto; height: 32px; border-radius: 6px; font-size: 11px; padding: 0 10px; margin-top: 0; }
-            #addStudentsBtn { padding: 4px 8px !important; font-size: 11px !important; height: 28px !important; }
+            #addStudentsBtn { padding: 4px 8px !important; font-size: 11px !important; height: 32px !important; }
+        }
+
+        @keyframes pulseAddBtn {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+        }
+        .pulse-add-students {
+            animation: pulseAddBtn 1.6s infinite !important;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;
+            border: 1.5px solid #a78bfa !important;
         }
 
         /* Theater Mode Styles */
@@ -2153,8 +2164,8 @@ function generateTeacherZoomPage(offer, teacher, token) {
                 <i class="fas fa-user-tie"></i> ${escapeHtml(teacherName)}
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-                <button id="addStudentsBtn" onclick="addStudentsToStream(${offer.id})" style="background: #6366f1; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; position: relative; display: inline-flex; align-items: center; gap: 4px; height: 28px;">
-                    <i class="fas fa-user-plus"></i> إضافة الطلاب
+                <button id="addStudentsBtn" class="pulse-add-students" onclick="addStudentsToStream(${offer.id})" style="color: white; border: none; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 800; position: relative; display: inline-flex; align-items: center; gap: 5px; height: 32px;">
+                    <i class="fas fa-hand-pointer" style="font-size: 13px; color: #fef08a;"></i> 👆 انقر هنا لإدخال الطلاب وبدء البث
                     <span id="waitingCountBadge" style="position: absolute; top: -6px; left: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-size: 9px; border: 2px solid #111827;">0</span>
                 </button>
                 <button onclick="leaveSession()" style="background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s; height: 28px;">
@@ -3968,51 +3979,68 @@ app.post('/api/ai/summarize', async (req, res) => {
 });
 
 // ============================================================
-// ✅ المعلم الذكي (AI Tutor) - محادثة تفاعلية مع الطالب ونظام النقاط
+// ✅ المعلم الذكي (AI Tutor) - محادثة تفاعلية مع الطالب/الأستاذ ونظام النقاط
 // ============================================================
 app.post('/api/ai/chat', authenticate, async (req, res) => {
     try {
-        const studentId = req.user?.userId;
-        if (!studentId || studentId === -1 || studentId === '-1') {
+        const userId = req.user?.userId;
+        const userRole = req.user?.role || req.user?.userType || 'student';
+        if (!userId || userId === -1 || userId === '-1') {
             return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول للوصول إلى Zoomy.' });
         }
 
-        const student = await getOne('students', 'id', studentId);
-        if (!student) {
-            return res.status(404).json({ success: false, error: 'الطالب غير موجود.' });
-        }
+        let isTeacher = (userRole === 'teacher');
+        let student = null;
+        let teacher = null;
 
-        // التحقق من التجديد اليومي التلقائي وإعادة شحن النقاط مجاناً لـ 50 نقطة
-        let currentTokens = student.ai_tokens !== undefined && student.ai_tokens !== null ? student.ai_tokens : 50;
-        
-        const now = new Date();
-        const lastResetStr = student.last_ai_reset;
-        const lastReset = lastResetStr ? new Date(lastResetStr) : null;
-        
-        const isNewDay = !lastReset || 
-            now.getFullYear() !== lastReset.getFullYear() || 
-            now.getMonth() !== lastReset.getMonth() || 
-            now.getDate() !== lastReset.getDate();
-            
-        if (isNewDay) {
-            currentTokens = 50;
-            try {
-                await update('students', studentId, {
-                    ai_tokens: 50,
-                    last_ai_reset: now.toISOString()
-                });
-                console.log(`⏳ [Zoomy] تم تجديد النقاط المجانية اليومية (50 نقطة) للطالب ${studentId}`);
-            } catch (dbErr) {
-                console.warn('⚠️ Could not update last_ai_reset or ai_tokens in chat endpoint:', dbErr.message);
+        if (isTeacher) {
+            teacher = await getOne('teachers', 'id', userId);
+        } else {
+            student = await getOne('students', 'id', userId);
+            if (!student) {
+                // تجربة البحث في الأساتذة احتياطياً
+                teacher = await getOne('teachers', 'id', userId);
+                if (teacher) isTeacher = true;
             }
         }
 
-        if (currentTokens <= 0) {
-            return res.status(403).json({ 
-                success: false, 
-                error: 'لقد نفدت نقاط Zoomy المتاحة لك لهذا اليوم. تجدد النقاط المجانية تلقائياً كل يوم، أو يمكنك شحن نقاط إضافية للمتابعة الآن!',
-                out_of_tokens: true
-            });
+        if (!student && !teacher) {
+            return res.status(404).json({ success: false, error: 'المستخدم غير موجود.' });
+        }
+
+        // إذا كان أستاذ، يحصل على نقاط غير محدودة
+        let currentTokens = isTeacher ? 999999 : (student?.ai_tokens !== undefined && student?.ai_tokens !== null ? student.ai_tokens : 50);
+        
+        if (!isTeacher && student) {
+            const now = new Date();
+            const lastResetStr = student.last_ai_reset;
+            const lastReset = lastResetStr ? new Date(lastResetStr) : null;
+            
+            const isNewDay = !lastReset || 
+                now.getFullYear() !== lastReset.getFullYear() || 
+                now.getMonth() !== lastReset.getMonth() || 
+                now.getDate() !== lastReset.getDate();
+                
+            if (isNewDay) {
+                currentTokens = 50;
+                try {
+                    await update('students', userId, {
+                        ai_tokens: 50,
+                        last_ai_reset: now.toISOString()
+                    });
+                    console.log(`⏳ [Zoomy] تم تجديد النقاط المجانية اليومية (50 نقطة) للطالب ${userId}`);
+                } catch (dbErr) {
+                    console.warn('⚠️ Could not update last_ai_reset or ai_tokens in chat endpoint:', dbErr.message);
+                }
+            }
+
+            if (currentTokens <= 0) {
+                return res.status(403).json({ 
+                    success: false, 
+                    error: 'لقد نفدت نقاط Zoomy المتاحة لك لهذا اليوم. تجدد النقاط المجانية تلقائياً كل يوم، أو يمكنك شحن نقاط إضافية للمتابعة الآن!',
+                    out_of_tokens: true
+                });
+            }
         }
 
         const { messages = [], imageBase64, mimeType = 'image/jpeg', education_level = 'غير محدد', model = 'gemini-3.6-flash' } = req.body || {};
@@ -4091,14 +4119,19 @@ app.post('/api/ai/chat', authenticate, async (req, res) => {
             throw new Error('فشل توليد نص الإجابة من نموذج الذكاء الاصطناعي.');
         }
 
-        // تخصم نقطة واحدة فقط بعد نجاح توليد الإجابة
-        const finalTokens = Math.max(0, currentTokens - 1);
-        await update('students', studentId, { ai_tokens: finalTokens });
+        // تخصم نقطة واحدة فقط للطلاب بعد نجاح توليد الإجابة
+        let finalTokens = currentTokens;
+        if (!isTeacher && student) {
+            finalTokens = Math.max(0, currentTokens - 1);
+            try {
+                await update('students', userId, { ai_tokens: finalTokens });
+            } catch (e) {}
+        }
 
         return res.json({ 
             success: true, 
             message: messageText,
-            ai_tokens: finalTokens
+            ai_tokens: isTeacher ? 999999 : finalTokens
         });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);
