@@ -202,11 +202,33 @@
         box-shadow: 0 16px 40px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(0,0,0,0.06);
         display: none;
         flex-direction: column;
-        z-index: 100000;
+        z-index: 999999;
         overflow: hidden;
         font-family: 'Cairo', system-ui, sans-serif;
         direction: rtl;
         animation: aiWindowPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (max-width: 640px) {
+        #zoomdz-ai-chat-window {
+            position: fixed !important;
+            inset: 10px !important;
+            width: auto !important;
+            height: auto !important;
+            max-width: none !important;
+            max-height: none !important;
+            border-radius: 16px !important;
+            z-index: 9999999 !important;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.4) !important;
+        }
+        #zoomdz-ai-float-btn {
+            bottom: 16px !important;
+            left: 16px !important;
+            z-index: 9999990 !important;
+        }
+        #zoomdz-ai-float-btn .ai-tooltip-badge {
+            display: none !important;
+        }
     }
 
     @keyframes aiWindowPop {
@@ -568,9 +590,16 @@
     let initialLeft = 0;
     let initialTop = 0;
     let hasMoved = false;
+    let lastTouchEndTime = 0;
 
     function onPointerDown(e) {
-        if (e.target.closest('#ai-close-chat-btn')) return;
+        if (e.target.closest('#ai-close-chat-btn') || e.target.closest('#ai-clear-chat-btn')) return;
+        
+        // Prevent synthetic mouse event right after touch end
+        if (e.type === 'mousedown' && (Date.now() - lastTouchEndTime < 600)) {
+            return;
+        }
+
         isDragging = true;
         hasMoved = false;
 
@@ -597,7 +626,7 @@
         const deltaX = clientX - dragStartX;
         const deltaY = clientY - dragStartY;
 
-        if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+        if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
             hasMoved = true;
             if (e.cancelable && e.type === 'touchmove') e.preventDefault();
 
@@ -622,6 +651,10 @@
     function onPointerUp(e) {
         if (!isDragging) return;
         isDragging = false;
+        if (e.type === 'touchend') {
+            lastTouchEndTime = Date.now();
+        }
+
         document.removeEventListener('mousemove', onPointerMove);
         document.removeEventListener('mouseup', onPointerUp);
         document.removeEventListener('touchmove', onPointerMove);
@@ -633,7 +666,7 @@
                 localStorage.setItem('zoomdz_ai_widget_pos', JSON.stringify({ left: rect.left, top: rect.top }));
             } catch (err) { }
         } else {
-            // It was a click!
+            // It was a click/tap!
             toggleChatWindow();
         }
     }
@@ -642,10 +675,11 @@
     floatBtn.addEventListener('touchstart', onPointerDown, { passive: true });
 
     function repositionChatWindow(btnLeft, btnTop) {
-        if (window.innerWidth < 450) {
-            chatWindow.style.left = '16px';
-            chatWindow.style.bottom = '85px';
-            chatWindow.style.top = 'auto';
+        if (window.innerWidth <= 640) {
+            chatWindow.style.left = '';
+            chatWindow.style.right = '';
+            chatWindow.style.top = '';
+            chatWindow.style.bottom = '';
             return;
         }
 
@@ -668,17 +702,24 @@
         }
     }
 
-    function toggleChatWindow() {
+    function toggleChatWindow(forceShow) {
         const isHidden = chatWindow.style.display === 'none' || !chatWindow.style.display;
-        if (isHidden) {
+        const shouldShow = (forceShow !== undefined) ? !!forceShow : isHidden;
+        if (shouldShow) {
             const rect = floatBtn.getBoundingClientRect();
             repositionChatWindow(rect.left, rect.top);
             chatWindow.style.display = 'flex';
-            inputField.focus();
+            setTimeout(() => {
+                if (inputField) inputField.focus();
+            }, 100);
         } else {
             chatWindow.style.display = 'none';
         }
     }
+
+    window.openAiAssistant = function () { toggleChatWindow(true); };
+    window.toggleAiAssistant = function () { toggleChatWindow(); };
+    window.openAiWidget = function () { toggleChatWindow(true); };
 
     closeBtn.addEventListener('click', () => {
         chatWindow.style.display = 'none';

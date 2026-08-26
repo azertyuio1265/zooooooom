@@ -3315,7 +3315,7 @@
             <button class="tab-scroll-btn right" onclick="document.getElementById('navTabs').scrollBy({left: 150, behavior: 'smooth'})">
                 <i class="fas fa-chevron-right"></i>
             </button>
-            <div class="nav-tabs" id="navTabs"><button class="nav-tab" onclick="window.location.href='/ai-tutor'" style="background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(16,185,129,0.1)); border: 1px solid rgba(37,99,235,0.2);"><i class="fas fa-robot" style="color:var(--primary);"></i><span class="tab-label" style="font-weight:700; color:var(--primary);">المعلم الذكي (AI)</span></button>
+            <div class="nav-tabs" id="navTabs"><button class="nav-tab" onclick="window.location.href='/ai-tutor'" style="background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(124,58,237,0.12)); border: 1.5px solid rgba(124,58,237,0.3); color:#7c3aed;"><i class="fas fa-robot" style="color:#7c3aed;"></i><span class="tab-label" style="font-weight:800; color:#7c3aed;">تعلم بالذكاء الاصطناعي (AI) 🤖</span></button>
                 <button class="nav-tab active" data-section="offers" onclick="showSection('offers')">
                     <i class="fas fa-video"></i>
                     <span class="tab-label">غرف الفيديو</span>
@@ -3447,6 +3447,9 @@
             <button class="dropdown-item dropdown-upgrade-item" onclick="openUpgradeModal(); closeAllDropdowns();" style="color: #d97706; font-weight: 800; background: #fffbe3; border-radius: 8px; margin: 2px 0;">
                 <i class="fas fa-crown" style="color: #f59e0b;"></i> طلب الترقية (الشارة الذهبية) 👑
             </button>
+            <button class="dropdown-item" onclick="window.location.href='/ai-tutor'; closeAllDropdowns();" style="color: #7c3aed; font-weight: 800;">
+                <i class="fas fa-robot" style="color: #7c3aed;"></i> تعلم بالذكاء الاصطناعي 🤖
+            </button>
             <button class="dropdown-item" onclick="showSection('profile'); closeAllDropdowns();">
                 <i class="fas fa-user"></i> ملفي الشخصي
             </button>
@@ -3522,6 +3525,10 @@
 
         <div class="sidebar-group-title">القائمة والتعليم</div>
         <div class="sidebar-nav-list">
+            <button class="sidebar-nav-item nav-tab" onclick="window.location.href='/ai-tutor'" style="background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.12)); border: 1px solid rgba(124,58,237,0.25); margin-bottom: 6px;">
+                <i class="fas fa-robot" style="color:#7c3aed;"></i>
+                <span class="tab-label" style="font-weight:800; color:#6d28d9;">تعلم بالذكاء الاصطناعي 🤖</span>
+            </button>
             <button class="sidebar-nav-item nav-tab active" data-section="offers" onclick="showSection('offers')">
                 <i class="fas fa-video"></i>
                 <span class="tab-label">غرف الفيديو</span>

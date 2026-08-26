@@ -400,6 +400,15 @@ router.post('/add-all-students/:offer_id', authenticate, authorize(['teacher']),
         const offer = req.offer;
         const baseUrl = req.protocol + '://' + req.get('host');
 
+        // ✅ تحديث حالة البث وتواجد الأستاذ فوراً لمنع أي إشارة توقف خاطئة للطالب
+        teacherPingStore.set(offer_id, Date.now());
+        try {
+            await supabase
+                .from('offers')
+                .update({ status: 'live', is_paused: false })
+                .eq('id', offer_id);
+        } catch (e) {}
+
         // ✅ جلب جميع الطلاب المسجلين والمدفوعين
         const { data: paidSessions } = await supabase
             .from('sessions')
@@ -1951,8 +1960,8 @@ async function handleGetChatMessages(req, res) {
 
         const lastTeacherPing = teacherPingStore.get(offerId);
         // مرونة عالية في التحقق من تواجد الأستاذ (تجنب اعتبار البث متوقفاً بسبب بطء الاتصال، المهلة 90 ثانية)
-        const isTeacherOnline = lastTeacherPing ? ((Date.now() - lastTeacherPing) <= 90000) : true;
         const isPaused = (offerStatus === 'paused');
+        const isTeacherOnline = (offerStatus === 'live') ? true : (lastTeacherPing ? ((Date.now() - lastTeacherPing) <= 90000) : true);
 
         // Dynamically fix any generic 'طالب' names in chat messages
         const unassignedStudentIds = msgs

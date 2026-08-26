@@ -1892,6 +1892,7 @@ const handleStartZoomStream = async (req, res) => {
                 stream_url: roomUrl,
                 stream_platform: 'agora',
                 status: 'live',
+                is_paused: false,
                 room_name: roomName,
                 room_password: password,
                 stream_started_at: new Date().toISOString()
@@ -3680,8 +3681,8 @@ function generateStudentZoomPage(offer, student) {
                         studentTotalSeconds = Math.max(Number(data.total_seconds), studentRemainingSeconds);
                     }
                     if (data.stream_status !== undefined || data.is_paused !== undefined) {
-                        // إظهار التوقف فقط إذا تم إيقافه صراحة أو انقطع الاتصال لأكثر من 90 ثانية
-                        const pauseCondition = (data.stream_status === 'paused') || (data.is_paused === true && data.is_teacher_online === false);
+                        // إظهار التوقف فقط إذا كانت حالة البث صريحة paused
+                        const pauseCondition = (data.stream_status === 'paused');
                         isStreamPaused = !!pauseCondition;
                         togglePauseOverlay(isStreamPaused);
                     }
