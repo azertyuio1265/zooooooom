@@ -39,9 +39,10 @@ async function fetchApprovedTeachers() {
     try {
         const res = await supabase
             .from('teachers')
-            .select('id, full_name, specialization, experience, bio, profile_image, profile_url, teaching_level, facebook_url, instagram_url, linkedin_url, youtube_url, twitter_url, website_url, whatsapp_url, status, is_banned')
-            .eq('status', 'approved')
+            .select('id, full_name, specialization, experience, bio, profile_image, profile_url, teaching_level, facebook_url, instagram_url, linkedin_url, youtube_url, twitter_url, website_url, whatsapp_url, status, is_certified, is_banned')
+            .neq('status', 'rejected')
             .eq('is_banned', false)
+            .order('is_certified', { ascending: false, nullsFirst: false })
             .order('created_at', { ascending: false });
         data = res.data;
     } catch (e) {
@@ -52,7 +53,7 @@ async function fetchApprovedTeachers() {
         try {
             const resFallback = await supabase
                 .from('teachers')
-                .select('id, full_name, specialization, experience, bio, profile_image, profile_url, teaching_level, facebook_url, instagram_url, linkedin_url, youtube_url, twitter_url, website_url, whatsapp_url, status, is_banned')
+                .select('id, full_name, specialization, experience, bio, profile_image, profile_url, teaching_level, facebook_url, instagram_url, linkedin_url, youtube_url, twitter_url, website_url, whatsapp_url, status, is_certified, is_banned')
                 .neq('status', 'rejected')
                 .order('created_at', { ascending: false });
             data = resFallback.data || [];
@@ -61,7 +62,13 @@ async function fetchApprovedTeachers() {
             data = [];
         }
     }
-    return (data || []).map(t => processUserProfile(t, 'teacher'));
+    const processed = (data || []).map(t => processUserProfile(t, 'teacher'));
+    // فرز الأساتذة المعتمَدين أولاً بضمان كامل
+    return processed.sort((a, b) => {
+        const aCert = (a.is_certified === true || a.status === 'certified') ? 1 : 0;
+        const bCert = (b.is_certified === true || b.status === 'certified') ? 1 : 0;
+        return bCert - aCert;
+    });
 }
 
 // ============================================================

@@ -7104,6 +7104,12 @@
                 return;
             }
             emptyMsg.style.display = 'none';
+            // فرز الأساتذة المعتمدين (أصحاب الشارة الذهبية) أولاً
+            teachers.sort(function(a, b) {
+                var aCert = (a.is_certified === true || a.status === 'certified') ? 1 : 0;
+                var bCert = (b.is_certified === true || b.status === 'certified') ? 1 : 0;
+                return bCert - aCert;
+            });
 
             var levelMap = {
                 'primary_all': 'جميع مستويات الابتدائي',
@@ -7181,9 +7187,20 @@
                     '</div>';
                 }
 
-                html += '<div class="teacher-card" onclick="viewTeacherProfile(' + t.id + ')">' +
-                    '<img src="' + imageUrl + '" data-original-url="' + imageUrl + '" class="teacher-image" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" onclick="event.stopPropagation(); showFullImage(this.src)" alt="صورة الأستاذ ' + escapeHtml(t.full_name) + '" loading="lazy">' +
+                var isCert = (t.is_certified === true || t.status === 'certified');
+                var badgeHtml = isCert 
+                    ? '<span style="display:inline-flex; align-items:center; gap:4px; background:#fef3c7; color:#b45309; border:1px solid #fde68a; padding:2px 8px; border-radius:12px; font-size:0.72rem; font-weight:800; margin-bottom:6px;"><i class="fas fa-crown" style="color:#f59e0b;"></i> أستاذ معتمد</span>' 
+                    : '<span style="display:inline-flex; align-items:center; gap:4px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 8px; border-radius:12px; font-size:0.72rem; font-weight:700; margin-bottom:6px;"><i class="fas fa-check-circle" style="color:#2563eb;"></i> أستاذ موثق</span>';
+                var imgStyle = isCert ? 'border: 3px solid #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);' : 'border: 2px solid white;';
+                var goldenCrown = isCert ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 8px; right: 50%; transform: translateX(32px); background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 2px solid white; box-shadow: 0 2px 6px rgba(217,119,6,0.4);"><i class="fas fa-crown"></i></span>' : '';
+
+                html += '<div class="teacher-card" onclick="viewTeacherProfile(' + t.id + ')" style="position:relative;">' +
+                    '<div style="position:relative; display:inline-block;">' +
+                        '<img src="' + imageUrl + '" data-original-url="' + imageUrl + '" class="teacher-image" style="' + imgStyle + '" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" onclick="event.stopPropagation(); showFullImage(this.src)" alt="صورة الأستاذ ' + escapeHtml(t.full_name) + '" loading="lazy">' +
+                        goldenCrown +
+                    '</div>' +
                     '<h3>' + escapeHtml(t.full_name) + '</h3>' +
+                    '<div>' + badgeHtml + '</div>' +
                     starsHtml +
                     '<p class="specialization"><i class="fas fa-book" aria-hidden="true"></i> ' + escapeHtml(t.specialization || 'تخصص عام') + '</p>' +
                     levelDisplay +

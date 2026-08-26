@@ -427,11 +427,12 @@ router.post('/approve-teacher/:id', [
             console.warn(`⚠️ [DATA PRIVACY] Purge warning for teacher ${teacherId}:`, purgeErr.message);
         }
 
-        // ✅ 2. تحديث حالة الأستاذ إلى approved وتصفير حقول المستندات وتأكيد إكمال الملف في قاعدة البيانات
+        // ✅ 2. تحديث حالة الأستاذ إلى approved مع منح الشارة الذهبية (is_certified = true) وتصفير حقول المستندات
         const { error: updateError } = await supabase
             .from('teachers')
             .update({ 
                 status: 'approved',
+                is_certified: true,
                 rejection_reason: null,
                 teaching_level: teacher.teaching_level || null,
                 diploma_image: null,

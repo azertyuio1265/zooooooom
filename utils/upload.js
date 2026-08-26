@@ -170,6 +170,8 @@ function processUserProfile(user, role) {
         user.id_image = id_card_image_url;
         user.certificate_image_url = certificate_image_url;
         user.id_card_image_url = id_card_image_url;
+        user.is_certified = Boolean(user.is_certified === true || user.status === 'certified' || user.verification_status === 'verified');
+        user.status = user.status === 'rejected' ? 'rejected' : 'approved';
     }
     
     return user;

@@ -6697,15 +6697,19 @@
         let statusText = '';
         let statusColor = '';
 
-        if (isApproved) {
-            statusText = '✅ معتمد';
-            statusColor = 'var(--secondary)';
-        } else if (!needsCompletion && !isRejected) {
-            statusText = '⏳ قيد التحقق';
-            statusColor = 'var(--gold)';
-        } else {
-            statusText = '⚠️ يلزم رفع الدبلوم وبطاقة الهوية';
+        const isCertified = Boolean(userData.is_certified === true || userData.status === 'certified');
+        if (isCertified) {
+            statusText = '👑 أستاذ معتمد (شارة ذهبية)';
+            statusColor = '#d97706';
+        } else if (isApproved) {
+            statusText = '✅ أستاذ موثق';
+            statusColor = '#2563eb';
+        } else if (isRejected) {
+            statusText = '❌ تم الرفض';
             statusColor = 'var(--danger)';
+        } else {
+            statusText = '✅ أستاذ موثق';
+            statusColor = '#2563eb';
         }
 
         let warningBoxHtml = '';

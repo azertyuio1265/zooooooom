@@ -232,7 +232,7 @@ router.post('/teacher/register', checkBanned, [
         // ✅ 6. تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        // ✅ 7. إنشاء الأستاذ في قاعدة البيانات (حالة pending - الخطوة الأولى فقط)
+        // ✅ 7. إنشاء الأستاذ في قاعدة البيانات (حساب مفعل وموثق تلقائياً)
         const newTeacher = await insert('teachers', {
             full_name: full_name.trim(),
             email: email.trim().toLowerCase(),
@@ -245,7 +245,8 @@ router.post('/teacher/register', checkBanned, [
             profile_image: null,
             diploma_image: null,
             id_image: null,
-            status: 'incomplete',
+            status: 'approved',
+            is_certified: false,
             email_verified: true, // ✅ لا حاجة لتأكيد البريد للأستاذ
             balance: 0,
             referral_balance: 0,
@@ -255,31 +256,31 @@ router.post('/teacher/register', checkBanned, [
             referral_code: null,
             is_banned: false,
             ban_reason: null,
-            profile_completion: false, // ✅ لم يكتمل الملف الشخصي بعد
+            profile_completion: true, // ✅ حساب مفعل وجاهز للعمل
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
         });
 
-        // ✅ 7. إنشاء رمز الإحالة
+        // ✅ 8. إنشاء رمز الإحالة
         const referralCode = generateReferralCode(full_name, newTeacher.id);
         await supabase
             .from('teachers')
-            .update({ referral_code: referralCode })
+            .update({ referral_code: referralCode, status: 'approved', profile_completion: true, is_certified: false })
             .eq('id', newTeacher.id);
 
-        // ✅ 8. معالجة الإحالة إذا وجدت
+        // ✅ 9. معالجة الإحالة إذا وجدت
         const effectiveRef = ref || req.cookies?.referral_code || req.cookies?.pendingReferral;
         if (effectiveRef && String(effectiveRef).trim().length > 3) {
             await processReferralOnRegister(String(effectiveRef).trim(), newTeacher.id, 'teacher');
         }
 
-        // ✅ 9. إرسال إشعار للمدير
+        // ✅ 10. إرسال إشعار للمدير
         try {
             await insert('notifications', {
                 user_id: 1,
                 user_type: 'admin',
-                title: '📝 طلب تسجيل أستاذ جديد',
-                message: `قام الأستاذ ${full_name} بتقديم طلب تسجيل. يرجى مراجعة الطلب.`,
+                title: '👨‍🏫 انضمام أستاذ جديد',
+                message: `انضم الأستاذ ${full_name} إلى المنصة كأستاذ موثق.`,
                 is_read: false,
                 created_at: new Date().toISOString()
             });
@@ -287,25 +288,30 @@ router.post('/teacher/register', checkBanned, [
             logger.error('⚠️ خطأ في إرسال إشعار للمدير:', notifError.message);
         }
 
-        // ✅ 10. إنشاء توكن للأستاذ (تسجيل الدخول التلقائي)
+        // ✅ 11. إنشاء توكن للأستاذ (تسجيل الدخول التلقائي)
         const token = generateToken(newTeacher.id, 'teacher', email);
 
-        // ✅ 11. الرد بنجاح
+        // ✅ 12. الرد بنجاح
         res.json({
             success: true,
             token: token,
-            message: '✅ تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول. بعد تسجيل الدخول، سيتم إكمال ملفك الشخصي.',
+            message: '✅ تم إنشاء حسابك بنجاح! حسابك نشط وموثق وجاهز للاستخدام مباشرة.',
             teacher_id: newTeacher.id,
             email: email,
             role: 'teacher',
-            status: 'pending',
-            profile_completion: false,
-            requires_profile_completion: true,
-            user: {
+            status: 'approved',
+            is_certified: false,
+            profile_completion: true,
+            requires_profile_completion: false,
+            user: processUserProfile({
                 id: newTeacher.id,
                 name: full_name,
-                role: 'teacher'
-            }
+                full_name: full_name,
+                role: 'teacher',
+                status: 'approved',
+                is_certified: false,
+                profile_completion: true
+            }, 'teacher')
         });
 
     } catch (error) {
@@ -627,7 +633,7 @@ router.post('/login', checkBanned, authLimiter, [
 
         resetLoginAttempts(email);
 
-        // ✅ التحقق من حالة الأستاذ (pending / approved / rejected)
+        // ✅ التحقق من حالة الأستاذ
         if (userRole === 'teacher') {
             if (user.status === 'rejected') {
                 return res.json({
@@ -637,6 +643,7 @@ router.post('/login', checkBanned, authLimiter, [
                     user: processUserProfile({
                         id: user.id,
                         name: user.full_name,
+                        full_name: user.full_name,
                         role: userRole,
                         profile_image: user.profile_image,
                         profile_url: user.profile_url,
@@ -647,62 +654,13 @@ router.post('/login', checkBanned, authLimiter, [
                         teaching_level: user.teaching_level || null,
                         status: 'rejected',
                         rejection_reason: user.rejection_reason || null,
-                        requires_profile_completion: true,
-                        profile_completion: false
-                    }, userRole),
-                    requires_profile_completion: true,
-                    status: 'rejected',
-                    rejection_reason: user.rejection_reason || 'لم يتم تحديد سبب'
-                });
-            }
-            if (user.status !== 'approved') {
-                // ✅ السماح بتسجيل الدخول لحساب pending - سيظهر له رسالة في الداشبورد
-                const profileCompletion = user.profile_completion || false;
-                if (!profileCompletion) {
-                    return res.json({
-                        success: true,
-                        token: generateToken(user.id, userRole, email),
-                        redirectTo: '/teacher-dashboard.html',
-                        user: processUserProfile({
-                            id: user.id,
-                            name: user.full_name,
-                            role: userRole,
-                            profile_image: user.profile_image,
-                            profile_url: user.profile_url,
-                            balance: user.balance || 0,
-                            email_verified: user.email_verified,
-                            referral_code: user.referral_code,
-                            education_level: user.education_level || null,
-                            teaching_level: user.teaching_level || null,
-                            status: user.status || null,
-                            requires_profile_completion: true,
-                            profile_completion: false
-                        }, userRole),
-                        requires_profile_completion: true
-                    });
-                }
-                // الحساب مكتمل لكنه لم يوافق عليه بعد
-                return res.json({
-                    success: true,
-                    token: generateToken(user.id, userRole, email),
-                    redirectTo: '/teacher-dashboard.html',
-                    user: processUserProfile({
-                        id: user.id,
-                        name: user.full_name,
-                        role: userRole,
-                        profile_image: user.profile_image,
-                        profile_url: user.profile_url,
-                        balance: user.balance || 0,
-                        email_verified: user.email_verified,
-                        referral_code: user.referral_code,
-                        education_level: user.education_level || null,
-                        teaching_level: user.teaching_level || null,
-                        status: user.status || null,
+                        is_certified: false,
                         requires_profile_completion: false,
                         profile_completion: true
                     }, userRole),
-                    pending_approval: true,
-                    message: '⏳ حسابك قيد المراجعة من قبل الإدارة. سيتم إعلامك عبر البريد الإلكتروني خلال 24 ساعة عند قبول حسابك.'
+                    requires_profile_completion: false,
+                    status: 'rejected',
+                    rejection_reason: user.rejection_reason || 'لم يتم تحديد سبب'
                 });
             }
         }

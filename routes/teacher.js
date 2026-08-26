@@ -1545,27 +1545,10 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
             return res.status(400).json({ success: false, error: 'المستوى الدراسي مطلوب' });
         }
 
-        if (teacher.status === 'approved') {
-            return res.status(400).json({ success: false, error: 'حسابك مقبول بالفعل' });
-        }
-
-        // ✅ رفع الملفات
+        // ✅ رفع الملفات (اختيارية)
         let profile_image = teacher.profile_image;
         let diploma_image = teacher.diploma_image;
         let id_image = teacher.id_image;
-
-        const isValidImage = (val) => val && typeof val === 'string' && val.trim() !== '' && val !== 'null' && val !== 'undefined' && val !== 'NULL';
-
-        // ✅ التحقق من إلزامية المستندات (صورة الدبلوم/الشهادة، صورة الهوية)
-        const hasDiplomaImage = (req.files && req.files['diploma_image'] && req.files['diploma_image'][0]) || isValidImage(teacher.diploma_image);
-        const hasIdImage = (req.files && req.files['id_image'] && req.files['id_image'][0]) || isValidImage(teacher.id_image);
-
-        if (!hasDiplomaImage) {
-            return res.status(400).json({ success: false, error: '❌ يرجى رفع صورة الدبلوم أو الشهادة أولاً لإتمام طلب التسجيل' });
-        }
-        if (!hasIdImage) {
-            return res.status(400).json({ success: false, error: '❌ يرجى رفع صورة بطاقة الهوية الوطنية أولاً لإتمام طلب التسجيل' });
-        }
 
         if (req.files && req.files['profile_image'] && req.files['profile_image'][0]) {
             const uploaded = await uploadToSupabase(req.files['profile_image'][0], 'teachers', teacher.profile_image);
@@ -1574,17 +1557,24 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
             }
         }
 
+        let newDocsUploaded = false;
         if (req.files && req.files['diploma_image'] && req.files['diploma_image'][0]) {
             const uploaded = await uploadToSupabase(req.files['diploma_image'][0], 'diplomas', teacher.diploma_image);
-            if (uploaded) diploma_image = uploaded.url;
+            if (uploaded) {
+                diploma_image = uploaded.url;
+                newDocsUploaded = true;
+            }
         }
 
         if (req.files && req.files['id_image'] && req.files['id_image'][0]) {
             const uploaded = await uploadToSupabase(req.files['id_image'][0], 'ids', teacher.id_image);
-            if (uploaded) id_image = uploaded.url;
+            if (uploaded) {
+                id_image = uploaded.url;
+                newDocsUploaded = true;
+            }
         }
 
-        // ✅ تحديث الملف الشخصي الكامل
+        // ✅ تحديث الملف الشخصي الكامل (دون إجبار على رفع المستندات)
         const updateData = {
             phone,
             specialization,
@@ -1595,7 +1585,7 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
             profile_url: profile_image,
             diploma_image,
             id_image,
-            status: 'pending',
+            status: 'approved',
             profile_completion: true,
             updated_at: new Date().toISOString()
         };
@@ -1606,21 +1596,22 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
              throw new Error('فشل تحديث بيانات الأستاذ في قاعدة البيانات');
         }
 
-        // استخدام البيانات المحدثة بدلاً من القديمة
         const finalTeacher = updatedTeacher;
 
-        // ✅ إرسال إشعار للمدير بوجود طلب جديد مكتمل
-        try {
-            await insert('notifications', {
-                user_id: 1,
-                user_type: 'admin',
-                title: '📝 أستاذ جديد - ملف شخصي مكتمل',
-                message: `الأستاذ ${teacher.full_name} أكمل ملفه الشخصي. يرجى مراجعة الطلب والموافقة.`,
-                is_read: false,
-                created_at: new Date().toISOString()
-            });
-        } catch (notifError) {
-            logger.error('⚠️ خطأ في إرسال إشعار للمدير:', notifError.message);
+        // ✅ إرسال إشعار للمدير إذا قام بتزويد مستندات التوثيق
+        if (newDocsUploaded) {
+            try {
+                await insert('notifications', {
+                    user_id: 1,
+                    user_type: 'admin',
+                    title: '📜 طلب توثيق واستحقاق الشارة الذهبية',
+                    message: `قام الأستاذ ${teacher.full_name} برفع وثائقه (البطاقة/الشهادة) للحصول على شارة الأستاذ المعتمد 👑.`,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                });
+            } catch (notifError) {
+                logger.error('⚠️ خطأ في إرسال إشعار للمدير:', notifError.message);
+            }
         }
 
         const { generateToken } = require('../utils/jwt');
@@ -1628,21 +1619,18 @@ router.post('/complete-profile', authenticate, authorize(['teacher']), upload.fi
 
         res.json({
             success: true,
-            message: '✅ تم إكمال ملفك الشخصي بنجاح! تم إرسال طلب الموافقة إلى الإدارة. سيتم إعلامك عبر البريد الإلكتروني خلال 24 ساعة عند قبول حسابك.',
+            message: newDocsUploaded 
+                ? '✅ تم تحديث بياناتك ورفع وثائق التوثيق بنجاح! سيتم مراجعتها لمنحك الشارة الذهبية.'
+                : '✅ تم تحديث ملفك الشخصي بنجاح!',
             teacher_id: teacher_id,
             profile_completion: true,
             token: token,
-            user: {
-                id: finalTeacher.id,
-                name: finalTeacher.full_name,
+            user: processUserProfile({
+                ...finalTeacher,
                 role: 'teacher',
-                status: finalTeacher.status || 'pending',
-                profile_completion: true,
-                requires_profile_completion: false,
-                profile_image: finalTeacher.profile_image,
-                diploma_image: finalTeacher.diploma_image,
-                id_image: finalTeacher.id_image
-            }
+                status: 'approved',
+                is_certified: Boolean(finalTeacher.is_certified)
+            }, 'teacher')
         });
 
     } catch (error) {

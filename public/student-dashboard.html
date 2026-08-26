@@ -5782,6 +5782,14 @@
             }
         }
 
+        // فرز الأساتذة المعتمدين أولاً
+        if (Array.isArray(teachers)) {
+            teachers.sort((a, b) => {
+                const aCert = (a.is_certified === true || a.status === 'certified') ? 1 : 0;
+                const bCert = (b.is_certified === true || b.status === 'certified') ? 1 : 0;
+                return bCert - aCert;
+            });
+        }
         renderTeachers(teachers);
     }
     window.filterStudentTeachersByLevel = filterStudentTeachersByLevel;
@@ -5829,7 +5837,13 @@
             html += `
                 <div class="teacher-card" onclick="showTeacherProfile(${teacher.id})" style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between;">
                     <div style="text-align: center;">
-                        <img src="${teacherImage}" data-original-url="${teacherImage}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="position: relative; display: inline-block; margin-bottom: 8px;">
+            <img src="${teacherImage}" data-original-url="${teacherImage}" class="teacher-avatar" referrerpolicy="no-referrer" onerror="handleImageFallback(this)" style="width: 68px; height: 68px; border-radius: 50%; object-fit: cover; border: ${teacher.is_certified ? '3px solid #f59e0b' : '2px solid white'}; box-shadow: ${teacher.is_certified ? '0 0 12px rgba(245, 158, 11, 0.4)' : '0 2px 8px rgba(0,0,0,0.1)'};">
+            ${teacher.is_certified 
+                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 2px solid white; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4);"><i class="fas fa-crown"></i></span>'
+                : '<span title="أستاذ موثق" style="position: absolute; bottom: 0; right: 0; background: #2563eb; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid white;"><i class="fas fa-check"></i></span>'
+            }
+        </div>
                         <div class="teacher-name" style="font-weight: 800; font-size: 1rem; color: #1e293b;">${escapeHtml(teacher.full_name || 'أستاذ')}</div>
                         ${starsHtml}
                         <div class="teacher-specialty" style="font-size: 0.82rem; color: #64748b; margin-top: 4px;"><i class="fas fa-book" style="color: var(--primary); margin-left:4px;"></i> ${escapeHtml(teacher.specialization || 'تخصص عام')}</div>
