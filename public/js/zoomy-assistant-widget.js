@@ -123,6 +123,28 @@
                     transform: scale(1.2) rotate(-10deg);
                 }
 
+                .zoomy-trash-quick-btn {
+                    background: rgba(255, 255, 255, 0.2);
+                    color: #ffffff;
+                    border: none;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.8rem;
+                    cursor: pointer;
+                    margin-right: 4px;
+                    transition: background 0.2s ease, transform 0.2s ease;
+                    flex-shrink: 0;
+                }
+                .zoomy-trash-quick-btn:hover {
+                    background: #ef4444;
+                    color: #ffffff;
+                    transform: scale(1.15);
+                }
+
                 .zoomy-sucking-into-trash {
                     transform: scale(0) rotate(720deg) !important;
                     opacity: 0 !important;
@@ -130,7 +152,7 @@
                 }
             </style>
 
-            <div id="zoomyFloatingWidget" style="display: ${isHidden ? 'none' : 'flex'};" title="اسحب المساعد إلى سلة المهملات بالأسفل لإخفائه">
+            <div id="zoomyFloatingWidget" style="display: ${isHidden ? 'none' : 'flex'};" title="اسحب المساعد أو انقر أيقونة السلة لإخفائه">
                 <div class="zoomy-avatar-box">
                     <i class="fas fa-robot"></i>
                 </div>
@@ -138,6 +160,9 @@
                     <span class="zoomy-text-title">Zoomy AI 🤖</span>
                     <span class="zoomy-text-sub">انقر للتحدث • اسحب للإخفاء</span>
                 </div>
+                <button class="zoomy-trash-quick-btn" onclick="event.stopPropagation(); window.sendZoomyToTrash();" title="نقل المساعد إلى سلة المهملات 🗑️">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </div>
 
             <div id="aiTrashBinZone">
@@ -307,6 +332,35 @@
             onDragEnd();
         });
     }
+
+    window.sendZoomyToTrash = function() {
+        const widget = document.getElementById('zoomyFloatingWidget');
+        const trashZone = document.getElementById('aiTrashBinZone');
+
+        if (widget && trashZone && widget.style.display !== 'none') {
+            trashZone.classList.add('active', 'hover-over');
+            widget.classList.add('zoomy-sucking-into-trash');
+
+            setTimeout(() => {
+                localStorage.setItem('zoomdz_ai_assistant_hidden', 'true');
+                widget.classList.remove('zoomy-sucking-into-trash');
+                trashZone.classList.remove('active', 'hover-over');
+                applyAssistantVisibilityState();
+
+                const msg = '🗑️ تم نقل معلم الذكاء الاصطناعي (Zoomy) إلى سلة المهملات. يمكنك إعادة إظهاره من إعدادات الملف الشخصي ✨';
+                if (typeof showToast === 'function') {
+                    showToast(msg, 'info');
+                }
+            }, 400);
+        } else {
+            localStorage.setItem('zoomdz_ai_assistant_hidden', 'true');
+            applyAssistantVisibilityState();
+            const msg = '🗑️ تم نقل معلم الذكاء الاصطناعي (Zoomy) إلى سلة المهملات.';
+            if (typeof showToast === 'function') {
+                showToast(msg, 'info');
+            }
+        }
+    };
 
     window.toggleAiAssistantSetting = function(enable) {
         if (enable) {
