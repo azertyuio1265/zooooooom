@@ -5547,6 +5547,15 @@
                 }
             }
 
+            const isOfferCert = Boolean(offer.is_certified === true || offer.teacher_is_certified === true || offer.status === 'certified');
+            const offerBadgeOverlay = isOfferCert
+                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 1.5px solid white; box-shadow: 0 1px 4px rgba(217,119,6,0.4); z-index: 2;"><i class="fas fa-crown"></i></span>'
+                : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: -2px; right: -2px; background: #2563eb; color: white; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(37,99,235,0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
+            const offerNameIcon = isOfferCert
+                ? '<i class="fas fa-crown" style="font-size: 0.8rem; color: #f59e0b;" title="أستاذ معتمد 👑"></i>'
+                : '<i class="fas fa-check-circle" style="font-size: 0.8rem; color: #2563eb;" title="أستاذ موثق 🔵"></i>';
+            const teacherOnClickAttr = offer.teacher_id ? "showTeacherProfile(" + offer.teacher_id + ")" : "";
+
             html += `
                 <div class="offer-card" id="offer-card-${offer.id}">
                     <div>
@@ -5557,28 +5566,19 @@
                             <div>${isFree ? '<span class="free-badge"><i class="fas fa-gift"></i> مجانية</span>' : `<span class="paid-badge"><i class="fas fa-money-bill"></i> ${offer.price} دج</span>`}</div>
                         </div>
 
-                        ${(() => {
-                            const isOfferCert = Boolean(offer.is_certified === true || offer.teacher_is_certified === true || offer.status === 'certified');
-                            const offerBadgeOverlay = isOfferCert
-                                ? '<span title="أستاذ معتمد - شارة ذهبية 👑" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; border: 1.5px solid white; box-shadow: 0 1px 4px rgba(217,119,6,0.4); z-index: 2;"><i class="fas fa-crown"></i></span>'
-                                : '<span title="أستاذ موثق - شارة زرقاء 🔵" style="position: absolute; bottom: -2px; right: -2px; background: #2563eb; color: white; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(37,99,235,0.4); z-index: 2;"><i class="fas fa-check"></i></span>';
-                            const offerNameIcon = isOfferCert
-                                ? '<i class="fas fa-crown" style="font-size: 0.8rem; color: #f59e0b;" title="أستاذ معتمد 👑"></i>'
-                                : '<i class="fas fa-check-circle" style="font-size: 0.8rem; color: #2563eb;" title="أستاذ موثق 🔵"></i>';
-                            return `<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer;" onclick="${offer.teacher_id ? \`showTeacherProfile(${offer.teacher_id})\` : ''}" title="عرض الملف الشخصي للأستاذ">
-                                <div style="position: relative;">
-                                    <img src="${teacherImage}" data-original-url="${teacherImage}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: ${isOfferCert ? '2px solid #f59e0b' : '2px solid white'}; box-shadow:var(--shadow-sm); transition: transform 0.2s;" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
-                                    ${offerBadgeOverlay}
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer;" onclick="${teacherOnClickAttr}" title="عرض الملف الشخصي للأستاذ">
+                            <div style="position: relative;">
+                                <img src="${teacherImage}" data-original-url="${teacherImage}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: ${isOfferCert ? '2px solid #f59e0b' : '2px solid white'}; box-shadow:var(--shadow-sm); transition: transform 0.2s;" referrerpolicy="no-referrer" onerror="handleImageFallback(this)">
+                                ${offerBadgeOverlay}
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.9rem; color:var(--primary); display: flex; align-items: center; gap: 6px;">
+                                    <span>${escapeHtml(offer.teacher_name || 'غير معروف')}</span>
+                                    ${offerNameIcon}
                                 </div>
-                                <div>
-                                    <div style="font-weight: 800; font-size: 0.9rem; color:var(--primary); display: flex; align-items: center; gap: 6px;">
-                                        <span>${escapeHtml(offer.teacher_name || 'غير معروف')}</span>
-                                        ${offerNameIcon}
-                                    </div>
-                                    <div style="font-size: 0.72rem; color: var(--gray-500);">${escapeHtml(offer.teacher_specialization || 'تخصص عام')}</div>
-                                </div>
-                            </div>`;
-                        })()}
+                                <div style="font-size: 0.72rem; color: var(--gray-500);">${escapeHtml(offer.teacher_specialization || 'تخصص عام')}</div>
+                            </div>
+                        </div>
                         <div class="offer-title">${escapeHtml(offer.subject_name)}</div>
                         <div class="offer-info"><i class="fas fa-calendar-alt"></i> ${offerDate.toLocaleDateString('ar-DZ', {timeZone: 'Africa/Algiers'})}</div>
                         <div class="offer-info"><i class="fas fa-clock"></i> ${offerDate.toLocaleTimeString('ar-DZ', {hour: '2-digit', minute:'2-digit', hour12: false, timeZone: 'Africa/Algiers'})} | ${offer.duration} دقيقة</div>
