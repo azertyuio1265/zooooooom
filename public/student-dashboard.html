@@ -5035,7 +5035,17 @@
         else if (section === 'bookings') loadMyBookings();
         else if (section === 'transactions') loadTransactions();
         else if (section === 'referral') loadReferralData();
-        else if (section === 'messages') loadConversations();
+        else if (section === 'messages') {
+            if (!currentChatTeacher) {
+                const cList = document.getElementById('conversationsList');
+                const cView = document.getElementById('chatView');
+                if (cList) cList.style.display = 'block';
+                if (cView) cView.style.display = 'none';
+                loadConversations();
+            } else {
+                loadConversations(true);
+            }
+        }
     }
 
     function toggleMobileDrawer() {
@@ -5890,6 +5900,15 @@
     // ✅ TEACHER PROFILE
     // ================================================================
 
+    
+    function closeTeacherProfileModal() {
+        const modal = document.getElementById('teacherProfileModal');
+        if (modal) modal.style.display = 'none';
+        const overlay = document.getElementById('modalOverlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+    window.closeTeacherProfileModal = closeTeacherProfileModal;
+
     async function showTeacherProfile(teacherId) {
         try {
             const modalBody = document.getElementById('teacherModalBody');
@@ -5994,7 +6013,7 @@
                                 <button class="follow-btn-${t.id}" onclick="toggleFollowTeacher(${t.id})" style="${t.is_following ? 'background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;' : 'background: var(--primary); color: white; border: none;'} padding: 8px 20px; border-radius: 25px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
                                     <i class="fas ${t.is_following ? 'fa-check-circle' : 'fa-user-plus'}"></i> <span>${t.is_following ? 'تتابعه' : 'متابعة'}</span>
                                 </button>
-                                <button onclick="document.getElementById('teacherProfileModal').style.display='none'; document.getElementById('modalOverlay').style.display='none'; startChatWithTeacher(${t.id}, '${escapeHtml(t.full_name)}', '${escapeHtml(img)}'); showSection('messages');" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 20px; border-radius: 25px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                                <button onclick="closeTeacherProfileModal(); startChatWithTeacher(${t.id}, '${escapeHtml(t.full_name)}', '${escapeHtml(img)}'); showSection('messages');" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 20px; border-radius: 25px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
                                     <i class="fas fa-paper-plane" style="color: var(--primary);"></i> مراسلة
                                 </button>
                                 <button onclick="openReportModal('teacher', ${t.id}, '${escapeHtml(t.full_name)}')" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 8px 18px; border-radius: 25px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;" title="إبلاغ عن الأستاذ">
