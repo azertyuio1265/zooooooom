@@ -301,7 +301,7 @@ const staticOptions = {
     maxAge: '1d',
     etag: true,
     lastModified: true,
-    index: false, // منع تقديم index.html تلقائياً للمسار الرئيسي لخدمته عبر الموجه المخصص بالكاش
+    index: false, // منع تقديم index.html تلقائياً للمسا�� الرئيسي لخدمته عبر الموجه المخصص بالكاش
     setHeaders: (res, filePath) => {
         if (filePath.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2|woff|ttf|eot)$/i)) {
             res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
@@ -3863,7 +3863,7 @@ app.use('/api', authRoutes);
 // ✅ 3. مسارات الإدارة (تحتاج مصادقة إدارية)
 app.use('/api/admin', adminRoutes);
 
-// ✅ 4. مسارات الأستاذ والطالب (ت��ت��ج مصادقة)
+// ✅ 4. مسارات الأستاذ وا��طالب (ت��ت��ج مصادقة)
 app.use('/api/teacher', authenticate, teacherRoutes);
 app.use('/api/student', authenticate, studentRoutes);
 
@@ -3950,7 +3950,7 @@ app.post('/api/ai/summarize', async (req, res) => {
             console.error('❌ فشل البحث أو توليد الشرح الحقيقي:', aiErr.message);
             return res.status(502).json({
                 success: false,
-                error: 'تعذر البحث عن الدرس أو توليد شرح موثوق حالياً. يرجى المحاولة مرة أخرى.'
+                error: 'تعذر البحث عن الدرس أو توليد شرح موثوق حالياً. يرجى المحاول�� مرة أخرى.'
             });
             
             // لا توجد إجابة احتياطية ثابتة؛ يجب أن يأتي الشرح من Gemini بعد البحث.
@@ -4183,7 +4183,7 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
 - التخصص الدقيق: ${specialty || levelName || 'غير محدد'}
 
 تعليمات صارمة:
-1. إذا كان التخصص مهنياً أو جامعياً أو تقنياً (مثل الإعلام الآلي، قواعد البيانات، الشبكات، المحاسبة، الإلكتروتقني، التسيير، إلخ)، يجب أن تكون المواد **جميعها** مواد تخصصية تقنية بحتة ومتوافقة تماماً مع تخصص الطالب المذكور، ولا تضع مواد عامة لا تخصه.
+1. إذا كان التخصص مهنياً أو جامعياً أو تقنياً (مثل الإعلام الآلي، قواعد البيانات، الشبكات، المحاسبة، الإلكتروتقني، التسيير، إلخ)، يجب أن تكو�� المواد **جميعها** مواد تخصصية تقنية بحتة ومتوافقة تماماً مع تخصص الطالب المذكور، ولا تضع مواد عامة لا تخصه.
 2. إذا كان الطور ثانوياً، التزم بالشعبة المحددة بدقة (علوم تجريبية، رياضيات، تقني رياضي، تسيير واقتصاد، آداب وفلسفة، لغات أجنبية).
 3. أرفق كل مادة بأيقونة إيموجي معبرة و3 إلى 5 وحدات دراسية دقيقة.
 4. يجب أن يكون الناتج بصيغة JSON حصرية وفق الهيكل التالي وبدون أي مقدمات:
@@ -4201,7 +4201,7 @@ app.post('/api/ai/discover-curriculum', async (req, res) => {
             let response;
             try {
                 response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
+                    model: 'gemini-3.6-flash',
                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     config: { responseMimeType: 'application/json' }
                 });
@@ -4269,7 +4269,7 @@ app.post('/api/ai/chat', async (req, res) => {
             const data = String(imageBase64).replace(/^data:[^;]+;base64,/, '');
             last.parts.push({ inlineData: { mimeType, data } });
         }
-        const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] });
+        const response = await ai.models.generateContent({ model: 'gemini-3.6-flash', contents: [{ role: 'user', parts: [{ text: prompt }] }, ...cleanMessages.slice(0, -1), last] });
         return res.json({ success: true, message: response.text() || 'لم أستطع توليد إجابة الآن.' });
     } catch (error) {
         console.error('[v0] AI chat error:', error.message);
@@ -4338,11 +4338,11 @@ app.post('/api/ai/solve-image', async (req, res) => {
   "solution_markdown": "الحل الكامل المنسق بصيغة Markdown الغنية فقط إذا كانت is_exercise=true وإلا اتركها فارغة"
 }`;
 
-                // Try gemini-2.5-flash first, fallback to gemini-3.1-pro-preview
+                // Try gemini-3.6-flash first, fallback to gemini-3.1-pro-preview
                 let response;
                 try {
                     response = await ai.models.generateContent({
-                        model: 'gemini-2.5-flash',
+                        model: 'gemini-3.6-flash',
                         contents: [
                             {
                                 role: 'user',
@@ -4490,7 +4490,7 @@ app.post('/api/ai/exercise-variation', async (req, res) => {
         let response;
         try {
             response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3.6-flash',
                 contents: [{ role: 'user', parts: [{ text: prompt }] }]
             });
         } catch (modelErr) {
